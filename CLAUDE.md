@@ -10,7 +10,7 @@ Vimprove 是一个交互式 Vim 学习网站。核心功能是通过浏览器中
 
 **课程范围**: 已完成 Chapter 1-6（基础、进阶编辑、行内 find/till、文本对象、搜索/重构），共 27 节课。
 
-**版本管理**: 版本号在 `src/version.ts` 和 `package.json` 中维护，CHANGELOG 见 `README.md`（当前 1.0.0）
+**版本管理**: 版本号在 `src/version.ts` 和 `package.json` 中维护，CHANGELOG 见 `README.md`
 
 ## Development Commands
 
@@ -396,9 +396,10 @@ export const LESSONS: Lesson[] = [..., newLesson];
 ## Styling
 
 - 使用 Tailwind CSS 3.x（**不要用 4.x**）
-- 配置已包含自定义动画和 stone-950 颜色
 - 样式入口: `src/index.css`（已配置 Tailwind directives）
-- 主题色: Stone 色系（深色主题）
+- 主题系统：`src/styles/theme.css` 统一管理（支持亮 / 暗 / 跟随系统；通过 `data-theme` 覆盖）
+- Tailwind 配色：`tailwind.config.js` 将语义色（如 `bg-background`、`text-foreground`）映射到主题变量，组件内避免直接硬编码 `stone-* / green-*`
+- 首屏配色：`index.html` 会提前加载主题变量并从 localStorage 读取 `data-theme`，避免闪屏
 - Logo: `tmp/vimprove.png`（已设置为网站图标）
 
 ## Quick Start（新会话开始时）
@@ -433,6 +434,7 @@ ls src/data/lessons/chapter3/
 - ✅ 完整的单元测试系统（Vitest，覆盖核心功能与新增命令）
 - ✅ Challenge 系统（目标验证、计时）
 - ✅ Run Example 可播放示例（`src/components/example/RunExamplePlayer.tsx`）
+- ✅ 亮 / 暗 / 跟随系统主题切换（Settings → Appearance）
 - ✅ 网站图标和 PWA 支持
 - ✅ 课程编写协作文档（`tmp/` 目录）
 - ✅ 完整的 i18n 支持（i18next，当前支持 en/zh/zh-lively，课程内容可翻译）
@@ -454,6 +456,8 @@ ls src/data/lessons/chapter3/
 - **Dot 命令测试**: `tmp/dot-command-test.md`（`.` 命令测试指南）
 - **测试总结**: `tmp/test-summary.md`（单元测试覆盖和统计）
 - **版本管理**: `src/version.ts` + `tmp/version-management.md`
+- **主题配色**: `src/styles/theme.css` + `tailwind.config.js`（design tokens + Tailwind 语义色映射）
+- **连字光标修复**: `src/core/ligatures.ts`（仅在光标命中 ligature 时禁用连字）
 - **原型参考**: `tmp/vimprove.html`（已完成重构，仅供参考）
 
 **i18n 相关**:

@@ -110,8 +110,8 @@ src/
 
 ### v2.0.0
 - [ ] hjkl贪吃蛇
-- [ ] alpha分支选择
-- [ ] 亮色模式
+- [x] alpha分支选择
+- [x] 亮色模式
 
 ### v2.1.0
 - [ ] 优化字体（i/l混淆问题）
@@ -128,6 +128,10 @@ src/
 
 ## 📝 CHANGELOG
 
+### Unreleased
+- 🎨 新增主题切换：亮 / 暗 / 跟随系统（Settings → Appearance）
+- 🎛️ 配色系统重构：CSS design tokens + Tailwind 语义色映射，暗色主题观感保持一致
+
 ### Release v1.5.0
 - 🧪 Vim 引擎对拍：`.` 重播（cw/paste/末行 jw）、多行寄存器行粘贴、撤销快照去重与 cw 边界全面对齐 Neovim
 - ⌨️ 可视化提升：按键历史面板 + Vim Status 面板，组合键聚合、实时记录与 dot 重播提示一致
@@ -143,23 +147,23 @@ src/
 <details>
 <summary><b>点击展开Alpha版本历史</b></summary>
 
-### Release v1.9.0
+### v1.9.0
 - 🧪 增加长序列对拍测试
 - 🧩 修复课程文件大小写冲突（motions-WORDs 更名为 motions-words-big），避免大小写不敏感平台编译报错
 - 📝 补齐 small-edits-chars 示例及 zh/zh-lively 翻译，并补上行边界课程的中文示例，确保三语言示例一致
 
-### Release v1.8.0
+### v1.8.0
 - 🐛 继续增强对拍测试覆盖率&修复bug
 - 🚀 将对拍测试并行化
 - 🌍 优化各地访问速度
 
-### Release v1.7.0
+### v1.7.0
 - ⚙️ Vim 引擎：dot 重放 count 覆盖、o/O 多行插入锚点、replace count 连续替换，dd/yy 越界 no-op, text-object 边界修正
 - 📌 粘贴修复：多行寄存器行内粘贴拆分插入，光标与 Neovim 对齐
 - 🧪 Parity 回归：`oM<Esc>2.`, `2dw[p/P]`, `rau2.`, `ddu2.` 等对拍修复
 - 🛠 调试文档：CLAUDE.md 精炼调试流程与引擎行为提示
 
-### Release v1.6.0
+### v1.6.0
 - 🧪 对拍工具链：`vimParity` 报告查看器支持聚合/过滤/排序，新增 quickcheck 脚本快速验证
 - 🔧 测试工作流优化：可选模块 quickcheck、JSON 报告 + viewer 调试流程，优化上下文占用
 
