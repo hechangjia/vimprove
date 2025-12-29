@@ -5,6 +5,7 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 import { useChallenge } from '@/hooks/useChallenge';
 import { vimReducer } from '@/core/vimReducer';
 import { tokenizeLine, getTokenClassName } from '@/core/syntaxHighlight';
+import { getLigatureRange } from '@/core/ligatures';
 import { useTranslationSafe } from '@/hooks/useI18n';
 import { useKeyHistory } from '@/hooks/useKeyHistory';
 import { KeyHistoryPanel } from '@/components/common/KeyHistoryPanel';
@@ -162,6 +163,7 @@ export const VimChallenge = ({
 
     return state.buffer.map((line, r) => {
       const tokens = tokenizeLine(line, language, state.buffer);
+      const ligatureRange = state.cursor.line === r ? getLigatureRange(line, state.cursor.col) : null;
       let charIndex = 0;
 
       return (
@@ -176,6 +178,8 @@ export const VimChallenge = ({
                 const c = charIndex++;
                 const isCursor = state.cursor.line === r && state.cursor.col === c;
                 const isNormalMode = state.mode === 'normal';
+                const disableLigatures =
+                  ligatureRange != null && c >= ligatureRange.start && c <= ligatureRange.end;
                 const cursorTextClass = isCursor
                   ? isNormalMode
                     ? 'vim-cursor-text'
@@ -192,7 +196,9 @@ export const VimChallenge = ({
                         className={isNormalMode ? 'vim-cursor-block' : 'vim-cursor-bar'}
                       />
                     )}
-                    <span className={cursorTextClass}>{char}</span>
+                    <span className={`${cursorTextClass} ${disableLigatures ? 'vim-no-ligatures' : ''}`.trim()}>
+                      {char}
+                    </span>
                   </span>
                 );
               });

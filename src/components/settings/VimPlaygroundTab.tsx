@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useVimEngine } from '@/hooks/useVimEngine';
 import { tokenizeLine, getTokenClassName } from '@/core/syntaxHighlight';
+import { getLigatureRange } from '@/core/ligatures';
 import { useTranslationSafe } from '@/hooks/useI18n';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { getFontFamily } from '@/hooks/useFontLoader';
@@ -136,6 +137,7 @@ export const VimPlaygroundTab = () => {
   const renderBuffer = () => {
     return state.buffer.map((line, r) => {
       const tokens = tokenizeLine(line, language, state.buffer);
+      const ligatureRange = state.cursor.line === r ? getLigatureRange(line, state.cursor.col) : null;
       let charIndex = 0;
 
       return (
@@ -150,6 +152,8 @@ export const VimPlaygroundTab = () => {
                 const c = charIndex++;
                 const isCursor = state.cursor.line === r && state.cursor.col === c;
                 const isNormalMode = state.mode === 'normal';
+                const disableLigatures =
+                  ligatureRange != null && c >= ligatureRange.start && c <= ligatureRange.end;
                 const cursorTextClass = isCursor
                   ? isNormalMode
                     ? 'vim-cursor-text'
@@ -166,7 +170,9 @@ export const VimPlaygroundTab = () => {
                         className={isNormalMode ? 'vim-cursor-block' : 'vim-cursor-bar'}
                       />
                     )}
-                    <span className={cursorTextClass}>{char}</span>
+                    <span className={`${cursorTextClass} ${disableLigatures ? 'vim-no-ligatures' : ''}`.trim()}>
+                      {char}
+                    </span>
                   </span>
                 );
               });

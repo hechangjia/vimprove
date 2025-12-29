@@ -71,6 +71,11 @@
     color: rgb(var(--color-surface));
   }
 
+  .vim-no-ligatures {
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0;
+  }
+
   .vim-cursor-eol-block {
     display: inline-block;
     width: 0.625rem; /* w-2.5 */

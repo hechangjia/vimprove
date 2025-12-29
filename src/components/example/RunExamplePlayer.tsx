@@ -3,6 +3,7 @@ import { Play, Pause, RotateCcw, SkipForward, SkipBack } from 'lucide-react';
 import type { RunExampleConfig, VimState } from '@/core/types';
 import { vimReducer, INITIAL_VIM_STATE } from '@/core/vimReducer';
 import { tokenizeLine, getTokenClassName } from '@/core/syntaxHighlight';
+import { getLigatureRange } from '@/core/ligatures';
 import { useTranslationSafe } from '@/hooks/useI18n';
 import { useKeyHistory } from '@/hooks/useKeyHistory';
 import { KeyHistoryPanel } from '@/components/common/KeyHistoryPanel';
@@ -164,6 +165,10 @@ export const RunExamplePlayer = ({
 
     return displayState.buffer.map((line, r) => {
       const tokens = tokenizeLine(line, language, displayState.buffer);
+      const ligatureRanges = states
+        .filter(s => s.cursor.line === r)
+        .map(s => getLigatureRange(line, s.cursor.col))
+        .filter((x): x is { start: number; end: number } => x != null);
       let charIndex = 0;
 
       return (
@@ -179,6 +184,7 @@ export const RunExamplePlayer = ({
                 const cursorsAtPos = states
                   .map((s, idx) => ({ state: s, idx }))
                   .filter(({ state }) => state.cursor.line === r && state.cursor.col === c);
+                const disableLigatures = ligatureRanges.some(range => c >= range.start && c <= range.end);
 
                 const renderChar = cursorsAtPos.length > 0 ? (
                   <span
@@ -206,7 +212,9 @@ export const RunExamplePlayer = ({
                         />
                       );
                     })}
-                    <span className={cursorsAtPos.some(({ idx }) => states[idx].mode === 'normal') ? 'vim-cursor-text' : 'relative z-10'}>
+                    <span
+                      className={`${cursorsAtPos.some(({ idx }) => states[idx].mode === 'normal') ? 'vim-cursor-text' : 'relative z-10'} ${disableLigatures ? 'vim-no-ligatures' : ''}`.trim()}
+                    >
                       {char}
                     </span>
                   </span>
