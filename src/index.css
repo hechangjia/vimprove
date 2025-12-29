@@ -68,8 +68,7 @@
   .vim-cursor-text {
     position: relative;
     z-index: 10;
-    color: rgb(var(--color-caret-foreground));
-    font-weight: 700;
+    color: rgb(var(--color-surface));
   }
 
   .vim-cursor-eol-block {

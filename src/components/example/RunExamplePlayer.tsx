@@ -188,21 +188,27 @@ export const RunExamplePlayer = ({
                     {cursorsAtPos.map(({ idx }) => {
                       const track = config.tracks[idx];
                       if (!track) return null;
-                      const bgColor = track.color || (idx === 0 ? 'bg-track-blue' : 'bg-track-green');
+                      const bgColor = idx === 0 ? 'bg-caret' : (track.color || (idx === 1 ? 'bg-track-blue' : 'bg-track-green'));
                       const isNormalMode = states[idx].mode === 'normal';
 
                       return (
                         <span
                           key={idx}
-                          className={`absolute ${bgColor} ${
+                          className={`absolute ${idx === 0 ? '' : bgColor} ${
                             isNormalMode
-                              ? 'inset-0 opacity-70'
-                              : 'left-0 top-0 bottom-0 w-0.5 opacity-90'
+                              ? idx === 0
+                                ? 'vim-cursor-block'
+                                : 'inset-0 opacity-70'
+                              : idx === 0
+                                ? 'vim-cursor-bar'
+                                : 'left-0 top-0 bottom-0 w-0.5 opacity-90'
                           }`}
                         />
                       );
                     })}
-                    <span className="relative z-10 text-track-foreground font-bold">{char}</span>
+                    <span className={cursorsAtPos.some(({ idx }) => states[idx].mode === 'normal') ? 'vim-cursor-text' : 'relative z-10'}>
+                      {char}
+                    </span>
                   </span>
                 ) : (
                   <span key={`${tokenIdx}-${localIdx}`} className={tokenColor}>
@@ -220,20 +226,22 @@ export const RunExamplePlayer = ({
                   .filter(({ state }) => state.cursor.line === r && state.cursor.col === line.length)
                   .map(({ idx }) => {
                     const track = config.tracks[idx];
-                    const bgColor = track.color || (idx === 0 ? 'bg-track-blue' : 'bg-track-green');
+                    const bgColor = idx === 0 ? 'bg-caret' : (track.color || (idx === 1 ? 'bg-track-blue' : 'bg-track-green'));
                     const isNormalMode = states[idx].mode === 'normal';
 
                     return (
-                      <span
-                        key={idx}
-                        className={`${bgColor} inline-block h-5 ${
-                          isNormalMode
-                            ? 'w-2.5 opacity-70'
-                            : 'w-0.5 opacity-90'
-                        }`}
-                      >
-                        &nbsp;
-                      </span>
+                      idx === 0 ? (
+                        <span key={idx} className={isNormalMode ? 'vim-cursor-eol-block' : 'vim-cursor-eol-bar'}>
+                          &nbsp;
+                        </span>
+                      ) : (
+                        <span
+                          key={idx}
+                          className={`${bgColor} inline-block h-5 ${isNormalMode ? 'w-2.5 opacity-70' : 'w-0.5 opacity-90'}`}
+                        >
+                          &nbsp;
+                        </span>
+                      )
                     );
                   })}
               </span>
@@ -264,7 +272,7 @@ export const RunExamplePlayer = ({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             {config.tracks.map((track, idx) => {
-              const bgColor = track.color || (idx === 0 ? 'bg-track-blue' : 'bg-track-green');
+              const bgColor = idx === 0 ? 'bg-caret' : (track.color || (idx === 1 ? 'bg-track-blue' : 'bg-track-green'));
               return (
                 <div key={idx} className="flex items-center gap-2">
                   <div className={`w-3 h-3 rounded-full ${bgColor}`} />

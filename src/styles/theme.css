@@ -103,9 +103,9 @@
   --color-editor-foreground: 28 25 23; /* stone-900 */
   --color-editor-line-number: 120 113 108; /* stone-500 */
 
-  --color-caret-block: 28 25 23; /* stone-900 */
+  --color-caret-block: 68 64 60; /* stone-700 */
   --color-caret-foreground: 255 255 255;
-  --alpha-caret-block: 0.18;
+  --alpha-caret-block: 0.4;
   --color-caret-bar: 22 163 74; /* green-600 */
   --alpha-caret-bar: 0.9;
 
@@ -322,7 +322,7 @@
   --color-syntax-preprocessor: 244 114 182; /* pink-400 */
   --color-syntax-plain: 214 211 209; /* stone-300 */
 
-  --color-warning-strong: 234 179 8; /* yellow-500 */
+  --color-warning-strong: 161 98 7; /* yellow-700 */
   --color-warning-soft: 253 224 71; /* yellow-300 */
   --color-danger: 239 68 68; /* red-500 */
   --color-danger-strong: 220 38 38; /* red-600 */

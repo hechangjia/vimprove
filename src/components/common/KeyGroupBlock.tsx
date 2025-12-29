@@ -84,7 +84,7 @@ export const KeyGroupBlock: React.FC<KeyGroupBlockProps> = ({ group }) => {
           ))}
         </div>
 
-        {statusText && <div className="text-warning mt-1.5 text-[10px]">{statusText}</div>}
+        {statusText && <div className="text-warning-strong mt-1.5 text-[10px]">{statusText}</div>}
         {group.summary && (
           <div className="mt-1.5 text-foreground-muted border-t border-border-stronger pt-1">{group.summary}</div>
         )}
@@ -128,7 +128,7 @@ export const KeyGroupBlock: React.FC<KeyGroupBlockProps> = ({ group }) => {
 
         {/* Summary text (optional, for better UX) */}
         {group.status === 'pending' && (
-          <div className="mt-1 text-[9px] text-warning/80">
+          <div className="mt-1 text-[9px] text-warning-strong/80">
             {t(`pending.${group.pendingKind || 'unknown'}`, '...', { ns: 'keyHistory' })}
           </div>
         )}
