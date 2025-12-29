@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronRight, Code2, ChevronDown, Languages, GitBranch } from 'lucide-react';
+import { ChevronRight, ChevronDown, Languages, GitBranch } from 'lucide-react';
 import { CATEGORIES } from '@/data';
 import type { Lesson } from '@/core/types';
 import { BRANCH_LINKS, CURRENT_BRANCH } from '@/version';
@@ -37,7 +37,7 @@ export const Sidebar = ({
   return (
     <div
       className={`
-        fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] h-screen bg-stone-900 border-r border-stone-800 transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] h-screen bg-surface border-r border-border transform transition-transform duration-300 ease-in-out
         flex flex-col
         ${!isVisible ? '-translate-x-full' : isOpen ? 'translate-x-0' : '-translate-x-full'}
         md:relative md:translate-x-0 md:h-screen md:max-w-none
@@ -47,17 +47,17 @@ export const Sidebar = ({
       {/* Header: hidden on mobile to save vertical space */}
       <button
         onClick={onHomeClick}
-        className="px-4 py-3 border-b border-stone-800 flex items-center gap-4 hidden md:flex text-left hover:bg-stone-900 transition-colors"
+        className="px-4 py-3 border-b border-border flex items-center gap-4 hidden md:flex text-left hover:bg-surface-2 transition-colors"
       >
         <img src="/favicon.png" alt="Vimprove" className="w-16 h-16 flex-shrink-0" />
-        <span className="font-bold text-4xl logo-text text-stone-100">Vimprove</span>
+        <span className="font-bold text-4xl logo-text text-logo">Vimprove</span>
       </button>
 
       <div className="flex-1 p-4 overflow-y-auto flex flex-col">
         <div className="flex-1">
           {CATEGORIES.map(cat => (
             <div key={cat.id} className="mb-5">
-              <h3 className="text-sm font-bold text-green-400 uppercase tracking-wide mb-2 px-2 py-1 border-l-2 border-green-500">
+              <h3 className="text-sm font-bold text-success-muted-foreground uppercase tracking-wide mb-2 px-2 py-1 border-l-2 border-success">
                 {translateLessons
                   ? t(`categories.${cat.id}`, cat.title, { ns: 'lessons' })
                   : cat.title}
@@ -72,8 +72,8 @@ export const Sidebar = ({
                       className={`w-full text-left px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-between
                       ${
                         currentLessonSlug === lesson.slug
-                          ? 'bg-stone-800 text-white'
-                          : 'text-stone-400 hover:text-stone-200 hover:bg-stone-900'
+                          ? 'bg-surface-3 text-foreground-strong'
+                          : 'text-foreground-subtle hover:text-foreground hover:bg-surface-2'
                       }
                     `}
                     >
@@ -81,7 +81,7 @@ export const Sidebar = ({
                         ? t(`lessons.${lesson.slug}.title`, lesson.title, { ns: 'lessons' })
                         : lesson.title}
                       {currentLessonSlug === lesson.slug && (
-                        <ChevronRight size={14} className="text-stone-500" />
+                        <ChevronRight size={14} className="text-foreground-faint" />
                       )}
                     </button>
                   ))}
@@ -92,12 +92,12 @@ export const Sidebar = ({
 
       </div>
 
-      <div className="border-t border-stone-800 px-4 py-3 bg-stone-950/50 space-y-3">
+      <div className="border-t border-border px-4 py-3 bg-surface-2/50 space-y-3">
         <div className="grid grid-cols-2 gap-2 items-center">
           <div className="relative">
             <button
               onClick={() => setIsBranchOpen(open => !open)}
-              className="w-full flex items-center gap-2 justify-center bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 hover:border-green-600 transition-colors whitespace-nowrap"
+              className="w-full flex items-center gap-2 justify-center bg-surface border border-border rounded-lg px-3 py-2 text-sm text-foreground hover:border-primary transition-colors whitespace-nowrap"
             >
               <GitBranch size={16} />
               <span>{currentBranch.label}</span>
@@ -105,7 +105,7 @@ export const Sidebar = ({
             </button>
             {isBranchOpen && (
               <div
-                className="absolute left-0 bottom-full mb-2 w-48 bg-stone-900 border border-stone-800 rounded-lg shadow-xl overflow-hidden"
+                className="absolute left-0 bottom-full mb-2 w-48 bg-surface border border-border rounded-lg shadow-xl overflow-hidden"
                 onMouseLeave={() => setIsBranchOpen(false)}
               >
                 {branchOptions.map(opt => (
@@ -119,15 +119,15 @@ export const Sidebar = ({
                     disabled={!opt.url}
                     className={`w-full text-left px-3 py-2 text-sm transition-colors ${
                       CURRENT_BRANCH === opt.key
-                        ? 'bg-green-700/30 text-white'
+                        ? 'bg-primary-strong/30 text-foreground-strong'
                         : opt.url
-                          ? 'text-stone-200 hover:bg-stone-800'
-                          : 'text-stone-500 cursor-not-allowed'
+                          ? 'text-foreground hover:bg-surface-3'
+                          : 'text-foreground-faint cursor-not-allowed'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span>{opt.label}</span>
-                      <span className="font-mono text-xs text-stone-400">v{opt.version}</span>
+                      <span className="font-mono text-xs text-foreground-subtle">v{opt.version}</span>
                     </div>
                   </button>
                 ))}
@@ -137,7 +137,7 @@ export const Sidebar = ({
           <div className="relative">
             <button
               onClick={() => setIsLangOpen(open => !open)}
-              className="w-full flex items-center gap-2 justify-center bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-sm text-stone-200 hover:border-green-600 transition-colors whitespace-nowrap"
+              className="w-full flex items-center gap-2 justify-center bg-surface border border-border rounded-lg px-3 py-2 text-sm text-foreground hover:border-primary transition-colors whitespace-nowrap"
             >
               <Languages size={16} />
               {supportedLocales.find(l => l.code === locale)?.shortLabel || locale}
@@ -145,7 +145,7 @@ export const Sidebar = ({
             </button>
             {isLangOpen && (
               <div
-                className="absolute right-0 bottom-full mb-2 w-44 bg-stone-900 border border-stone-800 rounded-lg shadow-xl overflow-hidden"
+                className="absolute right-0 bottom-full mb-2 w-44 bg-surface border border-border rounded-lg shadow-xl overflow-hidden"
                 onMouseLeave={() => setIsLangOpen(false)}
               >
                 {supportedLocales.map(lng => (
@@ -157,8 +157,8 @@ export const Sidebar = ({
                     }}
                     className={`w-full text-left px-3 py-2 text-sm transition-colors ${
                       locale === lng.code
-                        ? 'bg-green-700/30 text-white'
-                        : 'text-stone-200 hover:bg-stone-800'
+                        ? 'bg-primary-strong/30 text-foreground-strong'
+                        : 'text-foreground hover:bg-surface-3'
                     }`}
                   >
                     {lng.nativeLabel}

@@ -2,6 +2,10 @@
   "title": "Settings",
   "appearance": {
     "tab": "Appearance",
+    "theme": "Theme",
+    "themeSystem": "System",
+    "themeDark": "Dark",
+    "themeLight": "Light",
     "fontFamily": "Font Family",
     "fontSize": "Font Size",
     "preview": "Preview",

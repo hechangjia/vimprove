@@ -1,10 +1,11 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { useSettings, type Settings } from '@/hooks/useSettings';
-import type { EditorSettings } from '@/hooks/useSettings';
+import type { EditorSettings, ThemeMode } from '@/hooks/useSettings';
 
 type SettingsContextType = {
   settings: Settings;
   updateEditorSettings: (updates: Partial<EditorSettings>) => void;
+  updateTheme: (theme: ThemeMode) => void;
   resetToDefaults: () => void;
 };
 

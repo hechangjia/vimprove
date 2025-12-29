@@ -82,11 +82,11 @@ const TEST_STATS = {
 const StatusIcon = ({ status }: { status: SupportStatus }) => {
   switch (status) {
     case 'full':
-      return <Check size={14} className="text-green-500" />;
+      return <Check size={14} className="text-success" />;
     case 'partial':
-      return <Minus size={14} className="text-yellow-500" />;
+      return <Minus size={14} className="text-warning-strong" />;
     case 'none':
-      return <X size={14} className="text-stone-500" />;
+      return <X size={14} className="text-foreground-faint" />;
   }
 };
 
@@ -97,17 +97,15 @@ const ProgressBar = ({ passed, total }: { passed: number; total: number }) => {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex-1 h-2 bg-stone-700 rounded-full overflow-hidden">
+      <div className="flex-1 h-2 bg-surface-4 rounded-full overflow-hidden">
         <div
           className={`h-full transition-all ${
-            isGood ? 'bg-green-500' : isOk ? 'bg-yellow-500' : 'bg-red-500'
+            isGood ? 'bg-success' : isOk ? 'bg-warning-strong' : 'bg-danger'
           }`}
           style={{ width: `${percentage}%` }}
         />
       </div>
-      <span className={`text-sm font-mono ${
-        isGood ? 'text-green-400' : isOk ? 'text-yellow-400' : 'text-red-400'
-      }`}>
+      <span className={`text-sm font-mono ${isGood ? 'text-success-muted-foreground' : isOk ? 'text-warning' : 'text-danger-muted-foreground'}`}>
         {percentage}%
       </span>
     </div>
@@ -121,15 +119,15 @@ export const VimStatusTab = () => {
     <div className="space-y-6">
       {/* Test Results */}
       <section>
-        <h3 className="text-lg font-semibold text-white mb-4">
+        <h3 className="text-lg font-semibold text-foreground-strong mb-4">
           {t('vimStatus.testResults', 'Neovim Parity Tests')}
         </h3>
         <div className="space-y-4">
           {Object.entries(TEST_STATS).map(([key, stat]) => (
-            <div key={key} className="bg-stone-800/50 rounded-lg p-4">
+            <div key={key} className="bg-surface-3/50 rounded-lg p-4">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-stone-300 font-mono text-sm">{stat.name}</span>
-                <span className="text-stone-400 text-sm">
+                <span className="text-foreground-muted font-mono text-sm">{stat.name}</span>
+                <span className="text-foreground-subtle text-sm">
                   {stat.passed}/{stat.total} passed
                 </span>
               </div>
@@ -141,16 +139,16 @@ export const VimStatusTab = () => {
 
       {/* Command Matrix */}
       <section>
-        <h3 className="text-lg font-semibold text-white mb-4">
+        <h3 className="text-lg font-semibold text-foreground-strong mb-4">
           {t('vimStatus.supportMatrix', 'Command Support Matrix')}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {COMMAND_MATRIX.map((category) => (
             <div
               key={category.name}
-              className="bg-stone-800/50 rounded-lg p-3"
+              className="bg-surface-3/50 rounded-lg p-3"
             >
-              <h4 className="text-sm font-medium text-stone-400 mb-2">
+              <h4 className="text-sm font-medium text-foreground-subtle mb-2">
                 {category.name}
               </h4>
               <div className="space-y-1">
@@ -162,10 +160,10 @@ export const VimStatusTab = () => {
                     <StatusIcon status={cmd.status} />
                     <code className={`font-mono ${
                       cmd.status === 'full'
-                        ? 'text-stone-200'
+                        ? 'text-foreground'
                         : cmd.status === 'partial'
-                        ? 'text-yellow-300'
-                        : 'text-stone-500'
+                        ? 'text-warning-soft'
+                        : 'text-foreground-faint'
                     }`}>
                       {cmd.cmd}
                     </code>
@@ -178,17 +176,17 @@ export const VimStatusTab = () => {
       </section>
 
       {/* Legend */}
-      <section className="flex gap-6 text-sm text-stone-400">
+      <section className="flex gap-6 text-sm text-foreground-subtle">
         <div className="flex items-center gap-2">
-          <Check size={14} className="text-green-500" />
+          <Check size={14} className="text-success" />
           <span>{t('vimStatus.supported', 'Supported')}</span>
         </div>
         <div className="flex items-center gap-2">
-          <Minus size={14} className="text-yellow-500" />
+          <Minus size={14} className="text-warning-strong" />
           <span>{t('vimStatus.partial', 'Partial')}</span>
         </div>
         <div className="flex items-center gap-2">
-          <X size={14} className="text-stone-500" />
+          <X size={14} className="text-foreground-faint" />
           <span>{t('vimStatus.notSupported', 'Not Supported')}</span>
         </div>
       </section>

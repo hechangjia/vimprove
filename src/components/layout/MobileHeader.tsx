@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Settings, Github, SkipBack, SkipForward, Languages, ChevronDown } from 'lucide-react';
+import { Menu, X, Settings, Github, SkipBack, SkipForward, Languages } from 'lucide-react';
 import { useTranslationSafe, useLocale } from '@/hooks/useI18n';
 import { supportedLocales } from '@/i18n';
 
@@ -62,7 +62,7 @@ export const MobileHeader = ({
     <header
       className={`
         fixed top-0 left-0 right-0 z-50
-        bg-stone-900/95 backdrop-blur-sm border-b border-stone-800
+        bg-surface/95 backdrop-blur-sm border-b border-border
         transition-transform duration-300
         md:hidden
         ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}
@@ -80,7 +80,7 @@ export const MobileHeader = ({
           {showPrevButton && onPrevClick && (
             <button
               onClick={onPrevClick}
-              className="p-2 hover:bg-stone-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-3 rounded-lg transition-colors"
               title={t('prevLesson', 'Previous Lesson')}
             >
               <SkipBack size={20} />
@@ -89,7 +89,7 @@ export const MobileHeader = ({
           {showNextButton && onNextClick && (
             <button
               onClick={onNextClick}
-              className="p-2 hover:bg-stone-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-3 rounded-lg transition-colors"
               title={t('nextLesson', 'Next Lesson')}
             >
               <SkipForward size={20} />
@@ -99,14 +99,14 @@ export const MobileHeader = ({
           <div className="relative">
             <button
               onClick={() => setIsLangOpen(!isLangOpen)}
-              className="p-2 hover:bg-stone-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-3 rounded-lg transition-colors"
               title={t('language', 'Language')}
             >
               <Languages size={20} />
             </button>
             {isLangOpen && (
               <div
-                className="absolute right-0 top-full mt-2 w-36 bg-stone-900 border border-stone-800 rounded-lg shadow-xl overflow-hidden z-50"
+                className="absolute right-0 top-full mt-2 w-36 bg-surface border border-border rounded-lg shadow-xl overflow-hidden z-50"
                 onMouseLeave={() => setIsLangOpen(false)}
               >
                 {supportedLocales.map(lng => (
@@ -118,8 +118,8 @@ export const MobileHeader = ({
                     }}
                     className={`w-full text-left px-3 py-2 text-sm transition-colors ${
                       locale === lng.code
-                        ? 'bg-green-700/30 text-white'
-                        : 'text-stone-200 hover:bg-stone-800'
+                        ? 'bg-primary-strong/30 text-foreground-strong'
+                        : 'text-foreground hover:bg-surface-3'
                     }`}
                   >
                     {lng.nativeLabel}
@@ -130,14 +130,14 @@ export const MobileHeader = ({
           </div>
           <button
             onClick={onSettingsClick}
-            className="p-2 hover:bg-stone-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-3 rounded-lg transition-colors"
             title={t('settings', 'Settings')}
           >
             <Settings size={20} />
           </button>
           <button
             onClick={onMenuToggle}
-            className="p-2 hover:bg-stone-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-3 rounded-lg transition-colors"
             aria-label={t('menu', 'Menu')}
           >
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
@@ -146,7 +146,7 @@ export const MobileHeader = ({
             href="https://github.com/Jerry-Terrasse/vimprove"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 hover:bg-stone-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-3 rounded-lg transition-colors"
             title={t('starOnGithub', 'Give me a Star!')}
           >
             <Github size={20} />

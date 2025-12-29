@@ -108,7 +108,7 @@ const App = () => {
   return (
     <SettingsProvider>
       <EditorStyleApplier />
-      <div className="h-screen bg-stone-950 text-stone-200 font-sans flex overflow-hidden">
+      <div className="h-screen bg-background text-foreground font-sans flex overflow-hidden">
         {/* Mobile Header */}
         <MobileHeader
           isVisible={currentView === 'lesson'}
@@ -124,7 +124,7 @@ const App = () => {
         {/* Mobile Overlay */}
         {sidebarOpen && currentView === 'lesson' && (
           <div
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            className="fixed inset-0 bg-backdrop/50 z-40 md:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
@@ -138,7 +138,7 @@ const App = () => {
           isVisible={currentView === 'lesson'}
         />
 
-        <div className="flex-1 h-screen overflow-y-auto bg-stone-950 relative">
+        <div className="flex-1 h-screen overflow-y-auto bg-background relative">
           {currentView === 'home' ? (
             <HomePage onStart={handleStartLearning} />
           ) : (
@@ -155,7 +155,7 @@ const App = () => {
           {currentView === 'lesson' && currentLessonIdx > 0 && (
             <button
               onClick={handlePrev}
-              className="w-14 h-14 flex items-center justify-center bg-stone-700 hover:bg-stone-600 border border-stone-600 rounded-full shadow-2xl transition-all hover:scale-110 text-stone-200 hover:text-white"
+              className="w-14 h-14 flex items-center justify-center bg-surface-4 hover:bg-border-stronger border border-border-stronger rounded-full shadow-2xl transition-all hover:scale-110 text-foreground hover:text-foreground-strong"
               title={t('prevLesson', 'Previous Lesson')}
             >
               <SkipBack size={24} />
@@ -164,7 +164,7 @@ const App = () => {
           {currentView === 'lesson' && currentLessonIdx < LESSONS.length - 1 && (
             <button
               onClick={handleNext}
-              className="w-14 h-14 flex items-center justify-center bg-stone-700 hover:bg-stone-600 border border-stone-600 rounded-full shadow-2xl transition-all hover:scale-110 text-stone-200 hover:text-white"
+              className="w-14 h-14 flex items-center justify-center bg-surface-4 hover:bg-border-stronger border border-border-stronger rounded-full shadow-2xl transition-all hover:scale-110 text-foreground hover:text-foreground-strong"
               title={t('nextLesson', 'Next Lesson')}
             >
               <SkipForward size={24} />
@@ -172,7 +172,7 @@ const App = () => {
           )}
           <button
             onClick={() => setSettingsOpen(true)}
-            className="w-14 h-14 p-4 bg-stone-700 hover:bg-stone-600 border border-stone-600 rounded-full shadow-2xl transition-all hover:scale-110 text-stone-200 hover:text-white"
+            className="w-14 h-14 p-4 bg-surface-4 hover:bg-border-stronger border border-border-stronger rounded-full shadow-2xl transition-all hover:scale-110 text-foreground hover:text-foreground-strong"
             title={t('settings', 'Settings')}
           >
             <Settings size={24} />
@@ -181,7 +181,7 @@ const App = () => {
             href="https://github.com/Jerry-Terrasse/vimprove"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-14 h-14 p-4 bg-stone-700 hover:bg-stone-600 border border-stone-600 rounded-full shadow-2xl transition-all hover:scale-110 text-stone-200 hover:text-white"
+            className="w-14 h-14 p-4 bg-surface-4 hover:bg-border-stronger border border-border-stronger rounded-full shadow-2xl transition-all hover:scale-110 text-foreground hover:text-foreground-strong"
             title={t('starOnGithub', 'Give me a Star!')}
           >
             <Github size={24} />

@@ -28,8 +28,8 @@ export const LessonView = ({ lesson, onNext, onPrev }: LessonViewProps) => {
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 pt-16 md:pt-6 pb-32 animate-in slide-in-from-right duration-300">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">{title}</h1>
-        <p className="text-stone-400 text-lg">{shortDescription}</p>
+        <h1 className="text-3xl font-bold text-foreground-strong mb-2">{title}</h1>
+        <p className="text-foreground-subtle text-lg">{shortDescription}</p>
       </div>
 
       {lesson.contentBlocks.map((block, idx) => {
@@ -80,18 +80,18 @@ export const LessonView = ({ lesson, onNext, onPrev }: LessonViewProps) => {
         return null;
       })}
 
-      <div className="flex justify-between mt-16 border-t border-stone-800 pt-8">
+      <div className="flex justify-between mt-16 border-t border-border pt-8">
         <button
           onClick={onPrev}
           disabled={!onPrev}
-          className="flex items-center gap-2 text-stone-500 hover:text-white disabled:opacity-0 transition-colors"
+          className="flex items-center gap-2 text-foreground-faint hover:text-foreground-strong disabled:opacity-0 transition-colors"
         >
           <ChevronLeft /> {t('nav.previous', 'Previous Lesson', { ns: 'lesson' })}
         </button>
         <button
           onClick={onNext}
           disabled={!onNext}
-          className="flex items-center gap-2 text-stone-500 hover:text-white disabled:opacity-0 transition-colors"
+          className="flex items-center gap-2 text-foreground-faint hover:text-foreground-strong disabled:opacity-0 transition-colors"
         >
           {t('nav.next', 'Next Lesson', { ns: 'lesson' })} <ChevronRight />
         </button>

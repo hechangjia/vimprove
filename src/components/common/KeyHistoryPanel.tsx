@@ -36,8 +36,8 @@ export const KeyHistoryPanel: React.FC<KeyHistoryPanelProps> = ({
   return (
     <div className="flex flex-col h-full w-full">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-stone-700/50 bg-stone-900/50 w-full">
-        <h3 className="text-sm font-medium text-stone-300">
+      <div className="px-4 py-3 border-b border-border-strong/50 bg-surface/50 w-full">
+        <h3 className="text-sm font-medium text-foreground-muted">
           {t('title', 'Key History', { ns: 'keyHistory' })}
         </h3>
       </div>
@@ -49,7 +49,7 @@ export const KeyHistoryPanel: React.FC<KeyHistoryPanelProps> = ({
         className="flex-1 overflow-y-auto p-3"
       >
         {history.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-stone-500 text-sm">
+          <div className="flex items-center justify-center h-full text-foreground-faint text-sm">
             {t('empty', 'No keystrokes yet', { ns: 'keyHistory' })}
           </div>
         ) : (

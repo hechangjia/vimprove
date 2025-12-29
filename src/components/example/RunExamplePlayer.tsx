@@ -67,36 +67,6 @@ export const RunExamplePlayer = ({
     [config.steps, states, recordKey]
   );
 
-  const executeStepImmediately = useCallback(
-    (stepIndex: number, shouldRecord = false) => {
-      if (stepIndex < 0 || stepIndex >= config.steps.length) return;
-
-      const step = config.steps[stepIndex];
-      const cursorIdx = step.cursorIndex ?? 0;
-
-      // Calculate nextState and optionally record
-      const prevState = states[cursorIdx];
-      const nextState = vimReducer(prevState, {
-        type: 'KEYDOWN',
-        payload: { key: step.key, ctrlKey: false }
-      });
-
-      if (shouldRecord) {
-        recordKey(step.key, false, prevState, nextState);
-      }
-
-      // Update React state
-      setStates(prev => {
-        const newStates = [...prev];
-        newStates[cursorIdx] = nextState;
-        return newStates;
-      });
-
-      setCurrentStep(stepIndex);
-    },
-    [config.steps, states, recordKey]
-  );
-
   const handleNext = useCallback(() => {
     if (currentStep < config.steps.length - 1) {
       executeStep(currentStep + 1);
@@ -218,7 +188,7 @@ export const RunExamplePlayer = ({
                     {cursorsAtPos.map(({ idx }) => {
                       const track = config.tracks[idx];
                       if (!track) return null;
-                      const bgColor = track.color || (idx === 0 ? 'bg-blue-500' : 'bg-green-500');
+                      const bgColor = track.color || (idx === 0 ? 'bg-track-blue' : 'bg-track-green');
                       const isNormalMode = states[idx].mode === 'normal';
 
                       return (
@@ -232,7 +202,7 @@ export const RunExamplePlayer = ({
                         />
                       );
                     })}
-                    <span className="relative z-10 text-stone-900 font-bold">{char}</span>
+                    <span className="relative z-10 text-track-foreground font-bold">{char}</span>
                   </span>
                 ) : (
                   <span key={`${tokenIdx}-${localIdx}`} className={tokenColor}>
@@ -250,7 +220,7 @@ export const RunExamplePlayer = ({
                   .filter(({ state }) => state.cursor.line === r && state.cursor.col === line.length)
                   .map(({ idx }) => {
                     const track = config.tracks[idx];
-                    const bgColor = track.color || (idx === 0 ? 'bg-blue-500' : 'bg-green-500');
+                    const bgColor = track.color || (idx === 0 ? 'bg-track-blue' : 'bg-track-green');
                     const isNormalMode = states[idx].mode === 'normal';
 
                     return (
@@ -285,20 +255,20 @@ export const RunExamplePlayer = ({
   const keyedLabel = (key: string, fallback: string) => t(key, fallback, { ns: 'example' });
 
   return (
-    <div className="bg-stone-900 rounded-xl overflow-hidden border border-stone-800 shadow-2xl flex flex-row gap-0 h-[500px]">
+    <div className="bg-surface rounded-xl overflow-hidden border border-border shadow-2xl flex flex-row gap-0 h-[500px]">
       {/* Left: Player */}
       <div className="flex-1 flex flex-col min-w-0">
       {/* Header */}
-      <div className="bg-stone-950 border-b border-stone-800 p-3 flex items-center justify-between text-sm font-mono">
-        <div className="text-stone-300">{keyedLabel('title', 'Run Example')}</div>
+      <div className="bg-surface-2 border-b border-border p-3 flex items-center justify-between text-sm font-mono">
+        <div className="text-foreground-muted">{keyedLabel('title', 'Run Example')}</div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             {config.tracks.map((track, idx) => {
-              const bgColor = track.color || (idx === 0 ? 'bg-blue-500' : 'bg-green-500');
+              const bgColor = track.color || (idx === 0 ? 'bg-track-blue' : 'bg-track-green');
               return (
                 <div key={idx} className="flex items-center gap-2">
                   <div className={`w-3 h-3 rounded-full ${bgColor}`} />
-                  <span className="text-xs text-stone-300">
+                  <span className="text-xs text-foreground-muted">
                     {disableI18n || !lessonSlug
                       ? track.label
                       : t(
@@ -315,7 +285,7 @@ export const RunExamplePlayer = ({
           </div>
           <button
             onClick={handleReset}
-            className="hover:text-white text-stone-300 transition-colors"
+            className="hover:text-foreground-strong text-foreground-muted transition-colors"
             title={keyedLabel('reset', 'Reset')}
           >
             <RotateCcw size={14} />
@@ -324,23 +294,23 @@ export const RunExamplePlayer = ({
       </div>
 
       {/* Editor Area - flex-1 to push controls to bottom */}
-      <div className="bg-stone-900 flex-1 overflow-auto">
+      <div className="bg-surface flex-1 overflow-auto">
         <div className="vim-editor-root">{renderBuffer()}</div>
       </div>
 
       {/* Current Step Display */}
       {currentStepData && (
-        <div className="bg-stone-950 border-t border-stone-800 p-4">
+        <div className="bg-surface-2 border-t border-border p-4">
           <div className="flex items-center gap-4">
-            <div className="bg-stone-800 px-3 py-1 rounded font-mono text-lg font-bold text-white">
+            <div className="bg-surface-3 px-3 py-1 rounded font-mono text-lg font-bold text-foreground-strong">
               {currentStepData.key === ' '
                 ? keyedLabel('space', 'Space')
                 : currentStepData.key}
             </div>
-            <div className="text-stone-400 text-sm flex-1">
+            <div className="text-foreground-subtle text-sm flex-1">
               {resolveStepDesc(currentStep, currentStepData.description)}
             </div>
-            <div className="text-xs text-stone-600">
+            <div className="text-xs text-foreground-disabled">
               {keyedLabel('step', 'Step')} {currentStep + 1} / {config.steps.length}
             </div>
           </div>
@@ -348,11 +318,11 @@ export const RunExamplePlayer = ({
       )}
 
       {/* Controls - at bottom */}
-      <div className="bg-stone-950 border-t border-stone-800 p-4 flex items-center justify-center gap-3">
+      <div className="bg-surface-2 border-t border-border p-4 flex items-center justify-center gap-3">
         <button
           onClick={handlePrev}
           disabled={currentStep <= 0}
-          className="p-2 hover:bg-stone-800 rounded transition-colors text-stone-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+          className="p-2 hover:bg-surface-3 rounded transition-colors text-foreground-subtle hover:text-foreground-strong disabled:opacity-30 disabled:cursor-not-allowed"
           title={keyedLabel('prev', 'Previous Step')}
         >
           <SkipBack size={18} />
@@ -360,7 +330,7 @@ export const RunExamplePlayer = ({
         {isPlaying ? (
           <button
             onClick={handlePause}
-            className="p-3 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors text-white"
+            className="p-3 bg-info hover:bg-info-hover rounded-lg transition-colors text-info-foreground"
             title={keyedLabel('pause', 'Pause')}
           >
             <Pause size={20} />
@@ -368,7 +338,7 @@ export const RunExamplePlayer = ({
         ) : (
           <button
             onClick={handlePlay}
-            className="p-3 bg-green-600 hover:bg-green-500 rounded-lg transition-colors text-white"
+            className="p-3 bg-primary hover:bg-primary-hover rounded-lg transition-colors text-primary-foreground"
             title={keyedLabel('play', 'Play')}
           >
             <Play size={20} />
@@ -377,7 +347,7 @@ export const RunExamplePlayer = ({
         <button
           onClick={handleNext}
           disabled={currentStep >= config.steps.length - 1}
-          className="p-2 hover:bg-stone-800 rounded transition-colors text-stone-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+          className="p-2 hover:bg-surface-3 rounded transition-colors text-foreground-subtle hover:text-foreground-strong disabled:opacity-30 disabled:cursor-not-allowed"
           title={keyedLabel('next', 'Next Step')}
         >
           <SkipForward size={18} />
@@ -386,7 +356,7 @@ export const RunExamplePlayer = ({
       </div>
 
       {/* Right: Key History Panel */}
-      <div className="w-64 border-l border-stone-800 bg-stone-950/50 flex-shrink-0 hidden lg:flex">
+      <div className="w-64 border-l border-border bg-surface-2/50 flex-shrink-0 hidden lg:flex">
         <KeyHistoryPanel history={getHistory()} />
       </div>
     </div>

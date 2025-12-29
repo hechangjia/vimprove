@@ -81,7 +81,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
       {isVisible && (
         <div
           ref={tooltipRef}
-          className="fixed z-50 px-3 py-2 text-xs font-mono bg-stone-800 border border-stone-600 rounded-lg shadow-xl text-stone-200 max-w-xs whitespace-pre-wrap"
+          className="fixed z-50 px-3 py-2 text-xs font-mono bg-surface-3 border border-border-stronger rounded-lg shadow-xl text-foreground max-w-xs whitespace-pre-wrap"
           style={{
             top: position.top,
             left: position.left,

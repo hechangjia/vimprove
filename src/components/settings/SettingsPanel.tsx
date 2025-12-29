@@ -15,7 +15,7 @@ type SettingsPanelProps = {
 
 export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
   const [activeTab, setActiveTab] = useState<Tab>('appearance');
-  const { settings, updateEditorSettings, resetToDefaults } = useSettingsContext();
+  const { settings, updateEditorSettings, updateTheme, resetToDefaults } = useSettingsContext();
   const { t } = useTranslationSafe('settings');
 
   if (!isOpen) return null;
@@ -24,20 +24,20 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-backdrop/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Panel */}
-      <div className="relative bg-stone-900 rounded-2xl border border-stone-700 shadow-2xl w-full max-w-[95vw] md:max-w-4xl max-h-[85vh] overflow-hidden flex flex-col mx-4">
+      <div className="relative bg-surface rounded-2xl border border-border-strong shadow-2xl w-full max-w-[95vw] md:max-w-4xl max-h-[85vh] overflow-hidden flex flex-col mx-4">
         {/* Tab Bar */}
-        <div className="border-b border-stone-800 px-4 md:px-6 flex gap-2">
+        <div className="border-b border-border px-4 md:px-6 flex gap-2">
           <button
             onClick={() => setActiveTab('appearance')}
             className={`flex items-center gap-2 px-4 py-3 text-sm transition-colors border-b-2 ${
               activeTab === 'appearance'
-                ? 'border-green-500 text-white'
-                : 'border-transparent text-stone-400 hover:text-white'
+                ? 'border-primary text-foreground-strong'
+                : 'border-transparent text-foreground-subtle hover:text-foreground-strong'
             }`}
           >
             <Palette size={18} />
@@ -47,8 +47,8 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
             onClick={() => setActiveTab('vim-status')}
             className={`flex items-center gap-2 px-4 py-3 text-sm transition-colors border-b-2 ${
               activeTab === 'vim-status'
-                ? 'border-green-500 text-white'
-                : 'border-transparent text-stone-400 hover:text-white'
+                ? 'border-primary text-foreground-strong'
+                : 'border-transparent text-foreground-subtle hover:text-foreground-strong'
             }`}
           >
             <Terminal size={18} />
@@ -58,8 +58,8 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
             onClick={() => setActiveTab('playground')}
             className={`flex items-center gap-2 px-4 py-3 text-sm transition-colors border-b-2 ${
               activeTab === 'playground'
-                ? 'border-green-500 text-white'
-                : 'border-transparent text-stone-400 hover:text-white'
+                ? 'border-primary text-foreground-strong'
+                : 'border-transparent text-foreground-subtle hover:text-foreground-strong'
             }`}
           >
             <Code size={18} />
@@ -72,7 +72,9 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
           {activeTab === 'appearance' && (
             <AppearanceTab
               settings={settings.editor}
+              theme={settings.theme}
               onUpdate={updateEditorSettings}
+              onUpdateTheme={updateTheme}
             />
           )}
           {activeTab === 'vim-status' && <VimStatusTab />}
@@ -80,16 +82,16 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
         </div>
 
         {/* Footer */}
-        <div className="border-t border-stone-800 p-4 flex justify-between items-center">
+        <div className="border-t border-border p-4 flex justify-between items-center">
           <button
             onClick={resetToDefaults}
-            className="px-4 py-2 text-sm text-stone-400 hover:text-white transition-colors"
+            className="px-4 py-2 text-sm text-foreground-subtle hover:text-foreground-strong transition-colors"
           >
             {t('reset', 'Reset to Defaults')}
           </button>
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-semibold transition-colors"
+            className="px-6 py-2 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg font-semibold transition-colors"
           >
             {t('done', 'Done')}
           </button>

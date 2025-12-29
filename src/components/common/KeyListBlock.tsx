@@ -15,19 +15,19 @@ export const KeyListBlock = ({ keys, i18nBaseKey, disableI18n }: KeyListBlockPro
       {keys.map((k, i) => (
         <div
           key={i}
-          className="flex items-center justify-between bg-stone-800 p-3 rounded border border-stone-700"
+          className="flex items-center justify-between bg-surface-3 p-3 rounded border border-border-strong"
         >
           <div className="flex gap-1">
             {k.chars.map(char => (
               <kbd
                 key={char}
-                className="bg-stone-900 px-2 py-1 rounded text-green-400 font-mono font-bold border border-stone-700 shadow-sm min-w-[24px] text-center"
+                className="bg-surface px-2 py-1 rounded text-success-muted-foreground font-mono font-bold border border-border-strong shadow-sm min-w-[24px] text-center"
               >
                 {char}
               </kbd>
             ))}
           </div>
-          <span className="text-sm text-stone-400 font-medium">
+          <span className="text-sm text-foreground-subtle font-medium">
             {disableI18n
               ? k.desc
               : t(

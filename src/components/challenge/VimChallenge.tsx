@@ -178,7 +178,7 @@ export const VimChallenge = ({
                 const isNormalMode = state.mode === 'normal';
                 const cursorTextClass = isCursor
                   ? isNormalMode
-                    ? 'relative z-10 text-stone-900 font-bold'
+                    ? 'vim-cursor-text'
                     : 'relative z-10'
                   : '';
 
@@ -189,11 +189,7 @@ export const VimChallenge = ({
                   >
                     {isCursor && (
                       <span
-                        className={`absolute ${
-                          isNormalMode
-                            ? 'inset-0 bg-stone-200 opacity-70'
-                            : 'left-0 top-0 bottom-0 w-0.5 bg-stone-200 opacity-90'
-                        }`}
+                        className={isNormalMode ? 'vim-cursor-block' : 'vim-cursor-bar'}
                       />
                     )}
                     <span className={cursorTextClass}>{char}</span>
@@ -202,13 +198,7 @@ export const VimChallenge = ({
               });
             })}
             {state.cursor.line === r && state.cursor.col === line.length && (
-              <span
-                className={`${
-                  state.mode === 'normal'
-                    ? 'bg-stone-200 opacity-70 inline-block w-2.5 h-5'
-                    : 'bg-stone-200 opacity-90 inline-block w-0.5 h-5'
-                }`}
-              >
+              <span className={state.mode === 'normal' ? 'vim-cursor-eol-block' : 'vim-cursor-eol-bar'}>
                 &nbsp;
               </span>
             )}
@@ -219,22 +209,22 @@ export const VimChallenge = ({
   };
 
   return (
-    <div className="bg-stone-900 rounded-xl overflow-hidden border border-stone-800 shadow-2xl flex flex-row gap-0 h-[500px] md:h-[600px]">
+    <div className="bg-surface rounded-xl overflow-hidden border border-border shadow-2xl flex flex-row gap-0 h-[500px] md:h-[600px]">
       {/* Left: Editor */}
       <div className="flex-1 flex flex-col min-w-0">
       {/* Header / Status Bar */}
-      <div className="bg-stone-950 border-b border-stone-800 p-3 flex items-center justify-between text-sm font-mono">
+      <div className="bg-surface-2 border-b border-border p-3 flex items-center justify-between text-sm font-mono">
         <div className="flex items-center gap-4">
           <div
             className={`px-2 py-0.5 rounded text-xs font-bold ${
               state.mode === 'normal'
-                ? 'bg-green-900 text-green-400'
-                : 'bg-blue-900 text-blue-400'
+                ? 'bg-success-muted text-success-muted-foreground'
+                : 'bg-info-muted text-info-muted-foreground'
             }`}
           >
             {t(`mode.${state.mode}`, state.mode.toUpperCase(), { ns: 'challenge' })}
           </div>
-          <div className="text-stone-300 flex items-center gap-2">
+          <div className="text-foreground-muted flex items-center gap-2">
             <Clock size={14} />
             <span>
               {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}
@@ -243,16 +233,16 @@ export const VimChallenge = ({
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-stone-300">
+            <span className="text-foreground-muted">
               {t('goals.label', 'Goals:', { ns: 'challenge' })}
             </span>
-            <span className="text-white font-bold">
+            <span className="text-foreground-strong font-bold">
               {completedCount} / {config.goalsRequired}
             </span>
           </div>
           <button
             onClick={handleRestart}
-            className="hover:text-white text-stone-300 transition-colors"
+            className="hover:text-foreground-strong text-foreground-muted transition-colors"
           >
             <RotateCcw size={14} />
           </button>
@@ -261,7 +251,7 @@ export const VimChallenge = ({
 
       {/* Editor Area */}
       <div
-        className="flex-1 relative bg-stone-900 overflow-y-auto cursor-text"
+        className="flex-1 relative bg-surface overflow-y-auto cursor-text"
         onClick={() => inputRef.current?.focus()}
       >
         <input
@@ -278,20 +268,20 @@ export const VimChallenge = ({
         />
 
         {!isFocused && !isComplete && (
-          <div className="absolute inset-0 z-10 bg-stone-900/80 backdrop-blur-[1px] flex items-center justify-center text-stone-400 gap-2">
+          <div className="absolute inset-0 z-10 bg-surface/80 backdrop-blur-[1px] flex items-center justify-center text-foreground-subtle gap-2">
             <Keyboard size={20} />
             {t('focus.resume', 'Click to resume focus', { ns: 'challenge' })}
           </div>
         )}
 
         {isComplete && (
-          <div className="absolute inset-0 z-20 bg-stone-950/90 flex flex-col items-center justify-center animate-in fade-in duration-500">
-            <div className="bg-stone-900 px-12 py-10 rounded-2xl border border-green-900/50 shadow-2xl text-center max-w-lg mx-4">
-              <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-white mb-2">
+          <div className="absolute inset-0 z-20 bg-surface-2/90 flex flex-col items-center justify-center animate-in fade-in duration-500">
+            <div className="bg-surface px-12 py-10 rounded-2xl border border-success-muted/50 shadow-2xl text-center max-w-lg mx-4">
+              <Trophy className="w-16 h-16 text-warning mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-foreground-strong mb-2">
                 {t('complete.title', 'Lesson Complete!', { ns: 'challenge' })}
               </h3>
-              <p className="text-stone-400 mb-6">
+              <p className="text-foreground-subtle mb-6">
                 {t('complete.subtitle', 'You finished in {{time}} seconds.', {
                   ns: 'challenge',
                   time: elapsed
@@ -299,11 +289,11 @@ export const VimChallenge = ({
               </p>
               <button
                 onClick={() => onComplete({ next: true, time: elapsed })}
-                className="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg font-bold w-full transition-all"
+                className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-2 rounded-lg font-bold w-full transition-all"
               >
                 {t('complete.next', 'Next Lesson', { ns: 'challenge' })}
               </button>
-              <p className="text-stone-500 text-sm mt-4">
+              <p className="text-foreground-faint text-sm mt-4">
                 {t('complete.hint', 'Press Enter to continue', { ns: 'challenge' })}
               </p>
             </div>
@@ -314,8 +304,8 @@ export const VimChallenge = ({
       </div>
 
       {/* Goals List */}
-      <div className="bg-stone-950 p-4 border-t border-stone-800">
-        <h4 className="text-xs uppercase tracking-widest text-stone-500 font-bold mb-3">
+      <div className="bg-surface-2 p-4 border-t border-border">
+        <h4 className="text-xs uppercase tracking-widest text-foreground-faint font-bold mb-3">
           {t('goals.title', 'Mission Objectives', { ns: 'challenge' })}
         </h4>
         <div className="space-y-2">
@@ -323,12 +313,12 @@ export const VimChallenge = ({
             <div
               key={g.id}
               className={`flex items-center gap-2 text-sm transition-colors ${
-                goalsStatus[g.id] ? 'text-green-400 opacity-50' : 'text-stone-300'
+                goalsStatus[g.id] ? 'text-success-muted-foreground opacity-50' : 'text-foreground-muted'
               }`}
               >
                 <CheckCircle2
                   size={16}
-                  className={goalsStatus[g.id] ? 'fill-green-900' : 'text-stone-700'}
+                  className={goalsStatus[g.id] ? 'fill-success-muted' : 'text-foreground-disabled'}
                 />
               <span className={goalsStatus[g.id] ? 'line-through' : ''}>
                 {disableContentI18n
@@ -348,7 +338,7 @@ export const VimChallenge = ({
       </div>
 
       {/* Right: Key History Panel */}
-      <div className="w-64 border-l border-stone-800 bg-stone-950/50 flex-shrink-0 hidden lg:flex">
+      <div className="w-64 border-l border-border bg-surface-2/50 flex-shrink-0 hidden lg:flex">
         <KeyHistoryPanel history={getHistory()} />
       </div>
     </div>

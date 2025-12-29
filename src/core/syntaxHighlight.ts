@@ -256,25 +256,25 @@ export function tokenizeLine(line: string, language: Language = 'auto', buffer?:
 export function getTokenClassName(type: TokenType): string {
   switch (type) {
     case 'keyword':
-      return 'text-purple-400';
+      return 'text-syntax-keyword';
     case 'string':
-      return 'text-green-400';
+      return 'text-syntax-string';
     case 'comment':
-      return 'text-stone-500 italic';
+      return 'text-syntax-comment italic';
     case 'number':
-      return 'text-orange-400';
+      return 'text-syntax-number';
     case 'operator':
-      return 'text-cyan-400';
+      return 'text-syntax-operator';
     case 'punctuation':
-      return 'text-stone-400';
+      return 'text-syntax-punctuation';
     case 'function':
-      return 'text-yellow-400';
+      return 'text-syntax-function';
     case 'type':
-      return 'text-blue-400';
+      return 'text-syntax-type';
     case 'preprocessor':
-      return 'text-pink-400';
+      return 'text-syntax-preprocessor';
     case 'plain':
     default:
-      return 'text-stone-300';
+      return 'text-syntax-plain';
   }
 }

@@ -1,0 +1,369 @@
+:root {
+  color-scheme: light;
+
+  --color-background: 250 250 249; /* stone-50 */
+  --color-surface: 255 255 255; /* white */
+  --color-surface-2: 250 250 249; /* stone-50 */
+  --color-surface-3: 245 245 244; /* stone-100 */
+  --color-surface-4: 231 229 228; /* stone-200 */
+
+  --color-border: 231 229 228; /* stone-200 */
+  --color-border-strong: 214 211 209; /* stone-300 */
+  --color-border-stronger: 168 162 158; /* stone-400 */
+
+  --color-foreground: 28 25 23; /* stone-900 */
+  --color-foreground-strong: 28 25 23; /* stone-900 */
+  --color-foreground-muted: 68 64 60; /* stone-700 */
+  --color-foreground-subtle: 87 83 78; /* stone-600 */
+  --color-foreground-faint: 120 113 108; /* stone-500 */
+  --color-foreground-disabled: 168 162 158; /* stone-400 */
+  --color-foreground-dim: 168 162 158; /* stone-400 */
+
+  --color-backdrop: 0 0 0;
+
+  --color-primary: 22 163 74; /* green-600 */
+  --color-primary-strong: 21 128 61; /* green-700 */
+  --color-primary-hover: 21 128 61; /* green-700 */
+  --color-primary-foreground: 255 255 255;
+  --color-primary-muted: 220 252 231; /* green-100 */
+  --color-primary-muted-foreground: 21 128 61; /* green-700 */
+
+  --color-info-muted: 219 234 254; /* blue-100 */
+  --color-info-muted-foreground: 29 78 216; /* blue-700 */
+  --color-info: 37 99 235; /* blue-600 */
+  --color-info-hover: 59 130 246; /* blue-500 */
+  --color-info-foreground: 255 255 255;
+
+  --color-success: 22 163 74; /* green-600 */
+  --color-success-soft: 34 197 94; /* green-500 */
+  --color-success-muted: 220 252 231; /* green-100 */
+  --color-success-muted-foreground: 22 163 74; /* green-600 */
+
+  --color-warning: 250 204 21; /* yellow-400 */
+  --color-warning-strong: 234 179 8; /* yellow-500 */
+  --color-warning-soft: 253 224 71; /* yellow-300 */
+
+  --color-danger: 220 38 38; /* red-600 */
+  --color-danger-strong: 185 28 28; /* red-700 */
+  --color-danger-muted-foreground: 185 28 28; /* red-700 */
+
+  --color-key-orange: 249 115 22; /* orange-500 */
+  --color-key-orange-foreground: 194 65 12; /* orange-700 */
+  --color-key-orange-border: 251 146 60; /* orange-400 */
+  --color-key-blue: 59 130 246; /* blue-500 */
+  --color-key-blue-foreground: 29 78 216; /* blue-700 */
+  --color-key-blue-border: 96 165 250; /* blue-400 */
+  --color-key-cyan: 6 182 212; /* cyan-500 */
+  --color-key-cyan-foreground: 14 116 144; /* cyan-700 */
+  --color-key-cyan-border: 34 211 238; /* cyan-400 */
+  --color-key-purple: 168 85 247; /* purple-500 */
+  --color-key-purple-foreground: 126 34 206; /* purple-700 */
+  --color-key-purple-border: 192 132 252; /* purple-400 */
+  --color-key-green: 34 197 94; /* green-500 */
+  --color-key-green-foreground: 21 128 61; /* green-700 */
+  --color-key-green-border: 74 222 128; /* green-400 */
+  --color-key-red: 239 68 68; /* red-500 */
+  --color-key-red-foreground: 185 28 28; /* red-700 */
+  --color-key-red-border: 248 113 113; /* red-400 */
+  --color-key-yellow: 234 179 8; /* yellow-500 */
+  --color-key-yellow-foreground: 161 98 7; /* yellow-700 */
+  --color-key-yellow-border: 250 204 21; /* yellow-400 */
+  --color-key-neutral: 120 113 108; /* stone-500 */
+  --color-key-neutral-foreground: 68 64 60; /* stone-700 */
+  --color-key-neutral-border: 168 162 158; /* stone-400 */
+
+  --color-group-orange: 254 215 170; /* orange-200 */
+  --color-group-orange-border: 249 115 22; /* orange-500 */
+  --color-group-blue: 191 219 254; /* blue-200 */
+  --color-group-blue-border: 59 130 246; /* blue-500 */
+  --color-group-purple: 233 213 255; /* purple-200 */
+  --color-group-purple-border: 168 85 247; /* purple-500 */
+  --color-group-cyan: 165 243 252; /* cyan-200 */
+  --color-group-cyan-border: 6 182 212; /* cyan-500 */
+  --color-group-green: 187 247 208; /* green-200 */
+  --color-group-green-border: 34 197 94; /* green-500 */
+  --color-group-neutral: 231 229 228; /* stone-200 */
+  --color-group-neutral-border: 120 113 108; /* stone-500 */
+
+  --color-cta: 22 163 74; /* green-600 */
+  --color-cta-foreground: 255 255 255;
+
+  --color-track-red: 239 68 68; /* red-500 */
+  --color-track-blue: 59 130 246; /* blue-500 */
+  --color-track-green: 34 197 94; /* green-500 */
+  --color-track-foreground: 28 25 23; /* stone-900 */
+
+  --color-hero-from: 22 163 74; /* green-600 */
+  --color-hero-to: 37 99 235; /* blue-600 */
+
+  --color-chip: 168 162 158; /* stone-400 */
+  --color-chip-foreground: 68 64 60; /* stone-700 */
+  --color-chip-border: 120 113 108; /* stone-500 */
+
+  --color-editor-foreground: 28 25 23; /* stone-900 */
+  --color-editor-line-number: 120 113 108; /* stone-500 */
+
+  --color-caret-block: 28 25 23; /* stone-900 */
+  --color-caret-foreground: 255 255 255;
+  --alpha-caret-block: 0.18;
+  --color-caret-bar: 22 163 74; /* green-600 */
+  --alpha-caret-bar: 0.9;
+
+  --color-range-track: 231 229 228; /* stone-200 */
+
+  --color-syntax-keyword: 79 70 229; /* indigo-600 */
+  --color-syntax-string: 22 163 74; /* green-600 */
+  --color-syntax-comment: 120 113 108; /* stone-500 */
+  --color-syntax-number: 234 88 12; /* orange-600 */
+  --color-syntax-operator: 8 145 178; /* cyan-600 */
+  --color-syntax-punctuation: 87 83 78; /* stone-600 */
+  --color-syntax-function: 202 138 4; /* yellow-600 */
+  --color-syntax-type: 29 78 216; /* blue-700 */
+  --color-syntax-preprocessor: 225 29 72; /* rose-600 */
+  --color-syntax-plain: 28 25 23; /* stone-900 */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --color-background: 12 10 9; /* stone-950 */
+    --color-surface: 28 25 23; /* stone-900 */
+    --color-surface-2: 12 10 9; /* stone-950 */
+    --color-surface-3: 41 37 36; /* stone-800 */
+    --color-surface-4: 68 64 60; /* stone-700 */
+
+    --color-border: 41 37 36; /* stone-800 */
+    --color-border-strong: 68 64 60; /* stone-700 */
+    --color-border-stronger: 87 83 78; /* stone-600 */
+
+    --color-foreground: 231 229 228; /* stone-200 */
+    --color-foreground-strong: 255 255 255;
+    --color-foreground-muted: 214 211 209; /* stone-300 */
+    --color-foreground-subtle: 168 162 158; /* stone-400 */
+    --color-foreground-faint: 120 113 108; /* stone-500 */
+    --color-foreground-disabled: 87 83 78; /* stone-600 */
+    --color-foreground-dim: 68 64 60; /* stone-700 */
+
+    --color-primary: 22 163 74; /* green-600 */
+    --color-primary-strong: 21 128 61; /* green-700 */
+    --color-primary-hover: 34 197 94; /* green-500 */
+    --color-primary-foreground: 255 255 255;
+    --color-primary-muted: 20 83 45; /* green-900 */
+    --color-primary-muted-foreground: 74 222 128; /* green-400 */
+
+    --color-info-muted: 30 58 138; /* blue-900 */
+    --color-info-muted-foreground: 96 165 250; /* blue-400 */
+    --color-info: 37 99 235; /* blue-600 */
+    --color-info-hover: 59 130 246; /* blue-500 */
+    --color-info-foreground: 255 255 255;
+
+    --color-success: 34 197 94; /* green-500 */
+    --color-success-soft: 134 239 172; /* green-300 */
+    --color-success-muted: 20 83 45; /* green-900 */
+    --color-success-muted-foreground: 74 222 128; /* green-400 */
+
+    --color-cta: 255 255 255;
+    --color-cta-foreground: 0 0 0;
+
+    --color-track-red: 239 68 68; /* red-500 */
+    --color-track-blue: 59 130 246; /* blue-500 */
+    --color-track-green: 34 197 94; /* green-500 */
+    --color-track-foreground: 28 25 23; /* stone-900 */
+
+    --color-hero-from: 74 222 128; /* green-400 */
+    --color-hero-to: 59 130 246; /* blue-500 */
+
+    --color-chip: 87 83 78; /* stone-600 */
+    --color-chip-foreground: 214 211 209; /* stone-300 */
+    --color-chip-border: 120 113 108; /* stone-500 */
+
+    --color-editor-foreground: 214 211 209; /* stone-300 */
+    --color-editor-line-number: 87 83 78; /* stone-600 */
+
+    --color-caret-block: 231 229 228; /* stone-200 */
+    --color-caret-foreground: 28 25 23; /* stone-900 */
+    --alpha-caret-block: 0.7;
+    --color-caret-bar: 231 229 228; /* stone-200 */
+    --alpha-caret-bar: 0.9;
+
+    --color-range-track: 68 64 60; /* stone-700 */
+
+    --color-syntax-keyword: 192 132 252; /* purple-400 */
+    --color-syntax-string: 74 222 128; /* green-400 */
+    --color-syntax-comment: 120 113 108; /* stone-500 */
+    --color-syntax-number: 251 146 60; /* orange-400 */
+    --color-syntax-operator: 34 211 238; /* cyan-400 */
+    --color-syntax-punctuation: 168 162 158; /* stone-400 */
+    --color-syntax-function: 250 204 21; /* yellow-400 */
+    --color-syntax-type: 96 165 250; /* blue-400 */
+    --color-syntax-preprocessor: 244 114 182; /* pink-400 */
+    --color-syntax-plain: 214 211 209; /* stone-300 */
+
+    --color-warning-strong: 234 179 8; /* yellow-500 */
+    --color-warning-soft: 253 224 71; /* yellow-300 */
+    --color-danger: 239 68 68; /* red-500 */
+    --color-danger-strong: 220 38 38; /* red-600 */
+    --color-danger-muted-foreground: 248 113 113; /* red-400 */
+
+    --color-key-orange: 234 88 12; /* orange-600 */
+    --color-key-orange-foreground: 253 186 116; /* orange-300 */
+    --color-key-orange-border: 249 115 22; /* orange-500 */
+    --color-key-blue: 37 99 235; /* blue-600 */
+    --color-key-blue-foreground: 147 197 253; /* blue-300 */
+    --color-key-blue-border: 59 130 246; /* blue-500 */
+    --color-key-cyan: 8 145 178; /* cyan-600 */
+    --color-key-cyan-foreground: 103 232 249; /* cyan-300 */
+    --color-key-cyan-border: 6 182 212; /* cyan-500 */
+    --color-key-purple: 147 51 234; /* purple-600 */
+    --color-key-purple-foreground: 216 180 254; /* purple-300 */
+    --color-key-purple-border: 168 85 247; /* purple-500 */
+    --color-key-green: 22 163 74; /* green-600 */
+    --color-key-green-foreground: 134 239 172; /* green-300 */
+    --color-key-green-border: 34 197 94; /* green-500 */
+    --color-key-red: 220 38 38; /* red-600 */
+    --color-key-red-foreground: 252 165 165; /* red-300 */
+    --color-key-red-border: 239 68 68; /* red-500 */
+    --color-key-yellow: 202 138 4; /* yellow-600 */
+    --color-key-yellow-foreground: 253 224 71; /* yellow-300 */
+    --color-key-yellow-border: 234 179 8; /* yellow-500 */
+    --color-key-neutral: 87 83 78; /* stone-600 */
+    --color-key-neutral-foreground: 214 211 209; /* stone-300 */
+    --color-key-neutral-border: 120 113 108; /* stone-500 */
+
+    --color-group-orange: 67 20 7; /* orange-950 */
+    --color-group-orange-border: 194 65 12; /* orange-700 */
+    --color-group-blue: 23 37 84; /* blue-950 */
+    --color-group-blue-border: 29 78 216; /* blue-700 */
+    --color-group-purple: 59 7 100; /* purple-950 */
+    --color-group-purple-border: 126 34 206; /* purple-700 */
+    --color-group-cyan: 8 51 68; /* cyan-950 */
+    --color-group-cyan-border: 14 116 144; /* cyan-700 */
+    --color-group-green: 5 46 22; /* green-950 */
+    --color-group-green-border: 21 128 61; /* green-700 */
+    --color-group-neutral: 12 10 9; /* stone-950 */
+    --color-group-neutral-border: 68 64 60; /* stone-700 */
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-background: 12 10 9; /* stone-950 */
+  --color-surface: 28 25 23; /* stone-900 */
+  --color-surface-2: 12 10 9; /* stone-950 */
+  --color-surface-3: 41 37 36; /* stone-800 */
+  --color-surface-4: 68 64 60; /* stone-700 */
+
+  --color-border: 41 37 36; /* stone-800 */
+  --color-border-strong: 68 64 60; /* stone-700 */
+  --color-border-stronger: 87 83 78; /* stone-600 */
+
+  --color-foreground: 231 229 228; /* stone-200 */
+  --color-foreground-strong: 255 255 255;
+  --color-foreground-muted: 214 211 209; /* stone-300 */
+  --color-foreground-subtle: 168 162 158; /* stone-400 */
+  --color-foreground-faint: 120 113 108; /* stone-500 */
+  --color-foreground-disabled: 87 83 78; /* stone-600 */
+  --color-foreground-dim: 68 64 60; /* stone-700 */
+
+  --color-primary: 22 163 74; /* green-600 */
+  --color-primary-strong: 21 128 61; /* green-700 */
+  --color-primary-hover: 34 197 94; /* green-500 */
+  --color-primary-foreground: 255 255 255;
+  --color-primary-muted: 20 83 45; /* green-900 */
+  --color-primary-muted-foreground: 74 222 128; /* green-400 */
+
+  --color-info-muted: 30 58 138; /* blue-900 */
+  --color-info-muted-foreground: 96 165 250; /* blue-400 */
+  --color-info: 37 99 235; /* blue-600 */
+  --color-info-hover: 59 130 246; /* blue-500 */
+  --color-info-foreground: 255 255 255;
+
+  --color-success: 34 197 94; /* green-500 */
+  --color-success-soft: 134 239 172; /* green-300 */
+  --color-success-muted: 20 83 45; /* green-900 */
+  --color-success-muted-foreground: 74 222 128; /* green-400 */
+
+  --color-cta: 255 255 255;
+  --color-cta-foreground: 0 0 0;
+
+  --color-track-red: 239 68 68; /* red-500 */
+  --color-track-blue: 59 130 246; /* blue-500 */
+  --color-track-green: 34 197 94; /* green-500 */
+  --color-track-foreground: 28 25 23; /* stone-900 */
+
+  --color-hero-from: 74 222 128; /* green-400 */
+  --color-hero-to: 59 130 246; /* blue-500 */
+
+  --color-chip: 87 83 78; /* stone-600 */
+  --color-chip-foreground: 214 211 209; /* stone-300 */
+  --color-chip-border: 120 113 108; /* stone-500 */
+
+  --color-editor-foreground: 214 211 209; /* stone-300 */
+  --color-editor-line-number: 87 83 78; /* stone-600 */
+
+  --color-caret-block: 231 229 228; /* stone-200 */
+  --color-caret-foreground: 28 25 23; /* stone-900 */
+  --alpha-caret-block: 0.7;
+  --color-caret-bar: 231 229 228; /* stone-200 */
+  --alpha-caret-bar: 0.9;
+
+  --color-range-track: 68 64 60; /* stone-700 */
+
+  --color-syntax-keyword: 192 132 252; /* purple-400 */
+  --color-syntax-string: 74 222 128; /* green-400 */
+  --color-syntax-comment: 120 113 108; /* stone-500 */
+  --color-syntax-number: 251 146 60; /* orange-400 */
+  --color-syntax-operator: 34 211 238; /* cyan-400 */
+  --color-syntax-punctuation: 168 162 158; /* stone-400 */
+  --color-syntax-function: 250 204 21; /* yellow-400 */
+  --color-syntax-type: 96 165 250; /* blue-400 */
+  --color-syntax-preprocessor: 244 114 182; /* pink-400 */
+  --color-syntax-plain: 214 211 209; /* stone-300 */
+
+  --color-warning-strong: 234 179 8; /* yellow-500 */
+  --color-warning-soft: 253 224 71; /* yellow-300 */
+  --color-danger: 239 68 68; /* red-500 */
+  --color-danger-strong: 220 38 38; /* red-600 */
+  --color-danger-muted-foreground: 248 113 113; /* red-400 */
+
+  --color-key-orange: 234 88 12; /* orange-600 */
+  --color-key-orange-foreground: 253 186 116; /* orange-300 */
+  --color-key-orange-border: 249 115 22; /* orange-500 */
+  --color-key-blue: 37 99 235; /* blue-600 */
+  --color-key-blue-foreground: 147 197 253; /* blue-300 */
+  --color-key-blue-border: 59 130 246; /* blue-500 */
+  --color-key-cyan: 8 145 178; /* cyan-600 */
+  --color-key-cyan-foreground: 103 232 249; /* cyan-300 */
+  --color-key-cyan-border: 6 182 212; /* cyan-500 */
+  --color-key-purple: 147 51 234; /* purple-600 */
+  --color-key-purple-foreground: 216 180 254; /* purple-300 */
+  --color-key-purple-border: 168 85 247; /* purple-500 */
+  --color-key-green: 22 163 74; /* green-600 */
+  --color-key-green-foreground: 134 239 172; /* green-300 */
+  --color-key-green-border: 34 197 94; /* green-500 */
+  --color-key-red: 220 38 38; /* red-600 */
+  --color-key-red-foreground: 252 165 165; /* red-300 */
+  --color-key-red-border: 239 68 68; /* red-500 */
+  --color-key-yellow: 202 138 4; /* yellow-600 */
+  --color-key-yellow-foreground: 253 224 71; /* yellow-300 */
+  --color-key-yellow-border: 234 179 8; /* yellow-500 */
+  --color-key-neutral: 87 83 78; /* stone-600 */
+  --color-key-neutral-foreground: 214 211 209; /* stone-300 */
+  --color-key-neutral-border: 120 113 108; /* stone-500 */
+
+  --color-group-orange: 67 20 7; /* orange-950 */
+  --color-group-orange-border: 194 65 12; /* orange-700 */
+  --color-group-blue: 23 37 84; /* blue-950 */
+  --color-group-blue-border: 29 78 216; /* blue-700 */
+  --color-group-purple: 59 7 100; /* purple-950 */
+  --color-group-purple-border: 126 34 206; /* purple-700 */
+  --color-group-cyan: 8 51 68; /* cyan-950 */
+  --color-group-cyan-border: 14 116 144; /* cyan-700 */
+  --color-group-green: 5 46 22; /* green-950 */
+  --color-group-green-border: 21 128 61; /* green-700 */
+  --color-group-neutral: 12 10 9; /* stone-950 */
+  --color-group-neutral-border: 68 64 60; /* stone-700 */
+  --color-logo: 245 245 244; /* stone-100 */
+}
