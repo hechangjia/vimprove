@@ -137,11 +137,20 @@ export type RunExampleConfig = {
   language?: 'cpp' | 'javascript' | 'typescript' | 'python' | 'auto';
 };
 
+export type HjklSnakeGameConfig = {
+  boardWidth?: number;
+  boardHeight?: number;
+  bronzeScore?: number;
+  silverScore?: number;
+  goldScore?: number;
+};
+
 export type ContentBlock =
   | { type: 'markdown'; content: string; i18nKey?: string }
   | { type: 'key-list'; keys: KeyItem[]; i18nKey?: string }
   | { type: 'challenge'; config: ChallengeConfig; i18nKey?: string }
-  | { type: 'run-example'; config: RunExampleConfig; i18nKey?: string };
+  | { type: 'run-example'; config: RunExampleConfig; i18nKey?: string }
+  | { type: 'hjkl-snake'; config?: HjklSnakeGameConfig; i18nKey?: string };
 
 export type KeyItem = {
   chars: string[];

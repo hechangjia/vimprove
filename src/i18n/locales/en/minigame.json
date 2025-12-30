@@ -1,0 +1,42 @@
+{
+  "hjklSnake": {
+    "focus": "Click to focus",
+    "hintStart": "Press h/j/k/l to start",
+    "label": {
+      "score": "Score",
+      "time": "Time",
+      "speed": "Speed",
+      "best": "Best"
+    },
+    "action": {
+      "restart": "Restart",
+      "resetStats": "Reset stats"
+    },
+    "badge": {
+      "none": "None",
+      "bronze": "Bronze",
+      "silver": "Silver",
+      "gold": "Gold"
+    },
+    "toast": {
+      "reached": "Reached {{badge}}"
+    },
+    "gameOver": {
+      "title": "Game Over",
+      "summary": "Score {{score}} · Time {{time}}",
+      "hint": "Press r to restart"
+    },
+    "stats": {
+      "best": "Best",
+      "bestSurvival": "Best survival",
+      "attempts": "Attempts"
+    },
+    "best": {
+      "none": "—",
+      "noTime": "—"
+    },
+    "legend": {
+      "title": "Controls"
+    }
+  }
+}

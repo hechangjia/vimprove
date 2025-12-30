@@ -8,7 +8,7 @@ Vimprove 是一个交互式 Vim 学习网站。核心功能是通过浏览器中
 
 **当前状态**: ✅ 重构完成。项目已从单文件原型（`tmp/vimprove.html`）重构为模块化的 React + TypeScript 架构。
 
-**课程范围**: 已完成 Chapter 1-6（基础、进阶编辑、行内 find/till、文本对象、搜索/重构），共 27 节课。
+**课程范围**: 已完成 Chapter 1-6（基础、进阶编辑、行内 find/till、文本对象、搜索/重构），共 28 节课。
 
 **版本管理**: 版本号在 `src/version.ts` 和 `package.json` 中维护，CHANGELOG 见 `README.md`
 
@@ -69,7 +69,7 @@ src/
 ├── data/              # 课程数据（只依赖 core/types）
 │   ├── categories.ts # 课程分类定义
 │   └── lessons/      # 每个课程一个文件（按章节组织）
-│       ├── chapter1/ # 模式与基础移动（4课）
+│       ├── chapter1/ # 模式与基础移动（5课）
 │       ├── chapter2/ # 单词移动与小编辑（5课）
 │       ├── chapter3/ # 高级编辑（5课）
 │       ├── chapter4/ # 行内 find/till 精准编辑（4课）
@@ -80,12 +80,14 @@ src/
 │   ├── useVimEngine.ts    # 封装 vimReducer
 │   ├── useChallenge.ts    # 挑战逻辑（目标验证、计时）
 │   ├── useProgress.ts     # 进度持久化（localStorage）
+│   ├── useHjklSnakeStats.ts # hjkl 贪吃蛇本地记录
 │   └── useI18n.ts         # i18n hooks（useTranslationSafe, useLocale）
 │
 ├── components/        # UI 组件
 │   ├── common/       # 通用组件（MarkdownBlock, KeyListBlock）
 │   ├── lesson/       # 课程相关（LessonView, LessonNav）
 │   ├── challenge/    # 挑战相关（VimChallenge 内置编辑器 + GoalsList）
+│   ├── minigame/     # 小游戏组件（HJKL Snake）
 │   └── layout/       # 布局组件（Sidebar, Header）
 │
 ├── pages/            # 页面组件
@@ -424,7 +426,7 @@ ls src/data/lessons/chapter3/
 ### 当前已完成
 
 - ✅ 模块化架构（Core/Data/Hooks/Components）
-- ✅ 27 个课程（Chapter 1-6：基础、进阶、文本对象、搜索重构）
+- ✅ 28 个课程（Chapter 1-6：基础、进阶、文本对象、搜索重构）
 - ✅ 完整的 Vim 引擎（支持文本对象、搜索 `/ ? n N * #`、find/till、`.` 等命令）
 - ✅ Undo/Redo 系统
 - ✅ Yank/Paste 功能
@@ -435,6 +437,7 @@ ls src/data/lessons/chapter3/
 - ✅ Challenge 系统（目标验证、计时）
 - ✅ Run Example 可播放示例（`src/components/example/RunExamplePlayer.tsx`）
 - ✅ 亮 / 暗 / 跟随系统主题切换（Settings → Appearance）
+- ✅ Chapter 1 末尾小游戏：HJKL 贪吃蛇（`hjkl-snake`）
 - ✅ 网站图标和 PWA 支持
 - ✅ 课程编写协作文档（`tmp/` 目录）
 - ✅ 完整的 i18n 支持（i18next，当前支持 en/zh/zh-lively，课程内容可翻译）

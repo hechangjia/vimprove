@@ -43,6 +43,18 @@
   --color-warning-strong: 234 179 8; /* yellow-500 */
   --color-warning-soft: 253 224 71; /* yellow-300 */
 
+  --color-medal-bronze: 234 88 12; /* orange-600 */
+  --color-medal-bronze-soft: 254 215 170; /* orange-200 */
+  --color-medal-bronze-foreground: 124 45 18; /* orange-900 */
+
+  --color-medal-silver: 100 116 139; /* slate-500 */
+  --color-medal-silver-soft: 226 232 240; /* slate-200 */
+  --color-medal-silver-foreground: 30 41 59; /* slate-800 */
+
+  --color-medal-gold: 234 179 8; /* yellow-500 */
+  --color-medal-gold-soft: 254 240 138; /* yellow-200 */
+  --color-medal-gold-foreground: 113 63 18; /* amber-900 */
+
   --color-danger: 220 38 38; /* red-600 */
   --color-danger-strong: 185 28 28; /* red-700 */
   --color-danger-muted-foreground: 185 28 28; /* red-700 */
@@ -324,6 +336,19 @@
 
   --color-warning-strong: 161 98 7; /* yellow-700 */
   --color-warning-soft: 253 224 71; /* yellow-300 */
+
+  --color-medal-bronze: 253 186 116; /* orange-300 */
+  --color-medal-bronze-soft: 67 20 7; /* orange-950 */
+  --color-medal-bronze-foreground: 254 215 170; /* orange-200 */
+
+  --color-medal-silver: 203 213 225; /* slate-300 */
+  --color-medal-silver-soft: 15 23 42; /* slate-900 */
+  --color-medal-silver-foreground: 226 232 240; /* slate-200 */
+
+  --color-medal-gold: 250 204 21; /* yellow-400 */
+  --color-medal-gold-soft: 69 26 3; /* amber-950 */
+  --color-medal-gold-foreground: 253 224 71; /* yellow-300 */
+
   --color-danger: 239 68 68; /* red-500 */
   --color-danger-strong: 220 38 38; /* red-600 */
   --color-danger-muted-foreground: 248 113 113; /* red-400 */

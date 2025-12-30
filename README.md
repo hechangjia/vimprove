@@ -73,7 +73,7 @@ src/
 ├── data/              # 课程数据
 │   ├── categories.ts # 课程分类
 │   └── lessons/      # 课程文件（按章节组织）
-│       ├── chapter1/ # 模式与基础移动（4 课）
+│       ├── chapter1/ # 模式与基础移动（5 课）
 │       ├── chapter2/ # 单词移动与小编辑（5 课）
 │       ├── chapter3/ # 高级编辑（5 课）
 │       ├── chapter4/ # 行内查找与精确编辑（4 课）
@@ -109,7 +109,7 @@ src/
 ## 🕊️ TODO
 
 ### v2.0.0
-- [ ] hjkl贪吃蛇
+- [x] hjkl贪吃蛇
 - [x] alpha分支选择
 - [x] 亮色模式
 
@@ -131,6 +131,7 @@ src/
 ### Unreleased
 - 🎨 新增主题切换：亮 / 暗 / 跟随系统（Settings → Appearance）
 - 🎛️ 配色系统重构：CSS design tokens + Tailwind 语义色映射，暗色主题观感保持一致
+- 新增 Chapter 1 末尾小游戏：HJKL 贪吃蛇
 
 ### Release v1.5.0
 - 🧪 Vim 引擎对拍：`.` 重播（cw/paste/末行 jw）、多行寄存器行粘贴、撤销快照去重与 cw 边界全面对齐 Neovim
