@@ -129,9 +129,12 @@ src/
 ## 📝 CHANGELOG
 
 ### Unreleased
-- 🎨 新增主题切换：亮 / 暗 / 跟随系统（Settings → Appearance）
-- 🎛️ 配色系统重构：CSS design tokens + Tailwind 语义色映射，暗色主题观感保持一致
-- 新增 Chapter 1 末尾小游戏：HJKL 贪吃蛇
+
+### Release v2.0.0
+- 🎨 新增主题切换：亮 / 暗 / 跟随系统（Settings → Appearance），并重构配色系统为 CSS design tokens + Tailwind 语义色映射
+- 🎮 新增 Chapter 1 末尾小游戏：HJKL 贪吃蛇（本地成绩、金银铜徽章与提示、按 r 重开、撞墙宽限）
+- 🧪 对拍与测试工具链完善：quickcheck、JSON 报告 + viewer（聚合/过滤/排序），对拍并行化与长序列对拍覆盖
+- ⚙️ Vim 引擎与课程维护：dot/count/o/O/replace/paste 等对齐 Neovim；修复课程文件大小写冲突并补齐 zh/zh-lively 翻译
 
 ### Release v1.5.0
 - 🧪 Vim 引擎对拍：`.` 重播（cw/paste/末行 jw）、多行寄存器行粘贴、撤销快照去重与 cw 边界全面对齐 Neovim
