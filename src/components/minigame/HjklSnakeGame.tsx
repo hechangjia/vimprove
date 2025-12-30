@@ -27,6 +27,7 @@ type GameState = {
 
   score: number;
   tickMs: number;
+  wallGraceRemaining: number;
 
   startAtMs: number | null;
   lastEatAtMs: number | null;
@@ -50,6 +51,7 @@ const DEFAULTS = {
 const INITIAL_TICK_MS = 200;
 const MIN_TICK_MS = 80;
 const SPEED_MULTIPLIER_PER_FOOD = 0.965;
+const WALL_GRACE_TICKS = 1;
 
 const isOpposite = (a: Dir, b: Dir) => {
   return (
@@ -143,6 +145,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastRecordedEndRef = useRef<number | null>(null);
+  const directionRef = useRef<Dir | null>(null);
 
   const initialState: GameState = useMemo(() => {
     return {
@@ -154,6 +157,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
       food: null,
       score: 0,
       tickMs: INITIAL_TICK_MS,
+      wallGraceRemaining: WALL_GRACE_TICKS,
       startAtMs: null,
       lastEatAtMs: null,
       badge: 'none',
@@ -176,6 +180,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
     const food = spawnFood(prev.boardWidth, prev.boardHeight, snake);
     const now = performance.now();
     lastRecordedEndRef.current = null;
+    directionRef.current = dir;
 
     return {
       ...prev,
@@ -185,6 +190,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
       food,
       score: 0,
       tickMs: INITIAL_TICK_MS,
+      wallGraceRemaining: WALL_GRACE_TICKS,
       startAtMs: now,
       lastEatAtMs: null,
       badge: 'none',
@@ -204,6 +210,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
       food: null,
       score: 0,
       tickMs: INITIAL_TICK_MS,
+      wallGraceRemaining: WALL_GRACE_TICKS,
       startAtMs: null,
       lastEatAtMs: null,
       badge: 'none',
@@ -213,6 +220,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
       endedAtIso: null
     }));
     lastRecordedEndRef.current = null;
+    directionRef.current = null;
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -240,6 +248,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
       if (prev.phase === 'dead') return prev;
 
       if (prev.direction && isOpposite(prev.direction, nextDir)) return prev;
+      directionRef.current = nextDir;
       return { ...prev, direction: nextDir };
     });
   };
@@ -250,9 +259,10 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
       const now = performance.now();
       setGame(prev => {
         if (prev.phase !== 'playing') return prev;
-        if (!prev.direction) return prev;
+        const dir = directionRef.current ?? prev.direction;
+        if (!dir) return prev;
 
-        const v = moveVector(prev.direction);
+        const v = moveVector(dir);
         const head = prev.snake[0];
         const nextHead = { x: head.x + v.x, y: head.y + v.y };
 
@@ -264,6 +274,14 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
           || nextHead.y < 0
           || nextHead.y >= prev.boardHeight
         ) {
+          if (prev.wallGraceRemaining > 0) {
+            return {
+              ...prev,
+              toasts: prunedToasts,
+              wallGraceRemaining: prev.wallGraceRemaining - 1
+            };
+          }
+          directionRef.current = null;
           return {
             ...prev,
             phase: 'dead',
@@ -280,6 +298,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
           occupied.delete(posKey(prev.snake[prev.snake.length - 1]));
         }
         if (occupied.has(posKey(nextHead))) {
+          directionRef.current = null;
           return {
             ...prev,
             phase: 'dead',
@@ -318,6 +337,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
 
         const nextFood = spawnFood(prev.boardWidth, prev.boardHeight, nextSnake);
         if (nextFood == null) {
+          directionRef.current = null;
           return {
             ...prev,
             snake: nextSnake,
@@ -539,49 +559,83 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
             )}
 
             {isFocused && game.phase === 'dead' && (
-              <div className="absolute inset-10 z-20 bg-surface-2/90 flex flex-col items-center justify-center animate-in fade-in duration-200 rounded-xl border border-border shadow-2xl">
-                <div className="bg-surface px-10 py-8 rounded-2xl border border-border shadow-2xl text-center max-w-lg mx-4">
-                  <Trophy className="w-12 h-12 text-warning mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-foreground-strong mb-2">
-                    {t('hjklSnake.gameOver.title', 'Game Over')}
-                  </h3>
-                  <p className="text-foreground-subtle mb-6">
-                    {t('hjklSnake.gameOver.summary', 'Score {{score}} · Time {{time}}', {
-                      score: game.score,
-                      time: formatMmSs(elapsedMs)
-                    })}
-                  </p>
-
-                  <div className="text-sm text-foreground-muted mb-6 space-y-1">
-                    <div>
-                      {t('hjklSnake.stats.best', 'Best')}: <span className="text-foreground-strong font-bold">{bestLabel}</span>
-                    </div>
-                    <div>
-                      {t('hjklSnake.stats.bestSurvival', 'Best survival')}: <span className="text-foreground-strong font-bold">{formatMmSs(stats.bestSurvivalMs)}</span>
-                    </div>
-                    <div>
-                      {t('hjklSnake.stats.attempts', 'Attempts')}: <span className="text-foreground-strong font-bold">{stats.attemptsCount}</span>
-                    </div>
+              <div className="absolute inset-0 z-20 flex items-center justify-center bg-surface/70 backdrop-blur-[2px] rounded-lg">
+                <div className="w-[440px] max-w-[calc(100%-2rem)] bg-surface rounded-2xl border border-border shadow-2xl overflow-hidden">
+                  <div className="px-8 pt-7 pb-5 bg-surface-2 border-b border-border">
+                    <Trophy
+                      className={`w-12 h-12 mx-auto mb-4 ${
+                        game.badge === 'gold'
+                          ? 'text-medal-gold'
+                          : game.badge === 'silver'
+                            ? 'text-medal-silver'
+                            : game.badge === 'bronze'
+                              ? 'text-medal-bronze'
+                              : 'text-warning'
+                      }`}
+                    />
+                    <h3 className="text-2xl font-bold text-foreground-strong text-center mb-2">
+                      {t('hjklSnake.gameOver.title', 'Game Over')}
+                    </h3>
+                    <p className="text-foreground-subtle text-center">
+                      {t('hjklSnake.gameOver.summary', 'Score {{score}} · Time {{time}}', {
+                        score: game.score,
+                        time: formatMmSs(elapsedMs)
+                      })}
+                    </p>
                   </div>
 
-                  <div className="flex gap-3">
-                    <button
-                      onClick={handleRestart}
-                      className="flex-1 bg-surface-2 hover:bg-surface-3 text-foreground-strong px-6 py-2 rounded-lg font-bold transition-colors border border-border"
-                    >
-                      {t('hjklSnake.action.restart', 'Restart')}
-                    </button>
-                    <button
-                      onClick={resetStats}
-                      className="flex-1 bg-surface-2 hover:bg-surface-3 text-foreground-subtle px-6 py-2 rounded-lg font-bold transition-colors border border-border"
-                    >
-                      {t('hjklSnake.action.resetStats', 'Reset stats')}
-                    </button>
-                  </div>
+                  <div className="px-8 py-6">
+                    <div className="flex items-center justify-center gap-2 mb-5">
+                      {(['bronze', 'silver', 'gold'] as const).map(badge => {
+                        const achieved =
+                          (badge === 'bronze' && game.score >= bronzeScore)
+                          || (badge === 'silver' && game.score >= silverScore)
+                          || (badge === 'gold' && game.score >= goldScore);
 
-                  <p className="text-foreground-faint text-sm mt-4">
-                    {t('hjklSnake.gameOver.hint', 'Press h/j/k/l to restart')}
-                  </p>
+                        return (
+                          <div
+                            key={badge}
+                            className={`px-3 py-1 rounded-lg text-xs font-bold border ${
+                              achieved ? badgeClassName(badge) : 'bg-surface-2 text-foreground-faint border-border'
+                            }`}
+                          >
+                            {badgeText(badge)}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="text-sm text-foreground-muted mb-6 space-y-1 text-center">
+                      <div>
+                        {t('hjklSnake.stats.best', 'Best')}: <span className="text-foreground-strong font-bold">{bestLabel}</span>
+                      </div>
+                      <div>
+                        {t('hjklSnake.stats.bestSurvival', 'Best survival')}: <span className="text-foreground-strong font-bold">{formatMmSs(stats.bestSurvivalMs)}</span>
+                      </div>
+                      <div>
+                        {t('hjklSnake.stats.attempts', 'Attempts')}: <span className="text-foreground-strong font-bold">{stats.attemptsCount}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleRestart}
+                        className="flex-1 bg-surface-2 hover:bg-surface-3 text-foreground-strong px-6 py-2 rounded-lg font-bold transition-colors border border-border"
+                      >
+                        {t('hjklSnake.action.restart', 'Restart')}
+                      </button>
+                      <button
+                        onClick={resetStats}
+                        className="flex-1 bg-surface-2 hover:bg-surface-3 text-foreground-subtle px-6 py-2 rounded-lg font-bold transition-colors border border-border"
+                      >
+                        {t('hjklSnake.action.resetStats', 'Reset stats')}
+                      </button>
+                    </div>
+
+                    <p className="text-foreground-faint text-sm mt-4 text-center">
+                      {t('hjklSnake.gameOver.hint', 'Press r to restart')}
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
