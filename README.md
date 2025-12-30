@@ -73,7 +73,7 @@ src/
 ├── data/              # 课程数据
 │   ├── categories.ts # 课程分类
 │   └── lessons/      # 课程文件（按章节组织）
-│       ├── chapter1/ # 模式与基础移动（4 课）
+│       ├── chapter1/ # 模式与基础移动（5 课）
 │       ├── chapter2/ # 单词移动与小编辑（5 课）
 │       ├── chapter3/ # 高级编辑（5 课）
 │       ├── chapter4/ # 行内查找与精确编辑（4 课）
@@ -106,7 +106,35 @@ src/
   - `src/core/vimParity.test.ts` - 与 Neovim 对拍测试
   - `vimParityExhaustive.test.ts` - 与 Neovim 对拍测试（详尽）
 
+## 🕊️ TODO
+
+### v2.0.0
+- [x] hjkl贪吃蛇
+- [x] alpha分支选择
+- [x] 亮色模式
+
+### v2.1.0
+- [ ] 优化字体（i/l混淆问题）
+- [ ] 修复文案问题
+- [ ] 光标渲染问题
+
+### v2.2.0
+- [ ] VimEngine bug
+  - [ ] 撤销不识别
+  - [ ] s替换渲染
+- [ ] ESC焦点问题
+- [ ] 自动化排查run-example文案
+
+
 ## 📝 CHANGELOG
+
+### Unreleased
+
+### Release v2.0.0
+- 🎨 新增主题切换：亮 / 暗 / 跟随系统（Settings → Appearance），并重构配色系统为 CSS design tokens + Tailwind 语义色映射
+- 🎮 新增 Chapter 1 末尾小游戏：HJKL 贪吃蛇（本地成绩、金银铜徽章与提示、按 r 重开、撞墙宽限）
+- 🧪 对拍与测试工具链完善：quickcheck、JSON 报告 + viewer（聚合/过滤/排序），对拍并行化与长序列对拍覆盖
+- ⚙️ Vim 引擎与课程维护：dot/count/o/O/replace/paste 等对齐 Neovim；修复课程文件大小写冲突并补齐 zh/zh-lively 翻译
 
 ### Release v1.5.0
 - 🧪 Vim 引擎对拍：`.` 重播（cw/paste/末行 jw）、多行寄存器行粘贴、撤销快照去重与 cw 边界全面对齐 Neovim
@@ -121,7 +149,32 @@ src/
 - 💾 改进学习体验：记住上次学习位置，支持 Enter 快速进入下一课
 
 <details>
-<summary><b>点击展开完整版本历史</b></summary>
+<summary><b>点击展开Alpha版本历史</b></summary>
+
+### v1.9.0
+- 🧪 增加长序列对拍测试
+- 🧩 修复课程文件大小写冲突（motions-WORDs 更名为 motions-words-big），避免大小写不敏感平台编译报错
+- 📝 补齐 small-edits-chars 示例及 zh/zh-lively 翻译，并补上行边界课程的中文示例，确保三语言示例一致
+
+### v1.8.0
+- 🐛 继续增强对拍测试覆盖率&修复bug
+- 🚀 将对拍测试并行化
+- 🌍 优化各地访问速度
+
+### v1.7.0
+- ⚙️ Vim 引擎：dot 重放 count 覆盖、o/O 多行插入锚点、replace count 连续替换，dd/yy 越界 no-op, text-object 边界修正
+- 📌 粘贴修复：多行寄存器行内粘贴拆分插入，光标与 Neovim 对齐
+- 🧪 Parity 回归：`oM<Esc>2.`, `2dw[p/P]`, `rau2.`, `ddu2.` 等对拍修复
+- 🛠 调试文档：CLAUDE.md 精炼调试流程与引擎行为提示
+
+### v1.6.0
+- 🧪 对拍工具链：`vimParity` 报告查看器支持聚合/过滤/排序，新增 quickcheck 脚本快速验证
+- 🔧 测试工作流优化：可选模块 quickcheck、JSON 报告 + viewer 调试流程，优化上下文占用
+
+### v1.5.1
+- 🐛 Fix replace-wait state: `ru` writes literal `u` instead of triggering undo, matching Vim behavior
+- 🧭 Word motion细化：`w` 从标点起跳会先停在 `/` 等分隔符，不再直接跳到下一个单词
+- ✅ Parity 覆盖：vimParity 补充上述场景用例，保持 Neovim 行为一致
 
 ### v1.4.3
 - 🐛 `.` 重播对齐 Vim：cw 光标、末行 jw 落点、paste 重播行为与对拍一致
@@ -259,6 +312,12 @@ src/
 
 </details>
 
----
+## Star历史
 
-**当前版本**: v1.4.1
+<a href="https://www.star-history.com/#Jerry-Terrasse/vimprove&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Jerry-Terrasse/vimprove&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Jerry-Terrasse/vimprove&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Jerry-Terrasse/vimprove&type=date&legend=top-left" />
+ </picture>
+</a>

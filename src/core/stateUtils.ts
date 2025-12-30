@@ -37,16 +37,22 @@ export const createSnapshot = (state: VimState): VimState => ({
   changeRecording: state.changeRecording ? [...state.changeRecording] : null,
   lastChangeCount: state.lastChangeCount,
   recordingCount: state.recordingCount,
+  insertStart: state.insertStart ? { ...state.insertStart } : null,
   lastChangeCursor: state.lastChangeCursor ? { ...state.lastChangeCursor } : null,
   lastChangeInsertCursor: state.lastChangeInsertCursor ? { ...state.lastChangeInsertCursor } : null,
+  lastChangeInsertStart: state.lastChangeInsertStart ? { ...state.lastChangeInsertStart } : null,
   recordingExitCursor: state.recordingExitCursor ? { ...state.recordingExitCursor } : null,
   recordingInsertCursor: state.recordingInsertCursor ? { ...state.recordingInsertCursor } : null,
 });
 
-const appendSnapshot = (state: VimState, snapshot: VimState): { history: VimState[]; historyIndex: number } => {
+const appendSnapshot = (
+  state: VimState,
+  snapshot: VimState,
+  force = false
+): { history: VimState[]; historyIndex: number } => {
   const newHistory = state.history.slice(0, state.historyIndex + 1);
   const last = newHistory[newHistory.length - 1];
-  if (last && isSameSnapshot(last, snapshot)) {
+  if (!force && last && isSameSnapshot(last, snapshot)) {
     return { history: newHistory, historyIndex: newHistory.length - 1 };
   }
   newHistory.push(snapshot);
@@ -58,13 +64,13 @@ const appendSnapshot = (state: VimState, snapshot: VimState): { history: VimStat
   return { history: newHistory, historyIndex: newHistory.length - 1 };
 };
 
-export const pushHistory = (state: VimState): VimState => {
+export const pushHistory = (state: VimState, force = false): VimState => {
   const snapshot = createSnapshot(state);
   const latest = state.history[state.historyIndex];
-  if (latest && isSameSnapshot(latest, snapshot)) {
+  if (!force && latest && isSameSnapshot(latest, snapshot)) {
     return state;
   }
-  const { history, historyIndex } = appendSnapshot(state, snapshot);
+  const { history, historyIndex } = appendSnapshot(state, snapshot, force);
   return { ...state, history, historyIndex };
 };
 
@@ -113,6 +119,7 @@ export const finishRecording = (state: VimState): VimState => {
     recordingCount: null,
     lastChangeCursor: exitCursor,
     lastChangeInsertCursor: insertCursor,
+    lastChangeInsertStart: state.insertStart ? { ...state.insertStart } : null,
     recordingExitCursor: null,
     recordingInsertCursor: null,
   };

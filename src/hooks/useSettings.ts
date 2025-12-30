@@ -5,15 +5,19 @@ export type EditorSettings = {
   fontFamily: string;
 };
 
+export type ThemeMode = 'system' | 'dark' | 'light';
+
 export type Settings = {
   editor: EditorSettings;
+  theme: ThemeMode;
 };
 
 const DEFAULT_SETTINGS: Settings = {
   editor: {
     fontSize: 16,
     fontFamily: 'Consolas'
-  }
+  },
+  theme: 'system'
 };
 
 const STORAGE_KEY = 'vimprove-settings';
@@ -23,7 +27,15 @@ export const useSettings = () => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
-        return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+        const parsed = JSON.parse(stored) as Partial<Settings> | null;
+        return {
+          ...DEFAULT_SETTINGS,
+          ...parsed,
+          editor: {
+            ...DEFAULT_SETTINGS.editor,
+            ...(parsed?.editor ?? {})
+          }
+        };
       } catch {
         return DEFAULT_SETTINGS;
       }
@@ -42,6 +54,10 @@ export const useSettings = () => {
     }));
   };
 
+  const updateTheme = (theme: ThemeMode) => {
+    setSettings(prev => ({ ...prev, theme }));
+  };
+
   const resetToDefaults = () => {
     setSettings(DEFAULT_SETTINGS);
   };
@@ -49,6 +65,7 @@ export const useSettings = () => {
   return {
     settings,
     updateEditorSettings,
+    updateTheme,
     resetToDefaults
   };
 };

@@ -56,6 +56,7 @@ export type VimState = {
   // Insert position (for Insert mode only, 0..len)
   // This is the actual insertion point, while cursor.col is the display position
   insertCol?: number;
+  insertStart: Cursor | null;
 
   // Count prefix (e.g., "3" in "3dw")
   count: string;
@@ -70,6 +71,7 @@ export type VimState = {
   lastChangeCount: number | null;
   lastChangeCursor: Cursor | null;
   lastChangeInsertCursor: Cursor | null;
+  lastChangeInsertStart: Cursor | null;
 
   // Currently recording change for . command
   changeRecording: KeyPress[] | null;
@@ -135,11 +137,20 @@ export type RunExampleConfig = {
   language?: 'cpp' | 'javascript' | 'typescript' | 'python' | 'auto';
 };
 
+export type HjklSnakeGameConfig = {
+  boardWidth?: number;
+  boardHeight?: number;
+  bronzeScore?: number;
+  silverScore?: number;
+  goldScore?: number;
+};
+
 export type ContentBlock =
   | { type: 'markdown'; content: string; i18nKey?: string }
   | { type: 'key-list'; keys: KeyItem[]; i18nKey?: string }
   | { type: 'challenge'; config: ChallengeConfig; i18nKey?: string }
-  | { type: 'run-example'; config: RunExampleConfig; i18nKey?: string };
+  | { type: 'run-example'; config: RunExampleConfig; i18nKey?: string }
+  | { type: 'hjkl-snake'; config?: HjklSnakeGameConfig; i18nKey?: string };
 
 export type KeyItem = {
   chars: string[];

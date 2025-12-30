@@ -10,19 +10,27 @@ type KeyChipProps = {
 
 const getKeyKindColor = (kind: KeyAtom['kind']): string => {
   switch (kind) {
-    case 'operator': return 'bg-orange-600/20 text-orange-300 border-orange-500/40';
-    case 'motion': return 'bg-blue-600/20 text-blue-300 border-blue-500/40';
-    case 'count': return 'bg-cyan-600/20 text-cyan-300 border-cyan-500/40';
-    case 'textObjectPrefix': return 'bg-purple-600/20 text-purple-300 border-purple-500/40';
-    case 'insert': return 'bg-green-600/20 text-green-300 border-green-500/40';
-    case 'replace': return 'bg-orange-600/20 text-orange-300 border-orange-500/40';
-    case 'findChar': return 'bg-blue-600/20 text-blue-300 border-blue-500/40';
-    case 'searchControl': return 'bg-purple-600/20 text-purple-300 border-purple-500/40';
-    case 'searchChar': return 'bg-purple-600/20 text-purple-300 border-purple-500/40';
-    case 'enter': return 'bg-stone-600/20 text-stone-300 border-stone-500/40';
-    case 'escape': return 'bg-red-600/20 text-red-300 border-red-500/40';
-    case 'control': return 'bg-yellow-600/20 text-yellow-300 border-yellow-500/40';
-    default: return 'bg-stone-600/20 text-stone-300 border-stone-500/40';
+    case 'operator':
+    case 'replace':
+      return 'bg-key-orange/20 text-key-orange-foreground border-key-orange-border/40';
+    case 'motion':
+    case 'findChar':
+      return 'bg-key-blue/20 text-key-blue-foreground border-key-blue-border/40';
+    case 'count':
+      return 'bg-key-cyan/20 text-key-cyan-foreground border-key-cyan-border/40';
+    case 'textObjectPrefix':
+    case 'searchControl':
+    case 'searchChar':
+      return 'bg-key-purple/20 text-key-purple-foreground border-key-purple-border/40';
+    case 'insert':
+      return 'bg-key-green/20 text-key-green-foreground border-key-green-border/40';
+    case 'escape':
+      return 'bg-key-red/20 text-key-red-foreground border-key-red-border/40';
+    case 'control':
+      return 'bg-key-yellow/20 text-key-yellow-foreground border-key-yellow-border/40';
+    case 'enter':
+    default:
+      return 'bg-key-neutral/20 text-key-neutral-foreground border-key-neutral-border/40';
   }
 };
 
@@ -49,11 +57,11 @@ export const KeyChip: React.FC<KeyChipProps> = ({ keyAtom, showTooltip = true })
 
     return (
       <div>
-        <div className="font-bold text-stone-100 mb-1">{keyAtom.display}</div>
-        <div className="text-stone-400">
-          {roleText} <span className="text-stone-500">({kindText})</span>
+        <div className="font-bold text-logo mb-1">{keyAtom.display}</div>
+        <div className="text-foreground-subtle">
+          {roleText} <span className="text-foreground-faint">({kindText})</span>
         </div>
-        {desc && <div className="mt-1 text-stone-300 border-t border-stone-600 pt-1">{desc}</div>}
+        {desc && <div className="mt-1 text-foreground-muted border-t border-border-stronger pt-1">{desc}</div>}
       </div>
     );
   };

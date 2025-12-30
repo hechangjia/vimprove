@@ -8,9 +8,9 @@ Vimprove 是一个交互式 Vim 学习网站。核心功能是通过浏览器中
 
 **当前状态**: ✅ 重构完成。项目已从单文件原型（`tmp/vimprove.html`）重构为模块化的 React + TypeScript 架构。
 
-**课程范围**: 已完成 Chapter 1-6（基础、进阶编辑、行内 find/till、文本对象、搜索/重构），共 27 节课。
+**课程范围**: 已完成 Chapter 1-6（基础、进阶编辑、行内 find/till、文本对象、搜索/重构），共 28 节课。
 
-**版本管理**: 版本号在 `src/version.ts` 和 `package.json` 中维护，CHANGELOG 见 `README.md`（当前 1.0.0）
+**版本管理**: 版本号在 `src/version.ts` 和 `package.json` 中维护，CHANGELOG 见 `README.md`
 
 ## Development Commands
 
@@ -19,10 +19,32 @@ npm run dev      # Start dev server at http://localhost:3000
 npm run build    # Build for production
 npm run preview  # Preview production build
 npm run lint     # Run ESLint
-npm run test     # Run tests
-# For Codex, you are in a sandbox thus you should use:
-npx vitest run --pool=threads
+npx vitest run --pool=threads # deprecated
+# Note: please refer to section "Test Workflow" and use ./utils/vitest-quickcheck.sh to improve efficiency.
 ```
+
+## Test Workflow
+
+- 默认并行：`npx vitest run --pool=threads`（避免直接跑无过滤的 `npx vitest run`，输出过长会淹没上下文）
+- 测试输出简化： **重要** 使用`grep`过滤最终结论，避免无用信息淹没上下文。如 `npx vitest run --pool=threads [-t <pattern>] 2>&1 | grep -EA20 "Failed Tests|Test Files"`
+- 测试输出长度：`grep -EA20`是使用的20行，所获信息不足时，可以根据实际情况适当增加，建议不超过50行
+- Parity 单测输出节流：`npx vitest run --pool=threads -t "<pattern>" src/core/tests/exhaustiveTest.*.test.ts 2>&1 | grep -EA20 "Failed Tests|Test Files"`，避免海量 skip 日志淹没上下文
+- exhaustive parity 分片：`src/core/tests/exhaustiveTest.{0..7}.test.ts` 使用 `getShardCases` 按索引取模分片（总 shard=8），并行示例：`npx vitest run --pool=threads src/core/tests/exhaustiveTest.*.test.ts --maxWorkers=8`
+- 快速检查脚本：`bash utils/vitest-quickcheck.sh [<test_glob>]`（tap-flat + bail，默认跑全部，可传入路径/模式，成功输出 ok ✅，失败时列出前 5 条 not ok）
+- 深入排查（exhaustive parity）：
+  - 生成 JSON 报告：`npx vitest run --pool=threads --reporter=json --outputFile tmp/vimParity-report.json src/core/tests/exhaustiveTest.*.test.ts`
+  - 查看摘要/聚合或按子串过滤：`python utils/vimParity-report-viewer.py tmp/vimParity-report.json ["keyword"...]`（keyword 为测试名片段，支持多个并且大小写不敏感；工具仅用于 ParityExhaustive）
+    - 支持附加参数：`--feature paste-after-op`、`--limit 5`、`--sort name|feature|line`、`--details`（输出完整断言）
+  - 反复调试单用例：`npx vitest run --pool=threads -t "<pattern>" src/core/tests/exhaustiveTest.*.test.ts 2>&1 | grep -EA20 "Failed Tests|Test Files"`
+    - 正则含特殊符号时建议单引号包裹并在内部转义，如 `-t 'd\$P\.'`
+
+- ### Debug Tips & Tools
+
+- 生成组合差异时优先跑 `bash utils/vitest-quickcheck.sh`（Tap + bail）或 `npx vitest run --pool=threads -t "<case>" 2>&1 | grep -EA20 "Failed Tests|Test Files"`，务必加上过滤，避免全量输出淹没上下文。
+- 若 Neovim 输出夹杂错误日志，可用 `utils/nvim-state-probe.cjs` 直接打印 stdout/stderr 以及解析后的 state：`node utils/nvim-state-probe.cjs --lines '["foo bar"]' --cursor 1,5 --keys 'p' --debug`；支持 `--file` 读取文本文件，`--cursor` 为 1-based。
+- Parity 排查时，先用 probe 得到 Neovim 游标/模式，再用 `runSimKeys` 对比，减少反复跑大测试集。
+- `utils/vimprove-debug.cjs`：输入 shard 与 label（用例名）对比模拟器与 Neovim 的缓冲区/光标/模式，并可加 `--trace` 打印逐键状态（需 `node -r sucrase/register utils/vimprove-debug.cjs <label> <shard> [--trace]`）。
+- 定位顺序：1) quickcheck 抽样锁定 case；2) probe 取 Neovim 真实游标/模式；3) `runSimKeys` 对比；避免直接跑全量。
 
 ## Architecture
 
@@ -47,7 +69,7 @@ src/
 ├── data/              # 课程数据（只依赖 core/types）
 │   ├── categories.ts # 课程分类定义
 │   └── lessons/      # 每个课程一个文件（按章节组织）
-│       ├── chapter1/ # 模式与基础移动（4课）
+│       ├── chapter1/ # 模式与基础移动（5课）
 │       ├── chapter2/ # 单词移动与小编辑（5课）
 │       ├── chapter3/ # 高级编辑（5课）
 │       ├── chapter4/ # 行内 find/till 精准编辑（4课）
@@ -58,12 +80,14 @@ src/
 │   ├── useVimEngine.ts    # 封装 vimReducer
 │   ├── useChallenge.ts    # 挑战逻辑（目标验证、计时）
 │   ├── useProgress.ts     # 进度持久化（localStorage）
+│   ├── useHjklSnakeStats.ts # hjkl 贪吃蛇本地记录
 │   └── useI18n.ts         # i18n hooks（useTranslationSafe, useLocale）
 │
 ├── components/        # UI 组件
 │   ├── common/       # 通用组件（MarkdownBlock, KeyListBlock）
 │   ├── lesson/       # 课程相关（LessonView, LessonNav）
 │   ├── challenge/    # 挑战相关（VimChallenge 内置编辑器 + GoalsList）
+│   ├── minigame/     # 小游戏组件（HJKL Snake）
 │   └── layout/       # 布局组件（Sidebar, Header）
 │
 ├── pages/            # 页面组件
@@ -244,6 +268,12 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 - `.` - 重复上次修改操作
 - 数字前缀（`3w`, `5dd`, `2.`）- 重复命令 n 次
 
+**行为细节**:
+- 行级 count 越界：`dd`/`yy` 当 count 超出剩余行数时直接 no-op，不写入历史。
+- `.` 重放：count 覆盖命令的 count（执行一次带 count 的命令），插入/替换按记录的插入锚点与片段回放；undo 后仍以 lastChange 重放。
+- 多行寄存器粘贴（非行 wise）：内容拆成多行插入，首行插入列与 before/after 一致，光标落在首行插入处。
+- `o/O` 带 count：一次性创建多行再进入首行插入，退出时按记录的行数补齐。
+
 ### ❌ 尚未支持
 
 - Visual Mode
@@ -368,9 +398,10 @@ export const LESSONS: Lesson[] = [..., newLesson];
 ## Styling
 
 - 使用 Tailwind CSS 3.x（**不要用 4.x**）
-- 配置已包含自定义动画和 stone-950 颜色
 - 样式入口: `src/index.css`（已配置 Tailwind directives）
-- 主题色: Stone 色系（深色主题）
+- 主题系统：`src/styles/theme.css` 统一管理（支持亮 / 暗 / 跟随系统；通过 `data-theme` 覆盖）
+- Tailwind 配色：`tailwind.config.js` 将语义色（如 `bg-background`、`text-foreground`）映射到主题变量，组件内避免直接硬编码 `stone-* / green-*`
+- 首屏配色：`index.html` 会提前加载主题变量并从 localStorage 读取 `data-theme`，避免闪屏
 - Logo: `tmp/vimprove.png`（已设置为网站图标）
 
 ## Quick Start（新会话开始时）
@@ -395,7 +426,7 @@ ls src/data/lessons/chapter3/
 ### 当前已完成
 
 - ✅ 模块化架构（Core/Data/Hooks/Components）
-- ✅ 27 个课程（Chapter 1-6：基础、进阶、文本对象、搜索重构）
+- ✅ 28 个课程（Chapter 1-6：基础、进阶、文本对象、搜索重构）
 - ✅ 完整的 Vim 引擎（支持文本对象、搜索 `/ ? n N * #`、find/till、`.` 等命令）
 - ✅ Undo/Redo 系统
 - ✅ Yank/Paste 功能
@@ -405,6 +436,8 @@ ls src/data/lessons/chapter3/
 - ✅ 完整的单元测试系统（Vitest，覆盖核心功能与新增命令）
 - ✅ Challenge 系统（目标验证、计时）
 - ✅ Run Example 可播放示例（`src/components/example/RunExamplePlayer.tsx`）
+- ✅ 亮 / 暗 / 跟随系统主题切换（Settings → Appearance）
+- ✅ Chapter 1 末尾小游戏：HJKL 贪吃蛇（`hjkl-snake`）
 - ✅ 网站图标和 PWA 支持
 - ✅ 课程编写协作文档（`tmp/` 目录）
 - ✅ 完整的 i18n 支持（i18next，当前支持 en/zh/zh-lively，课程内容可翻译）
@@ -426,6 +459,8 @@ ls src/data/lessons/chapter3/
 - **Dot 命令测试**: `tmp/dot-command-test.md`（`.` 命令测试指南）
 - **测试总结**: `tmp/test-summary.md`（单元测试覆盖和统计）
 - **版本管理**: `src/version.ts` + `tmp/version-management.md`
+- **主题配色**: `src/styles/theme.css` + `tailwind.config.js`（design tokens + Tailwind 语义色映射）
+- **连字光标修复**: `src/core/ligatures.ts`（仅在光标命中 ligature 时禁用连字）
 - **原型参考**: `tmp/vimprove.html`（已完成重构，仅供参考）
 
 **i18n 相关**:

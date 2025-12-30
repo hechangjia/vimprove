@@ -2,9 +2,14 @@
   "title": "Settings",
   "appearance": {
     "tab": "Appearance",
+    "theme": "Theme",
+    "themeSystem": "System",
+    "themeDark": "Dark",
+    "themeLight": "Light",
     "fontFamily": "Font Family",
     "fontSize": "Font Size",
-    "preview": "Preview"
+    "preview": "Preview",
+    "language": "Language"
   },
   "vimStatus": {
     "tab": "Vim Status",

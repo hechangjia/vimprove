@@ -1,0 +1,42 @@
+{
+  "hjklSnake": {
+    "focus": "点一下，让我接管键盘",
+    "hintStart": "按 h/j/k/l 开始跑",
+    "label": {
+      "score": "分数",
+      "time": "用时",
+      "speed": "速度",
+      "best": "最佳"
+    },
+    "action": {
+      "restart": "重开",
+      "resetStats": "清空记录"
+    },
+    "badge": {
+      "none": "无",
+      "bronze": "青铜",
+      "silver": "白银",
+      "gold": "黄金"
+    },
+    "toast": {
+      "reached": "拿下 {{badge}}"
+    },
+    "gameOver": {
+      "title": "寄了",
+      "summary": "分数 {{score}} · 用时 {{time}}",
+      "hint": "按 r 再来一把"
+    },
+    "stats": {
+      "best": "最佳",
+      "bestSurvival": "最长存活",
+      "attempts": "次数"
+    },
+    "best": {
+      "none": "—",
+      "noTime": "—"
+    },
+    "legend": {
+      "title": "操作"
+    }
+  }
+}

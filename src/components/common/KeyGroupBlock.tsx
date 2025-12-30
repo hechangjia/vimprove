@@ -9,22 +9,31 @@ type KeyGroupBlockProps = {
 
 const getGroupTypeColor = (type: KeyGroup['type']): string => {
   switch (type) {
-    case 'operatorMotion': return 'bg-orange-950/40 border-orange-700/60';
-    case 'replaceChar': return 'bg-orange-950/40 border-orange-700/60';
-    case 'findChar': return 'bg-blue-950/40 border-blue-700/60';
-    case 'search': return 'bg-purple-950/40 border-purple-700/60';
-    case 'countPrefix': return 'bg-cyan-950/40 border-cyan-700/60';
-    case 'insertText': return 'bg-green-950/40 border-green-700/60';
-    case 'standalone': return 'bg-stone-950/40 border-stone-700/60';
-    default: return 'bg-stone-950/40 border-stone-700/60';
+    case 'operatorMotion':
+    case 'replaceChar':
+      return 'bg-group-orange/40 border-group-orange-border/60';
+    case 'findChar':
+      return 'bg-group-blue/40 border-group-blue-border/60';
+    case 'search':
+      return 'bg-group-purple/40 border-group-purple-border/60';
+    case 'countPrefix':
+      return 'bg-group-cyan/40 border-group-cyan-border/60';
+    case 'insertText':
+      return 'bg-group-green/40 border-group-green-border/60';
+    case 'standalone':
+    default:
+      return 'bg-group-neutral/40 border-group-neutral-border/60';
   }
 };
 
 const getGroupStatusBorder = (status: KeyGroup['status']): string => {
   switch (status) {
-    case 'pending': return 'border-dashed border-yellow-500/80 shadow-yellow-500/20';
-    case 'ignored': return 'border-stone-600/40 opacity-50';
-    case 'cancelled': return 'border-red-600/40 opacity-60';
+    case 'pending':
+      return 'border-dashed border-warning-strong/80 shadow-warning-strong/20';
+    case 'ignored':
+      return 'border-border-stronger/40 opacity-50';
+    case 'cancelled':
+      return 'border-danger-strong/40 opacity-60';
     default: return '';
   }
 };
@@ -62,22 +71,22 @@ export const KeyGroupBlock: React.FC<KeyGroupBlockProps> = ({ group }) => {
 
     return (
       <div>
-        <div className="font-bold text-stone-100 mb-1">{keysStr}</div>
-        <div className="text-stone-400 text-[10px] mb-1">{typeLabel}</div>
+        <div className="font-bold text-logo mb-1">{keysStr}</div>
+        <div className="text-foreground-subtle text-[10px] mb-1">{typeLabel}</div>
 
         {/* Key breakdown */}
         <div className="space-y-0.5 text-[10px]">
           {keyDetails.map((k, i) => (
             <div key={i} className="flex gap-2">
-              <span className="text-stone-200 font-mono">{k.display}</span>
-              <span className="text-stone-500">{k.role}</span>
+              <span className="text-foreground font-mono">{k.display}</span>
+              <span className="text-foreground-faint">{k.role}</span>
             </div>
           ))}
         </div>
 
-        {statusText && <div className="text-yellow-400 mt-1.5 text-[10px]">{statusText}</div>}
+        {statusText && <div className="text-warning-strong mt-1.5 text-[10px]">{statusText}</div>}
         {group.summary && (
-          <div className="mt-1.5 text-stone-300 border-t border-stone-600 pt-1">{group.summary}</div>
+          <div className="mt-1.5 text-foreground-muted border-t border-border-stronger pt-1">{group.summary}</div>
         )}
       </div>
     );
@@ -100,12 +109,12 @@ export const KeyGroupBlock: React.FC<KeyGroupBlockProps> = ({ group }) => {
       >
         {/* Pending indicator */}
         {group.status === 'pending' && (
-          <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-yellow-500 rounded-full animate-pulse" />
+          <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-warning-strong rounded-full animate-pulse" />
         )}
 
         {/* Cancelled indicator */}
         {group.status === 'cancelled' && (
-          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-600/80 rounded-full flex items-center justify-center text-[9px] text-white">
+          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-danger-strong/80 rounded-full flex items-center justify-center text-[9px] text-primary-foreground">
             ×
           </div>
         )}
@@ -119,7 +128,7 @@ export const KeyGroupBlock: React.FC<KeyGroupBlockProps> = ({ group }) => {
 
         {/* Summary text (optional, for better UX) */}
         {group.status === 'pending' && (
-          <div className="mt-1 text-[9px] text-yellow-400/80">
+          <div className="mt-1 text-[9px] text-warning-strong/80">
             {t(`pending.${group.pendingKind || 'unknown'}`, '...', { ns: 'keyHistory' })}
           </div>
         )}

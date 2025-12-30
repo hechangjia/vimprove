@@ -6,11 +6,12 @@ import { modesBasics } from './lessons/chapter1/modes-basics';
 import { motionsHjkl } from './lessons/chapter1/motions-hjkl';
 import { motionsLineBounds } from './lessons/chapter1/motions-line-bounds';
 import { modesMovementMiniReview } from './lessons/chapter1/modes-movement-mini-review';
+import { hjklSnake } from './lessons/chapter1/hjkl-snake';
 
 // Chapter 2: Words & Small Edits
 import { motionsWords } from './lessons/chapter2/motions-words';
 import { wordsFixSmallThings } from './lessons/chapter2/words-fix-small-things';
-import { motionsWORDs } from './lessons/chapter2/motions-WORDs';
+import { motionsWORDs } from './lessons/chapter2/motions-words-big';
 import { smallEditsChars } from './lessons/chapter2/small-edits-chars';
 import { wordsMiniReview } from './lessons/chapter2/words-mini-review';
 
@@ -48,6 +49,7 @@ export const LESSONS: Lesson[] = [
   motionsHjkl,
   motionsLineBounds,
   modesMovementMiniReview,
+  hjklSnake,
   motionsWords,
   wordsFixSmallThings,
   motionsWORDs,

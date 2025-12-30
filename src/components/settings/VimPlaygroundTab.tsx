@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useVimEngine } from '@/hooks/useVimEngine';
-import { vimReducer } from '@/core/vimReducer';
 import { tokenizeLine, getTokenClassName } from '@/core/syntaxHighlight';
+import { getLigatureRange } from '@/core/ligatures';
 import { useTranslationSafe } from '@/hooks/useI18n';
 import { useSettingsContext } from '@/contexts/SettingsContext';
 import { getFontFamily } from '@/hooks/useFontLoader';
@@ -137,6 +137,7 @@ export const VimPlaygroundTab = () => {
   const renderBuffer = () => {
     return state.buffer.map((line, r) => {
       const tokens = tokenizeLine(line, language, state.buffer);
+      const ligatureRange = state.cursor.line === r ? getLigatureRange(line, state.cursor.col) : null;
       let charIndex = 0;
 
       return (
@@ -151,9 +152,11 @@ export const VimPlaygroundTab = () => {
                 const c = charIndex++;
                 const isCursor = state.cursor.line === r && state.cursor.col === c;
                 const isNormalMode = state.mode === 'normal';
+                const disableLigatures =
+                  ligatureRange != null && c >= ligatureRange.start && c <= ligatureRange.end;
                 const cursorTextClass = isCursor
                   ? isNormalMode
-                    ? 'relative z-10 text-stone-900 font-bold'
+                    ? 'vim-cursor-text'
                     : 'relative z-10'
                   : '';
 
@@ -164,26 +167,18 @@ export const VimPlaygroundTab = () => {
                   >
                     {isCursor && (
                       <span
-                        className={`absolute ${
-                          isNormalMode
-                            ? 'inset-0 bg-stone-200 opacity-70'
-                            : 'left-0 top-0 bottom-0 w-0.5 bg-stone-200 opacity-90'
-                        }`}
+                        className={isNormalMode ? 'vim-cursor-block' : 'vim-cursor-bar'}
                       />
                     )}
-                    <span className={cursorTextClass}>{char}</span>
+                    <span className={`${cursorTextClass} ${disableLigatures ? 'vim-no-ligatures' : ''}`.trim()}>
+                      {char}
+                    </span>
                   </span>
                 );
               });
             })}
             {state.cursor.line === r && state.cursor.col === line.length && (
-              <span
-                className={`${
-                  state.mode === 'normal'
-                    ? 'bg-stone-200 opacity-70 inline-block w-2.5 h-5'
-                    : 'bg-stone-200 opacity-90 inline-block w-0.5 h-5'
-                }`}
-              >
+              <span className={state.mode === 'normal' ? 'vim-cursor-eol-block' : 'vim-cursor-eol-bar'}>
                 &nbsp;
               </span>
             )}
@@ -197,7 +192,7 @@ export const VimPlaygroundTab = () => {
     <div className="space-y-4">
       {/* Language Selector */}
       <div>
-        <label className="block text-sm font-semibold text-stone-200 mb-3">
+        <label className="block text-sm font-semibold text-foreground mb-3">
           {t('playground.language', 'Language')}
         </label>
         <div className="flex gap-2">
@@ -207,8 +202,8 @@ export const VimPlaygroundTab = () => {
               onClick={() => handleLanguageChange(option.value)}
               className={`px-4 py-2 rounded-lg text-sm transition-all ${
                 language === option.value
-                  ? 'bg-green-600 text-white'
-                  : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-surface-3 text-foreground-muted hover:bg-surface-4'
               }`}
             >
               {option.label}
@@ -222,20 +217,20 @@ export const VimPlaygroundTab = () => {
         <div
           className={`px-3 py-1 rounded text-xs font-bold ${
             state.mode === 'normal'
-              ? 'bg-green-900 text-green-400'
-              : 'bg-blue-900 text-blue-400'
+              ? 'bg-success-muted text-success-muted-foreground'
+              : 'bg-info-muted text-info-muted-foreground'
           }`}
         >
           {state.mode.toUpperCase()}
         </div>
-        <span className="text-sm text-stone-400">
+        <span className="text-sm text-foreground-subtle">
           {t('playground.hint', 'Try Vim commands in this playground')}
         </span>
       </div>
 
       {/* Vim Editor */}
       <div
-        className="bg-stone-900 rounded-lg border border-stone-700 overflow-hidden cursor-text"
+        className="bg-surface rounded-lg border border-border-strong overflow-hidden cursor-text"
         onClick={(e) => {
           const input = (e.currentTarget.querySelector('input') as HTMLInputElement);
           input?.focus();
@@ -262,7 +257,7 @@ export const VimPlaygroundTab = () => {
       </div>
 
       {/* Tip */}
-      <div className="text-xs text-stone-500 bg-stone-800/50 rounded-lg p-3">
+      <div className="text-xs text-foreground-faint bg-surface-3/50 rounded-lg p-3">
         💡 {t('playground.tip', 'This is a fully functional Vim editor. Try commands like h/j/k/l, w/b/e, d/c/y, i/a/o, and more!')}
       </div>
     </div>

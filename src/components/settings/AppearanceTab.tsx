@@ -1,15 +1,20 @@
 import { tokenizeLine, getTokenClassName } from '@/core/syntaxHighlight';
 import type { EditorSettings } from '@/hooks/useSettings';
-import { useTranslationSafe } from '@/hooks/useI18n';
+import { useTranslationSafe, useLocale } from '@/hooks/useI18n';
+import { supportedLocales } from '@/i18n';
 import { useFontLoader, FONT_CONFIGS, getFontFamily } from '@/hooks/useFontLoader';
+import type { ThemeMode } from '@/hooks/useSettings';
 
 type AppearanceTabProps = {
   settings: EditorSettings;
+  theme: ThemeMode;
   onUpdate: (updates: Partial<EditorSettings>) => void;
+  onUpdateTheme: (theme: ThemeMode) => void;
 };
 
-export const AppearanceTab = ({ settings, onUpdate }: AppearanceTabProps) => {
+export const AppearanceTab = ({ settings, theme, onUpdate, onUpdateTheme }: AppearanceTabProps) => {
   const { t } = useTranslationSafe('settings');
+  const { locale, setLocale } = useLocale();
   useFontLoader(settings.fontFamily);
 
   const isMobile = window.innerWidth < 768;
@@ -61,9 +66,70 @@ export const AppearanceTab = ({ settings, onUpdate }: AppearanceTabProps) => {
 
   return (
     <div className="space-y-4 md:space-y-6">
+      {/* Theme */}
+      <div>
+        <label className="block text-sm font-semibold text-foreground mb-2 md:mb-3">
+          {t('appearance.theme', 'Theme')}
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            onClick={() => onUpdateTheme('system')}
+            className={`h-10 px-2 md:px-3 py-2 rounded-lg text-xs md:text-sm transition-all ${
+              theme === 'system'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-surface-3 text-foreground-muted hover:bg-surface-4'
+            }`}
+          >
+            <span className="truncate">{t('appearance.themeSystem', 'System')}</span>
+          </button>
+          <button
+            onClick={() => onUpdateTheme('dark')}
+            className={`h-10 px-2 md:px-3 py-2 rounded-lg text-xs md:text-sm transition-all ${
+              theme === 'dark'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-surface-3 text-foreground-muted hover:bg-surface-4'
+            }`}
+          >
+            <span className="truncate">{t('appearance.themeDark', 'Dark')}</span>
+          </button>
+          <button
+            onClick={() => onUpdateTheme('light')}
+            className={`h-10 px-2 md:px-3 py-2 rounded-lg text-xs md:text-sm transition-all ${
+              theme === 'light'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-surface-3 text-foreground-muted hover:bg-surface-4'
+            }`}
+          >
+            <span className="truncate">{t('appearance.themeLight', 'Light')}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Language */}
+      <div>
+        <label className="block text-sm font-semibold text-foreground mb-2 md:mb-3">
+          {t('appearance.language', 'Language')}
+        </label>
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+          {supportedLocales.map(lng => (
+            <button
+              key={lng.code}
+              onClick={() => setLocale(lng.code)}
+              className={`h-10 px-2 md:px-3 py-2 rounded-lg text-xs md:text-sm transition-all ${
+                locale === lng.code
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-surface-3 text-foreground-muted hover:bg-surface-4'
+              }`}
+            >
+              <span className="truncate">{lng.nativeLabel}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Font Family */}
       <div>
-        <label className="block text-sm font-semibold text-stone-200 mb-2 md:mb-3">
+        <label className="block text-sm font-semibold text-foreground mb-2 md:mb-3">
           {t('appearance.fontFamily', 'Font Family')}
         </label>
         <div className="grid grid-cols-3 md:grid-cols-2 gap-2">
@@ -71,10 +137,10 @@ export const AppearanceTab = ({ settings, onUpdate }: AppearanceTabProps) => {
             <button
               key={config.name}
               onClick={() => onUpdate({ fontFamily: config.name })}
-              className={`px-2 md:px-4 py-2 rounded-lg text-xs md:text-sm transition-all ${
+              className={`h-10 px-2 md:px-4 py-2 rounded-lg text-xs md:text-sm transition-all ${
                 settings.fontFamily === config.name
-                  ? 'bg-green-600 text-white'
-                  : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-surface-3 text-foreground-muted hover:bg-surface-4'
               }`}
               style={{ fontFamily: getFontFamily(config.name) }}
             >
@@ -86,32 +152,32 @@ export const AppearanceTab = ({ settings, onUpdate }: AppearanceTabProps) => {
 
       {/* Font Size */}
       <div>
-        <label className="block text-sm font-semibold text-stone-200 mb-2 md:mb-3">
+        <label className="block text-sm font-semibold text-foreground mb-2 md:mb-3">
           {t('appearance.fontSize', 'Font Size')}: {settings.fontSize}px
         </label>
         <div className="flex items-center gap-4">
-          <span className="text-stone-500 text-sm">12px</span>
+          <span className="text-foreground-faint text-sm">12px</span>
           <input
             type="range"
             min="12"
             max="20"
             value={settings.fontSize}
             onChange={e => onUpdate({ fontSize: Number(e.target.value) })}
-            className="flex-1 h-2 bg-stone-700 rounded-lg appearance-none cursor-pointer slider"
+            className="flex-1 h-2 bg-surface-4 rounded-lg appearance-none cursor-pointer slider"
             style={{
               '--range-progress': `${((settings.fontSize - 12) / (20 - 12)) * 100}%`
             } as React.CSSProperties}
           />
-          <span className="text-stone-500 text-sm">20px</span>
+          <span className="text-foreground-faint text-sm">20px</span>
         </div>
       </div>
 
       {/* Preview */}
       <div>
-        <label className="block text-sm font-semibold text-stone-200 mb-2 md:mb-3">
+        <label className="block text-sm font-semibold text-foreground mb-2 md:mb-3">
           {t('appearance.preview', 'Preview')}
         </label>
-        <div className="bg-stone-900 rounded-lg p-3 md:p-4 border border-stone-700 overflow-x-auto">
+        <div className="bg-surface rounded-lg p-3 md:p-4 border border-border-strong overflow-x-auto">
           <div
             className="whitespace-pre"
             style={{
@@ -124,6 +190,7 @@ export const AppearanceTab = ({ settings, onUpdate }: AppearanceTabProps) => {
           </div>
         </div>
       </div>
+
     </div>
   );
 };
