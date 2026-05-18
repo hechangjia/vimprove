@@ -2,6 +2,49 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> 变更记录 (Changelog)
+> - 2026-05-18 init-architect 增量更新：插入「Module Map」（Mermaid 模块图 + 模块索引），并为各子模块生成模块级 CLAUDE.md（`src/{core,data,hooks,components,pages,i18n}/CLAUDE.md`），扫描索引落地到 `.claude/index.json`。本节以下为原内容，保持不变。
+
+## Module Map（模块结构图）
+
+```mermaid
+graph TD
+    A["(根) vimprove"] --> SRC["src"]
+    SRC --> CORE["core - Vim 引擎（纯函数）"]
+    SRC --> DATA["data - 课程数据（28 节）"]
+    SRC --> HOOKS["hooks - 业务逻辑封装"]
+    SRC --> COMPONENTS["components - UI 组件"]
+    SRC --> PAGES["pages - 页面壳"]
+    SRC --> I18N["i18n - 多语言"]
+    SRC --> CONTEXTS["contexts - React Context"]
+    DATA --> LESSONS["lessons/chapter1..6"]
+    CORE --> CORE_TESTS["tests + testUtils (Neovim 对拍)"]
+    I18N --> LOCALES["locales/{en,zh,zh-lively}"]
+
+    click CORE "./src/core/CLAUDE.md" "查看 core 模块文档"
+    click DATA "./src/data/CLAUDE.md" "查看 data 模块文档"
+    click HOOKS "./src/hooks/CLAUDE.md" "查看 hooks 模块文档"
+    click COMPONENTS "./src/components/CLAUDE.md" "查看 components 模块文档"
+    click PAGES "./src/pages/CLAUDE.md" "查看 pages 模块文档"
+    click I18N "./src/i18n/CLAUDE.md" "查看 i18n 模块文档"
+```
+
+### 模块索引
+
+| 模块 | 路径 | 一句话职责 | 模块级文档 |
+| --- | --- | --- | --- |
+| core | `src/core/` | 纯函数 Vim 引擎：types / vimReducer / motions / operators / 工具 / 对拍测试 | [`src/core/CLAUDE.md`](./src/core/CLAUDE.md) |
+| data | `src/data/` | 配置驱动的课程内容（6 章 × 28 课） | [`src/data/CLAUDE.md`](./src/data/CLAUDE.md) |
+| hooks | `src/hooks/` | 业务 React Hook（引擎封装、挑战、进度、i18n、设置、按键历史等） | [`src/hooks/CLAUDE.md`](./src/hooks/CLAUDE.md) |
+| components | `src/components/` | UI 组件，按功能域分目录（common / lesson / challenge / example / minigame / layout / settings） | [`src/components/CLAUDE.md`](./src/components/CLAUDE.md) |
+| pages | `src/pages/` | 页面壳：HomePage / LessonPage | [`src/pages/CLAUDE.md`](./src/pages/CLAUDE.md) |
+| i18n | `src/i18n/` | i18next 配置 + 语言包（en / zh / zh-lively） | [`src/i18n/CLAUDE.md`](./src/i18n/CLAUDE.md) |
+| contexts | `src/contexts/` | React Context Providers（SettingsContext） | — |
+
+> 完整的扫描索引（含覆盖率、缺口、忽略统计）见 [.claude/index.json](./.claude/index.json)。
+
+---
+
 ## Project Overview
 
 Vimprove 是一个交互式 Vim 学习网站。核心功能是通过浏览器中的"迷你 Vim 编辑器 + 关卡式练习"来教用户实际操作 Vim 命令。
