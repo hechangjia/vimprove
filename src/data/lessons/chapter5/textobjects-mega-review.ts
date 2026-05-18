@@ -143,8 +143,10 @@ It shows how different text objects can be combined back-to-back to reshape stru
             description: 'Rename "userName" to "name" everywhere.',
             validator: (prev, next) => {
               const text = next.buffer.join('\\n');
-              return text.includes('name') &&
-                     !text.includes('userName');
+              // 原 buffer 中 userName 出现 4 次。收紧为：必须不再含 userName 整词，
+              // 且 name 整词至少出现 3 次（防御性留 1 次容差，避免 goal 3 顺序影响判定）。
+              const nameCount = (text.match(/\bname\b/g) || []).length;
+              return nameCount >= 3 && !/\buserName\b/.test(text);
             }
           },
           {

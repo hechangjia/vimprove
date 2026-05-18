@@ -101,9 +101,10 @@ then use \`n\` and \`.\` to repeat the same change on the remaining occurrences.
             description: 'Rename "value" to "count" everywhere in the snippet.',
             validator: (prev, next) => {
               const text = next.buffer.join('\\n');
-              const hasOld = text.includes('value');
-              const hasNew = text.includes('count');
-              return !hasOld && hasNew;
+              // 收紧：原 buffer 中 value 出现 2 次，要求 count 整词至少出现 2 次，
+              // 且不再有 value 整词；避免删空也能过。
+              const countOccurrences = (text.match(/\bcount\b/g) || []).length;
+              return countOccurrences >= 2 && !/\bvalue\b/.test(text);
             }
           },
           {

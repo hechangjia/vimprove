@@ -11,13 +11,35 @@ export const useChallenge = (
   const [elapsed, setElapsed] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const prevConfigRef = useRef(config);
+  // 把"易变值"放进 ref，避免进入 validator effect 的 deps：
+  // - elapsedRef：onComplete 调用时读取最新计时，但 elapsed 自身的 setInterval 更新
+  //   不应触发 validator 重跑。
+  // - goalsStatusRef：判断"是否已完成"也无需把 goalsStatus 放 deps。
+  // - onCompleteRef：父组件每次 render 传入新引用也不应触发 validator。
+  const elapsedRef = useRef(0);
+  const goalsStatusRef = useRef<Record<string, boolean>>({});
+  const onCompleteRef = useRef(onComplete);
+
+  useEffect(() => {
+    elapsedRef.current = elapsed;
+  }, [elapsed]);
+
+  useEffect(() => {
+    goalsStatusRef.current = goalsStatus;
+  }, [goalsStatus]);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   // Reset challenge state when config changes (e.g., switching lessons)
   useEffect(() => {
     if (prevConfigRef.current !== config) {
       setGoalsStatus({});
+      goalsStatusRef.current = {};
       setStartTime(null);
       setElapsed(0);
+      elapsedRef.current = 0;
       setIsComplete(false);
       prevConfigRef.current = config;
     }
@@ -36,7 +58,7 @@ export const useChallenge = (
   useEffect(() => {
     if (isComplete) return;
 
-    const newStatus = { ...goalsStatus };
+    const newStatus = { ...goalsStatusRef.current };
     let changed = false;
 
     config.goals.forEach(g => {
@@ -49,27 +71,29 @@ export const useChallenge = (
     });
 
     if (changed) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      goalsStatusRef.current = newStatus;
       setGoalsStatus(newStatus);
-      if (!startTime) setStartTime(Date.now());
+      setStartTime(prev => prev ?? Date.now());
 
       const completedCount = Object.values(newStatus).filter(Boolean).length;
       if (completedCount >= config.goalsRequired) {
         setIsComplete(true);
-        onComplete?.({ time: elapsed });
+        onCompleteRef.current?.({ time: elapsedRef.current });
       }
     }
-  }, [state, config, goalsStatus, startTime, isComplete, elapsed, onComplete]);
+  }, [state, config, isComplete]);
 
   const restart = () => {
     setGoalsStatus({});
+    goalsStatusRef.current = {};
     setStartTime(null);
     setElapsed(0);
+    elapsedRef.current = 0;
     setIsComplete(false);
   };
 
   const startTimer = () => {
-    if (!startTime) setStartTime(Date.now());
+    setStartTime(prev => prev ?? Date.now());
   };
 
   return {

@@ -26,3 +26,5 @@ dist-ssr
 tmp/
 .playwright-mcp/
 .nvimlog
+.ccg/
+.claude/

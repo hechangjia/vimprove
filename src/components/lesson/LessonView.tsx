@@ -38,7 +38,10 @@ export const LessonView = ({ lesson, onNext, onPrev }: LessonViewProps) => {
         const reactKey = `${lesson.slug}-${idx}`;
 
         if (block.type === 'markdown') {
-          const content = translateLessons ? t(blockKey, block.content) : block.content;
+          // 类型守卫：若 i18n 条目错放成 object/undefined，回退到 .ts 原文，
+          // 避免 React 抛 "Objects are not valid as a React child" 导致整页白屏。
+          const translated = translateLessons ? t(blockKey, block.content) : block.content;
+          const content = typeof translated === 'string' ? translated : block.content;
           return <MarkdownBlock key={reactKey} content={content} />;
         }
         if (block.type === 'key-list') {

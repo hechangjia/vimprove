@@ -43,15 +43,23 @@ export const VimChallenge = ({
   const isComposingRef = useRef(false);
   const compositionDataRef = useRef('');
 
+  const dispatchRef = useRef(dispatch);
+  const clearHistoryRef = useRef(clearHistory);
   useEffect(() => {
-    // Reset vim state when config changes (e.g., switching lessons)
-    dispatch({
+    dispatchRef.current = dispatch;
+    clearHistoryRef.current = clearHistory;
+  });
+
+  useEffect(() => {
+    // Reset vim state when config changes (e.g., switching lessons).
+    // 只依赖 config 引用变化，避免 dispatch/clearHistory 引用波动导致编辑器反复重置。
+    dispatchRef.current({
       type: 'RESET',
       payload: { buffer: config.initialBuffer, cursor: config.initialCursor }
     });
-    clearHistory();
+    clearHistoryRef.current();
     setIsFocused(false);
-  }, [config, dispatch, clearHistory]);
+  }, [config]);
 
   // Handle Enter key to proceed to next lesson when challenge is complete
   useEffect(() => {
@@ -88,10 +96,9 @@ export const VimChallenge = ({
 
     // In Insert mode: insert Chinese characters normally
     if (state.mode === 'insert') {
-      // Process all characters and update state once to avoid async issues
+      // 单路径：local reducer 推进 + dispatch 同步进行，确保 recordKey 的 prev/next
+      // 与最终 reducer state 一致，避免双 loop 之间 React 重渲染导致错位。
       const chars = Array.from(text);
-
-      // Compute final state by chaining reducers
       let currentState = state;
       for (const char of chars) {
         const nextState = vimReducer(currentState, {
@@ -99,15 +106,11 @@ export const VimChallenge = ({
           payload: { key: char, ctrlKey: false }
         });
         recordKey(char, false, currentState, nextState);
-        currentState = nextState;
-      }
-
-      // Dispatch all characters at once
-      for (const char of chars) {
         dispatch({
           type: 'KEYDOWN',
           payload: { key: char, ctrlKey: false }
         });
+        currentState = nextState;
       }
     } else {
       // In Normal mode: record Chinese input but don't execute

@@ -8,6 +8,15 @@ import { useTranslationSafe } from '@/hooks/useI18n';
 import { useKeyHistory } from '@/hooks/useKeyHistory';
 import { KeyHistoryPanel } from '@/components/common/KeyHistoryPanel';
 
+// 多 track 颜色轮转池：原实现 idx>=3 全部 fallback 到同一个绿色。
+// 使用 tailwind.config.js / theme.css 中已定义的 track-* 颜色。
+const TRACK_COLOR_PALETTE = ['bg-track-blue', 'bg-track-green', 'bg-track-red'];
+const resolveTrackBg = (idx: number, override?: string): string => {
+  if (idx === 0) return 'bg-caret';
+  if (override) return override;
+  return TRACK_COLOR_PALETTE[(idx - 1) % TRACK_COLOR_PALETTE.length];
+};
+
 type RunExamplePlayerProps = {
   config: RunExampleConfig;
   lessonSlug?: string;
@@ -24,20 +33,35 @@ export const RunExamplePlayer = ({
   const [currentStep, setCurrentStep] = useState(-1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [states, setStates] = useState<VimState[]>([]);
+  // statesRef 镜像 states 当前值，供 executeStep / handlers 同步读取，
+  // 避免把 states 放入 useCallback deps 导致自动播放 timer 反复 cleanup 重建。
+  const statesRef = useRef<VimState[]>([]);
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
+  // pendingPlayRef：从末尾点击 ▶ 时先 reset，等 currentStep 回到 -1 再启动自动播放，
+  // 避免 setTimeout(100) 在慢设备上时序不可靠。
+  const pendingPlayRef = useRef(false);
   const { t } = useTranslationSafe(['example', 'lessons']);
   const { recordKey, getHistory, clearHistory } = useKeyHistory();
 
+  const buildInitialStates = useCallback(
+    (): VimState[] =>
+      config.tracks.map(() => ({
+        ...INITIAL_VIM_STATE,
+        buffer: config.initialBuffer,
+        cursor: config.initialCursor
+      })),
+    [config.tracks, config.initialBuffer, config.initialCursor]
+  );
+
   useEffect(() => {
-    const initialStates = config.tracks.map(() => ({
-      ...INITIAL_VIM_STATE,
-      buffer: config.initialBuffer,
-      cursor: config.initialCursor
-    }));
+    const initialStates = buildInitialStates();
+    statesRef.current = initialStates;
     setStates(initialStates);
     setCurrentStep(-1);
+    setIsPlaying(false);
+    pendingPlayRef.current = false;
     clearHistory();
-  }, [config, clearHistory]);
+  }, [config, buildInitialStates, clearHistory]);
 
   const executeStep = useCallback(
     (stepIndex: number) => {
@@ -46,26 +70,24 @@ export const RunExamplePlayer = ({
       const step = config.steps[stepIndex];
       const cursorIdx = step.cursorIndex ?? 0;
 
-      // Calculate nextState and record before updating React state
-      const prevState = states[cursorIdx];
+      // 从 ref 读取最新 state，避免闭包旧值。
+      const prevState = statesRef.current[cursorIdx];
+      if (!prevState) return;
       const nextState = vimReducer(prevState, {
         type: 'KEYDOWN',
         payload: { key: step.key, ctrlKey: false }
       });
 
-      // Record key immediately
       recordKey(step.key, false, prevState, nextState);
 
-      // Update React state
-      setStates(prevStates => {
-        const newStates = [...prevStates];
-        newStates[cursorIdx] = nextState;
-        return newStates;
-      });
+      const newStates = [...statesRef.current];
+      newStates[cursorIdx] = nextState;
+      statesRef.current = newStates;
+      setStates(newStates);
 
       setCurrentStep(stepIndex);
     },
-    [config.steps, states, recordKey]
+    [config.steps, recordKey]
   );
 
   const handleNext = useCallback(() => {
@@ -92,20 +114,25 @@ export const RunExamplePlayer = ({
 
   const handleReset = useCallback(() => {
     setIsPlaying(false);
-    const initialStates = config.tracks.map(() => ({
-      ...INITIAL_VIM_STATE,
-      buffer: config.initialBuffer,
-      cursor: config.initialCursor
-    }));
+    const initialStates = buildInitialStates();
+    statesRef.current = initialStates;
     setStates(initialStates);
     setCurrentStep(-1);
     clearHistory();
-  }, [config, clearHistory]);
+  }, [buildInitialStates, clearHistory]);
+
+  // currentStep 回到 -1 且有 pendingPlay 时，自动启动播放（替代 setTimeout 时序 hack）。
+  useEffect(() => {
+    if (currentStep === -1 && pendingPlayRef.current) {
+      pendingPlayRef.current = false;
+      setIsPlaying(true);
+    }
+  }, [currentStep]);
 
   const handlePlay = useCallback(() => {
     if (currentStep >= config.steps.length - 1) {
+      pendingPlayRef.current = true;
       handleReset();
-      setTimeout(() => setIsPlaying(true), 100);
     } else {
       setIsPlaying(true);
     }
@@ -126,14 +153,8 @@ export const RunExamplePlayer = ({
 
     const targetStep = currentStep - 1;
 
-    // Reset to initial state
-    let trackStates = config.tracks.map(() => ({
-      ...INITIAL_VIM_STATE,
-      buffer: config.initialBuffer,
-      cursor: config.initialCursor
-    }));
+    let trackStates = buildInitialStates();
 
-    // Replay to targetStep and record key history
     for (let i = 0; i <= targetStep; i++) {
       const step = config.steps[i];
       const cursorIdx = step.cursorIndex ?? 0;
@@ -144,18 +165,16 @@ export const RunExamplePlayer = ({
         payload: { key: step.key, ctrlKey: false }
       });
 
-      // Record key history
       recordKey(step.key, false, prevState, nextState);
 
-      // Update track state
       trackStates = [...trackStates];
       trackStates[cursorIdx] = nextState;
     }
 
-    // Update React state
+    statesRef.current = trackStates;
     setStates(trackStates);
     setCurrentStep(targetStep);
-  }, [currentStep, config, clearHistory, recordKey, handleReset]);
+  }, [currentStep, config.steps, buildInitialStates, clearHistory, recordKey, handleReset]);
 
   const renderBuffer = () => {
     const displayState = states[0];
@@ -194,7 +213,7 @@ export const RunExamplePlayer = ({
                     {cursorsAtPos.map(({ idx }) => {
                       const track = config.tracks[idx];
                       if (!track) return null;
-                      const bgColor = idx === 0 ? 'bg-caret' : (track.color || (idx === 1 ? 'bg-track-blue' : 'bg-track-green'));
+                      const bgColor = resolveTrackBg(idx, track.color);
                       const isNormalMode = states[idx].mode === 'normal';
 
                       return (

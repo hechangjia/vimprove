@@ -128,6 +128,12 @@ src/
 
 ## 📝 CHANGELOG
 
+### v2.0.1
+- 修复 Chapter 4-6 Run Example 动画 bug：自动播放计时器重建、闭包旧 state、播放重启时序
+- 修复中文翻译错误：find-char 全角分号/逗号、zh-lively `di()`/`ci()` 冗余括号、错别字、search-basic wrap 描述
+- 收紧课程 validator：用 `\b` 词边界 + 出现次数计数，避免删空也算过
+- 工程改进：LessonView markdown 类型守卫防白屏、useChallenge effect 拆 ref 防误判、多 track 颜色轮转
+
 ### Unreleased
 
 ### Release v2.0.0

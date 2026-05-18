@@ -52,9 +52,9 @@ and \`n\`/\`N\` to move forward and backward through each match in the buffer.`
         steps: [
           { key: '*', description: '*: search for the word "Ada" under the cursor and jump to the next match.', cursorIndex: 0 },
           { key: 'n', description: 'n: jump to the next "Ada".', cursorIndex: 0 },
-          { key: 'n', description: 'n: jump again to the next "Ada".', cursorIndex: 0 },
-          { key: 'N', description: 'N: go back to the previous match.', cursorIndex: 0 },
-          { key: 'N', description: 'N: go back to the first "Ada".', cursorIndex: 0 }
+          { key: 'n', description: 'n: search wraps around — back to the first "Ada".', cursorIndex: 0 },
+          { key: 'N', description: 'N: reverse direction — wraps to the last "Ada".', cursorIndex: 0 },
+          { key: 'N', description: 'N: keep going backward to the previous "Ada".', cursorIndex: 0 }
         ]
       }
     },

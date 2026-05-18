@@ -74,7 +74,7 @@ then \`;\` and \`,\` to move forward and backward between commas without countin
         ],
         initialCursor: { line: 3, col: 4 },
         goalsRequired: 2,
-        enabledCommands: ['h', 'l', '0', '$', 'f', 'F', ';', ','],
+        enabledCommands: ['h', 'j', 'k', 'l', '0', '$', 'f', 'F', ';', ','],
         goals: [
           {
             id: 'first-comma',
