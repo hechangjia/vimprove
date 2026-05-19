@@ -324,6 +324,11 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 - `~` 和 case operators 已写入 `lastChange`，`.` 可重放
 - 已开启 `operator_case` + `edit_DCYS` parity（`motion_large` 与 `edit_caseToggle` 因 feedkeys / 无操作历史 seed 边界推到 v2.2）
 
+**v2.1.2 修复**（word-end + operator parity）:
+- `e` / `E` 与 operator 组合（`de` / `ce` / `dE` / `cE`）在标点边界处现在正确推进到下一个 word-end（之前停在标点本身导致 `de` 等只删一字符）
+- 清掉 5 条 master 长期存在的 parity baseline（`ceX<Esc>` / `de` / `dep` / `deP.` / `ceX<Esc>E`）
+- 全量 parity：1209/1210 通过；剩 `yi{3wP` 多行 charwise 粘贴边界（独立 bug，已记录）
+
 **行为细节**:
 - 行级 count 越界：`dd`/`yy` 当 count 超出剩余行数时直接 no-op，不写入历史。
 - `.` 重放：count 覆盖命令的 count（执行一次带 count 的命令），插入/替换按记录的插入锚点与片段回放；undo 后仍以 lastChange 重放。

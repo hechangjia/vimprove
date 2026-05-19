@@ -128,6 +128,11 @@ src/
 
 ## 📝 CHANGELOG
 
+### v2.1.2
+- 修复 `e` / `E` 与 operator 组合时的 word-end 边界（`de` / `ce` 在单字符标点上现在正确推进到下一个 word-end）
+- 清理 5 条长期存在的 Neovim parity baseline 失败（`ceX<Esc>` / `de` / `dep` / `deP.` / `ceX<Esc>E`）
+- 全量 parity：1209/1210 通过（剩 `yi{3wP` 多行粘贴边界，独立 bug 已记录）
+
 ### v2.1.1
 - 修复 `gu` / `gU` / `g~` 跨行 motion（如 `g~w` 越过段落首行时不应把下一行首字符也大小写）
 - 修复 `guu` / `gUU` / `g~~` 线性操作后光标停留位置（对齐 Neovim：first non-blank）

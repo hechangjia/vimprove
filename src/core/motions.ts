@@ -357,7 +357,7 @@ export const getMotionTarget = (state: VimState, motion: Motion, forOperator = f
     }
 
     case 'e':
-      return moveToNextRunEnd(buffer, cursor, getSmallWordCategory, !forOperator);
+      return moveToNextRunEnd(buffer, cursor, getSmallWordCategory, true);
 
     case 'W': {
       let r = line, c = col;
@@ -483,7 +483,7 @@ export const getMotionTarget = (state: VimState, motion: Motion, forOperator = f
     }
 
     case 'E':
-      return moveToNextRunEnd(buffer, cursor, getBigWordCategory, !forOperator);
+      return moveToNextRunEnd(buffer, cursor, getBigWordCategory, true);
 
     case 'gg':
       return gotoFirstLine(buffer, cursor);
