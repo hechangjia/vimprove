@@ -50,6 +50,7 @@ export type VimState = {
   pendingFind: 'f' | 'F' | 't' | 'T' | null;
   pendingTextObject: 'i' | 'a' | null;
   pendingSearch: SearchState | null;
+  pendingG: boolean;
   lastSearch: SearchState | null;
   lastCommand: Command | null;
 

@@ -1,5 +1,13 @@
 import type { VimState, Cursor, Motion } from './types';
 import { isWhitespace, isWordChar } from './utils';
+import {
+  gotoFirstLine,
+  gotoLastLine,
+  gotoLineN,
+  paraNext,
+  paraPrev,
+  bracketMatch,
+} from './largeMotions';
 
 type WordCategory = 'space' | 'word' | 'other';
 
@@ -476,6 +484,24 @@ export const getMotionTarget = (state: VimState, motion: Motion, forOperator = f
 
     case 'E':
       return moveToNextRunEnd(buffer, cursor, getBigWordCategory, !forOperator);
+
+    case 'gg':
+      return gotoFirstLine(buffer, cursor);
+
+    case 'G': {
+      const cnt = state.count;
+      if (cnt && cnt.length > 0) return gotoLineN(buffer, parseInt(cnt, 10));
+      return gotoLastLine(buffer, cursor);
+    }
+
+    case '{':
+      return paraPrev(buffer, cursor);
+
+    case '}':
+      return paraNext(buffer, cursor);
+
+    case '%':
+      return bracketMatch(buffer, cursor);
 
     default:
       return cursor;

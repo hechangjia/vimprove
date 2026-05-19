@@ -797,6 +797,7 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
         pendingFind: null,
         pendingTextObject: null,
         pendingSearch: null,
+        pendingG: false,
         count: '',
       };
     }
@@ -809,6 +810,7 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
       pendingFind: null,
       pendingTextObject: null,
       pendingSearch: null,
+      pendingG: false,
       count: '',
       changeRecording: null,
       recordingCount: null,
@@ -844,6 +846,7 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
         pendingFind: null,
         pendingTextObject: null,
         pendingSearch: null,
+        pendingG: false,
         count: '',
       };
     }
@@ -958,7 +961,7 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
       return { ...recorded, pendingTextObject: key as 'i' | 'a' };
     }
 
-    if (['h', 'j', 'k', 'l', 'w', 'b', 'e', '0', '$', '^', '_', 'W', 'B', 'E'].includes(key)) {
+    if (['h', 'j', 'k', 'l', 'w', 'b', 'e', '0', '$', '^', '_', 'W', 'B', 'E', '{', '}', '%', 'G'].includes(key)) {
       const recorded = recordKey(state, key, ctrlKey || false);
       const resultState = applyOperatorMotion(recorded, operator, key as Motion);
       return { ...resultState, pendingOperator: null };
@@ -1040,6 +1043,56 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
       };
     }
     return state;
+  }
+
+  // ----- g pending: 'g' awaits 'g'/'u'/'U'/'~' -----
+  if (state.pendingG) {
+    const clearedG: VimState = { ...state, pendingG: false };
+    if (key === 'g') {
+      const target = getMotionTarget(clearedG, 'gg');
+      return {
+        ...clearedG,
+        cursor: target,
+        count: '',
+        lastCommand: { type: 'move', motion: 'gg' },
+      };
+    }
+    if (key === 'u' || key === 'U' || key === '~') {
+      const op: Operator = key === 'u' ? 'gu' : key === 'U' ? 'gU' : 'g~';
+      return { ...clearedG, pendingOperator: op };
+    }
+    return clearedG;
+  }
+
+  if (key === 'g') {
+    return { ...state, pendingG: true };
+  }
+
+  if (key === 'G') {
+    const target = getMotionTarget(state, 'G');
+    return {
+      ...state,
+      cursor: target,
+      count: '',
+      lastCommand: { type: 'move', motion: 'G' },
+    };
+  }
+
+  if (key === '{' || key === '}' || key === '%') {
+    const motion = key as Motion;
+    const count = key === '%' ? 1 : getCount(state);
+    let newPos = state.cursor;
+    let tempState = state;
+    for (let i = 0; i < count; i++) {
+      newPos = getMotionTarget(tempState, motion);
+      tempState = { ...tempState, cursor: newPos };
+    }
+    return {
+      ...state,
+      cursor: newPos,
+      count: '',
+      lastCommand: { type: 'move', motion },
+    };
   }
 
   if (key === 'd') {
@@ -1266,6 +1319,7 @@ export const INITIAL_VIM_STATE: VimState = {
   pendingFind: null,
   pendingTextObject: null,
   pendingSearch: null,
+  pendingG: false,
   lastSearch: null,
   lastCommand: null,
   history: [],
