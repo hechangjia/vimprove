@@ -128,6 +128,12 @@ src/
 
 ## 📝 CHANGELOG
 
+### v2.1.0
+- 新增基础导航：`gg` / `G` / `{N}G` / `{` / `}` / `%`（单行匹配）
+- 新增大写快捷与大小写操作符：`D` / `C` / `Y` / `S` / `~` / `gu` / `gU` / `g~`（含 linewise `guu`/`gUU`/`g~~`）
+- Chapter 1 + 3 新增 5 节课程；每章末尾追加可下载 PNG Cheat Sheet
+- 33 节课程 / 全套引擎单测 + 对拍脚手架（部分新特性 v2.2 启用 parity 校验）
+
 ### v2.0.1
 - 修复 Chapter 4-6 Run Example 动画 bug：自动播放计时器重建、闭包旧 state、播放重启时序
 - 修复中文翻译错误：find-char 全角分号/逗号、zh-lively `di()`/`ci()` 冗余括号、错别字、search-basic wrap 描述
