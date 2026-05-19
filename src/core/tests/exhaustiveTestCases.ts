@@ -57,16 +57,16 @@ const ENABLED_FEATURES: FeatureConfig = {
     'motion_WORD',
     'motion_line',
     'motion_find',
-    // 'motion_large',       // TODO(v2.2): enable after Neovim parity for gg/G/{N}G/{ }/% is tightened
+    // 'motion_large',       // TODO(v2.2): gg/G/{N}G/{ }/% — Neovim feedkeys parity needs investigation
     'operator_d',
     'operator_c',
     'operator_y',
     'operator_y_line',
-    // 'operator_case',      // TODO(v2.2): gu/gU/g~ need linewise cursor-to-first-non-blank + dot recording
+    'operator_case',
     'text_objects',
     'edit_xsr',
     'edit_dd',
-    // 'edit_caseToggle',    // TODO(v2.2): ~ needs dot recording integration
+    // 'edit_caseToggle',    // TODO: ~ no-op + runSim baseline-seeded history collision (deferred)
     'edit_DCYS',
     'insert_ia',
     'insert_IA',

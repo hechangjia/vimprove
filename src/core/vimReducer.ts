@@ -970,12 +970,17 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
       const op = operator;
       // Linewise: guu / gUU / g~~
       if ((op === 'gu' && key === 'u') || (op === 'gU' && key === 'U') || (op === 'g~' && key === '~')) {
-        return applyCaseOperatorLinewise(state, op);
+        const recorded = recordKey(state, key, ctrlKey || false);
+        const applied = applyCaseOperatorLinewise(recorded, op);
+        return finishRecording(applied);
       }
       if (['h', 'j', 'k', 'l', 'w', 'b', 'e', 'W', 'B', 'E', '0', '$', '^', '_', '{', '}', '%'].includes(key)) {
-        return applyCaseOperatorWithMotion(state, key, op);
+        const recorded = recordKey(state, key, ctrlKey || false);
+        const applied = applyCaseOperatorWithMotion(recorded, key, op);
+        return finishRecording(applied);
       }
-      return { ...state, pendingOperator: null, count: '' };
+      // Unknown follow-up: cancel without recording a change
+      return { ...state, pendingOperator: null, count: '', changeRecording: null, recordingCount: null };
     }
 
     if (['h', 'j', 'k', 'l', 'w', 'b', 'e', '0', '$', '^', '_', 'W', 'B', 'E', '{', '}', '%', 'G'].includes(key)) {
@@ -1076,7 +1081,11 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
     }
     if (key === 'u' || key === 'U' || key === '~') {
       const op: Operator = key === 'u' ? 'gu' : key === 'U' ? 'gU' : 'g~';
-      return { ...clearedG, pendingOperator: op };
+      // Begin recording the change so `.` can replay [g, u/U/~, motion...]
+      const stateWithHistory = pushHistory(clearedG);
+      const stateWithRec = startRecording(stateWithHistory, 'g', false);
+      const stateWithKey = recordKey(stateWithRec, key, false);
+      return { ...stateWithKey, pendingOperator: op };
     }
     return clearedG;
   }
@@ -1198,7 +1207,6 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
     if (cursor.col >= lineText.length) return { ...state, count: '' };
     const count = getCount(state);
     const endCol = Math.min(lineText.length - 1, cursor.col + count - 1);
-    const stateWithHistory = pushHistory(state);
     const newBuffer = applyCaseRange(
       buffer,
       cursor,
@@ -1206,12 +1214,30 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
       'toggle',
     );
     const newCol = Math.min(endCol + 1, Math.max(0, (newBuffer[cursor.line]?.length ?? 0) - 1));
-    return {
-      ...stateWithHistory,
+    const finalCursor = { line: cursor.line, col: Math.max(0, newCol) };
+
+    // No-op (non-letter): move cursor only, skip history + recording to avoid breaking undo
+    if (newBuffer[cursor.line] === lineText) {
+      return {
+        ...state,
+        cursor: finalCursor,
+        count: '',
+        lastCommand: { type: 'move' },
+      };
+    }
+
+    const stateWithHistory = pushHistory(state);
+    const stateWithRecording = startRecording(stateWithHistory, key, ctrlKey || false);
+    const finished = finishRecording({
+      ...stateWithRecording,
       buffer: newBuffer,
-      cursor: { line: cursor.line, col: Math.max(0, newCol) },
+      cursor: finalCursor,
+    });
+    return {
+      ...finished,
       count: '',
-      lastCommand: { type: 'delete-char' },
+      // Use 'move' so undo restores to the snapshot cursor (Neovim parity for ~).
+      lastCommand: { type: 'move' },
     };
   }
 

@@ -128,6 +128,12 @@ src/
 
 ## 📝 CHANGELOG
 
+### v2.1.1
+- 修复 `gu` / `gU` / `g~` 跨行 motion（如 `g~w` 越过段落首行时不应把下一行首字符也大小写）
+- 修复 `guu` / `gUU` / `g~~` 线性操作后光标停留位置（对齐 Neovim：first non-blank）
+- 接入 `~` / `gu` / `gU` / `g~` 的 `lastChange` 录制，`.` 可正确重放大小写操作
+- Neovim parity：启用 `operator_case` + `edit_DCYS` 用例，新增 17 条 case-op 对拍通过
+
 ### v2.1.0
 - 新增基础导航：`gg` / `G` / `{N}G` / `{` / `}` / `%`（单行匹配）
 - 新增大写快捷与大小写操作符：`D` / `C` / `Y` / `S` / `~` / `gu` / `gU` / `g~`（含 linewise `guu`/`gUU`/`g~~`）

@@ -318,12 +318,18 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 - 大写快捷：`D`（= `d$`）、`C`（= `c$`）、`Y`（= `yy`）、`S`（清空整行 + 进入 insert）
 - 大小写：`~`（切换光标处字符）、`gu{motion}`、`gU{motion}`、`g~{motion}`，以及行级 `guu` / `gUU` / `g~~`
 
+**v2.1.1 修复**（case-op parity 收尾）:
+- `gu` / `gU` / `g~` 跨行 motion 在跨到下一行 col 0 时正确收缩到上一行 EOL
+- `guu` / `gUU` / `g~~` 操作后光标落到 first non-blank
+- `~` 和 case operators 已写入 `lastChange`，`.` 可重放
+- 已开启 `operator_case` + `edit_DCYS` parity（`motion_large` 与 `edit_caseToggle` 因 feedkeys / 无操作历史 seed 边界推到 v2.2）
+
 **行为细节**:
 - 行级 count 越界：`dd`/`yy` 当 count 超出剩余行数时直接 no-op，不写入历史。
 - `.` 重放：count 覆盖命令的 count（执行一次带 count 的命令），插入/替换按记录的插入锚点与片段回放；undo 后仍以 lastChange 重放。
 - 多行寄存器粘贴（非行 wise）：内容拆成多行插入，首行插入列与 before/after 一致，光标落在首行插入处。
 - `o/O` 带 count：一次性创建多行再进入首行插入，退出时按记录的行数补齐。
-- `~` 与 `gu/gU/g~` 暂未接入 `.` 重放与 linewise cursor-to-first-non-blank 行为（计划 v2.2 完善，对应 parity 用例已 scaffold 但默认关闭）。
+- `~` 与 `gu/gU/g~` 已接入 `.` 重放与 linewise cursor-to-first-non-blank 行为（v2.1.1 对齐 Neovim）。`~` 在非字母字符上为无操作（不写入历史，避免与 runSim baseline seed 冲突）。
 
 ### ❌ 尚未支持
 

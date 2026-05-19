@@ -1,8 +1,16 @@
 import type { Cursor, VimState } from './types';
 import { getMotionTarget } from './motions';
 import { pushHistory } from './stateUtils';
+import { isWhitespace } from './utils';
 
 export type CaseMode = 'toggle' | 'upper' | 'lower';
+
+const firstNonBlankCol = (line: string): number => {
+  for (let i = 0; i < line.length; i++) {
+    if (!isWhitespace(line[i])) return i;
+  }
+  return 0;
+};
 
 export const toggleCharCase = (ch: string): string => {
   if (ch >= 'a' && ch <= 'z') return ch.toUpperCase();
@@ -71,12 +79,16 @@ export const applyCaseOperatorWithMotion = (
   const [start, endRaw] = sortCursors(startCursor, targetCursor);
 
   let end = endRaw;
-  // shrink exclusive forward motions by one column on the end line
-  if (EXCLUSIVE_FORWARD.has(motion) && cmpCursor(end, start) > 0 && end.col > 0) {
-    end = { line: end.line, col: end.col - 1 };
+  // Shrink exclusive forward motions (w/W/b/B) by one column.
+  if (EXCLUSIVE_FORWARD.has(motion) && cmpCursor(end, start) > 0) {
+    if (end.col > 0) {
+      end = { line: end.line, col: end.col - 1 };
+    } else if (end.line > start.line) {
+      // Motion crossed into next line at col 0 → shrink to EOL of previous line
+      const prevLine = state.buffer[end.line - 1] ?? '';
+      end = { line: end.line - 1, col: Math.max(0, prevLine.length - 1) };
+    }
   }
-  // also shrink if end is at line[0] of the next line (we'd be at start of next word)
-  // but that only happens when motion crosses a newline; we already shrunk by col-1 above.
   if (cmpCursor(end, start) < 0) {
     return { ...state, pendingOperator: null, count: '' };
   }
@@ -107,9 +119,12 @@ export const applyCaseOperatorLinewise = (
     opToCaseMode(op),
   );
   const stateWithHistory = pushHistory(state);
+  // Linewise operators (guu/gUU/g~~) leave cursor on first non-blank, matching Neovim.
+  const newCol = firstNonBlankCol(newBuffer[state.cursor.line] ?? '');
   return {
     ...stateWithHistory,
     buffer: newBuffer,
+    cursor: { line: state.cursor.line, col: newCol },
     pendingOperator: null,
     count: '',
   };

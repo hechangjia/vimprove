@@ -1,5 +1,5 @@
-export const REL_VERSION = '2.1.0';
-export const DEV_VERSION = '2.1.0';
+export const REL_VERSION = '2.1.1';
+export const DEV_VERSION = '2.1.1';
 export const VERSION = REL_VERSION;
 
 const branch =
