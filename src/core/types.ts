@@ -145,12 +145,20 @@ export type HjklSnakeGameConfig = {
   goldScore?: number;
 };
 
+export type Game2048Config = {
+  // 预留扩展位（如自定义胜利方块 / 起始方块数）。当前 4x4，胜利方块固定 2048。
+  bronzeTile?: number;  // 默认 128
+  silverTile?: number;  // 默认 512
+  goldTile?: number;    // 默认 2048
+};
+
 export type ContentBlock =
   | { type: 'markdown'; content: string; i18nKey?: string }
   | { type: 'key-list'; keys: KeyItem[]; i18nKey?: string }
   | { type: 'challenge'; config: ChallengeConfig; i18nKey?: string }
   | { type: 'run-example'; config: RunExampleConfig; i18nKey?: string }
-  | { type: 'hjkl-snake'; config?: HjklSnakeGameConfig; i18nKey?: string };
+  | { type: 'hjkl-snake'; config?: HjklSnakeGameConfig; i18nKey?: string }
+  | { type: 'game-2048'; config?: Game2048Config; i18nKey?: string };
 
 export type KeyItem = {
   chars: string[];

@@ -21,6 +21,7 @@ import { operatorChangeBasic } from './lessons/chapter3/operator-change-basic';
 import { operatorYankBasic } from './lessons/chapter3/operator-yank-basic';
 import { countRepeatUndo } from './lessons/chapter3/count-repeat-undo';
 import { operatorsMiniReview } from './lessons/chapter3/operators-mini-review';
+import { game2048 } from './lessons/chapter3/game-2048';
 
 // Chapter 4: In-line Find/Till & Precise Edits
 import { findChar } from './lessons/chapter4/find-char';
@@ -62,6 +63,7 @@ export const LESSONS: Lesson[] = [
   operatorYankBasic,
   countRepeatUndo,
   operatorsMiniReview,
+  game2048,
 
   // Chapter 4: In-line Find/Till & Precise Edits
   findChar,

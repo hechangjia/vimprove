@@ -5,6 +5,7 @@ import { KeyListBlock } from '@/components/common/KeyListBlock';
 import { VimChallenge } from '@/components/challenge/VimChallenge';
 import { RunExamplePlayer } from '@/components/example/RunExamplePlayer';
 import { HjklSnakeGame } from '@/components/minigame/HjklSnakeGame';
+import { Game2048Game } from '@/components/minigame/Game2048Game';
 import { useTranslationSafe } from '@/hooks/useI18n';
 import { useLocale } from '@/hooks/useI18n';
 
@@ -83,6 +84,9 @@ export const LessonView = ({ lesson, onNext, onPrev }: LessonViewProps) => {
         }
         if (block.type === 'hjkl-snake') {
           return <HjklSnakeGame key={reactKey} config={block.config} />;
+        }
+        if (block.type === 'game-2048') {
+          return <Game2048Game key={reactKey} config={block.config} />;
         }
         return null;
       })}
