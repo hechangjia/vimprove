@@ -5,6 +5,9 @@ import { CATEGORIES } from './categories';
 import { modesBasics } from './lessons/chapter1/modes-basics';
 import { motionsHjkl } from './lessons/chapter1/motions-hjkl';
 import { motionsLineBounds } from './lessons/chapter1/motions-line-bounds';
+import { motionsFileBounds } from './lessons/chapter1/motions-file-bounds';
+import { motionsParagraph } from './lessons/chapter1/motions-paragraph';
+import { motionsBracketMatch } from './lessons/chapter1/motions-bracket-match';
 import { modesMovementMiniReview } from './lessons/chapter1/modes-movement-mini-review';
 import { hjklSnake } from './lessons/chapter1/hjkl-snake';
 
@@ -21,6 +24,8 @@ import { operatorChangeBasic } from './lessons/chapter3/operator-change-basic';
 import { operatorYankBasic } from './lessons/chapter3/operator-yank-basic';
 import { countRepeatUndo } from './lessons/chapter3/count-repeat-undo';
 import { operatorsMiniReview } from './lessons/chapter3/operators-mini-review';
+import { operatorShortcuts } from './lessons/chapter3/operator-shortcuts';
+import { operatorCase } from './lessons/chapter3/operator-case';
 import { game2048 } from './lessons/chapter3/game-2048';
 
 // Chapter 4: In-line Find/Till & Precise Edits
@@ -49,6 +54,9 @@ export const LESSONS: Lesson[] = [
   modesBasics,
   motionsHjkl,
   motionsLineBounds,
+  motionsFileBounds,
+  motionsParagraph,
+  motionsBracketMatch,
   modesMovementMiniReview,
   hjklSnake,
   motionsWords,
@@ -63,6 +71,8 @@ export const LESSONS: Lesson[] = [
   operatorYankBasic,
   countRepeatUndo,
   operatorsMiniReview,
+  operatorShortcuts,
+  operatorCase,
   game2048,
 
   // Chapter 4: In-line Find/Till & Precise Edits
