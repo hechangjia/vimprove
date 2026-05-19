@@ -53,7 +53,7 @@ It demonstrates how operator + motion pairs read like short sentences you can st
           '    std::cout << total << "\\n";',
           '}'
         ],
-        initialCursor: { line: 3, col: 4 },
+        initialCursor: { line: 3, col: 0 },
         autoPlaySpeed: 900,
         tracks: [
           { label: 'Operator mini workflow', keys: [] }

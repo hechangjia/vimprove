@@ -57,9 +57,9 @@ It shows how the delete operator follows whatever motion you pair with it.`
           { key: 'd', description: 'd: start the delete operator.', cursorIndex: 0 },
           { key: 'w', description: 'w: dw – delete the word "debugValue".', cursorIndex: 0 },
 
-          { key: 'w', description: 'w: move to the comment start "//".', cursorIndex: 0 },
+          { key: 'w', description: 'w: advance one word so the cursor moves further along the line.', cursorIndex: 0 },
           { key: 'd', description: 'd: start another delete.', cursorIndex: 0 },
-          { key: '$', description: '$: d$ – delete from here to end of line.', cursorIndex: 0 }
+          { key: '$', description: '$: d$ – delete from here to end of line (wipes the trailing comment).', cursorIndex: 0 }
         ]
       }
     },
@@ -101,8 +101,10 @@ It shows how the delete operator follows whatever motion you pair with it.`
             type: 'delete',
             description: 'Remove the word "debug" from the comment on the value line.',
             validator: (prev, next) => {
-              const text = next.buffer.join('\n');
-              return !text.includes('debug value') && !text.includes('debug');
+              if (next.buffer.length < 4) return false;
+              const line = next.buffer[3];
+              // 精确到注释段：变量声明保持 `int value = 42;` 不变，注释里不能再含 `debug`。
+              return line.includes('int value = 42;') && !line.includes('debug');
             }
           },
           {

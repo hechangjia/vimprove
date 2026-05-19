@@ -15,24 +15,34 @@ type View = 'home' | 'lesson';
 const CURRENT_LESSON_KEY = 'vimprove_current_lesson';
 const LEGACY_LEARNING_STARTED_KEY = 'vimprove_learning_started'; // For migration
 
-const App = () => {
-  // Migrate legacy localStorage key
-  const legacyStarted = localStorage.getItem(LEGACY_LEARNING_STARTED_KEY);
-  const currentSaved = localStorage.getItem(CURRENT_LESSON_KEY);
-  if (legacyStarted === 'true' && !currentSaved) {
-    // Migrate: assume user was at first lesson
-    localStorage.setItem(CURRENT_LESSON_KEY, LESSONS[0].slug);
-    localStorage.removeItem(LEGACY_LEARNING_STARTED_KEY);
+// 在模块加载阶段执行一次性的 localStorage 迁移，避免在 render body 中产生副作用
+// （render body 在 StrictMode 下会双跑，且违反 React 纯渲染规范）。
+const readInitialLessonState = (): { view: View; slug: string } => {
+  if (typeof window === 'undefined') {
+    return { view: 'home', slug: LESSONS[0].slug };
   }
+  try {
+    const legacyStarted = window.localStorage.getItem(LEGACY_LEARNING_STARTED_KEY);
+    const currentSaved = window.localStorage.getItem(CURRENT_LESSON_KEY);
+    if (legacyStarted === 'true' && !currentSaved) {
+      window.localStorage.setItem(CURRENT_LESSON_KEY, LESSONS[0].slug);
+      window.localStorage.removeItem(LEGACY_LEARNING_STARTED_KEY);
+      return { view: 'lesson', slug: LESSONS[0].slug };
+    }
+    if (currentSaved && LESSONS.some(l => l.slug === currentSaved)) {
+      return { view: 'lesson', slug: currentSaved };
+    }
+  } catch {
+    // localStorage 不可用（隐私模式）时静默回退到首页。
+  }
+  return { view: 'home', slug: LESSONS[0].slug };
+};
 
-  // Load last lesson from localStorage
-  const savedLessonSlug = localStorage.getItem(CURRENT_LESSON_KEY);
-  const hasValidSavedLesson = savedLessonSlug && LESSONS.some(l => l.slug === savedLessonSlug);
+const App = () => {
+  const [{ view: initialView, slug: initialSlug }] = useState(readInitialLessonState);
 
-  const [currentView, setCurrentView] = useState<View>(hasValidSavedLesson ? 'lesson' : 'home');
-  const [currentLessonSlug, setCurrentLessonSlug] = useState(
-    hasValidSavedLesson ? savedLessonSlug : LESSONS[0].slug
-  );
+  const [currentView, setCurrentView] = useState<View>(initialView);
+  const [currentLessonSlug, setCurrentLessonSlug] = useState(initialSlug);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { t } = useTranslationSafe('layout');
 
@@ -41,10 +51,8 @@ const App = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      // Auto-open sidebar on desktop (md breakpoint is 768px)
-      if (window.innerWidth >= 768) {
-        setSidebarOpen(true);
-      }
+      // 桌面端默认展开，移动端默认收起；resize 时双向同步。
+      setSidebarOpen(window.innerWidth >= 768);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -57,9 +65,8 @@ const App = () => {
   // Scroll to top when lesson changes
   useEffect(() => {
     if (currentView === 'lesson') {
-      // Use requestAnimationFrame to ensure DOM has updated (Firefox compatibility)
       requestAnimationFrame(() => {
-        const scrollContainer = document.querySelector('.flex-1.h-screen.overflow-y-auto');
+        const scrollContainer = document.querySelector('[data-scroll-container]');
         if (scrollContainer) {
           scrollContainer.scrollTop = 0;
         }
@@ -138,7 +145,7 @@ const App = () => {
           isVisible={currentView === 'lesson'}
         />
 
-        <div className="flex-1 h-screen overflow-y-auto bg-background relative">
+        <div className="flex-1 h-screen overflow-y-auto bg-background relative" data-scroll-container>
           {currentView === 'home' ? (
             <HomePage onStart={handleStartLearning} />
           ) : (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronRight, ChevronDown, Languages, GitBranch } from 'lucide-react';
 import { CATEGORIES } from '@/data';
 import type { Lesson } from '@/core/types';
@@ -28,6 +28,33 @@ export const Sidebar = ({
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isBranchOpen, setIsBranchOpen] = useState(false);
   const translateLessons = locale !== 'en';
+  const langMenuRef = useRef<HTMLDivElement>(null);
+  const branchMenuRef = useRef<HTMLDivElement>(null);
+
+  // 点击外部 / Esc 关闭语言菜单与分支菜单。
+  useEffect(() => {
+    if (!isLangOpen && !isBranchOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (isLangOpen && langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) {
+        setIsLangOpen(false);
+      }
+      if (isBranchOpen && branchMenuRef.current && !branchMenuRef.current.contains(e.target as Node)) {
+        setIsBranchOpen(false);
+      }
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsLangOpen(false);
+        setIsBranchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [isLangOpen, isBranchOpen]);
   const branchOptions = [
     { key: 'release' as const, label: t('branchRelease', 'Release'), url: BRANCH_LINKS.release.url, version: BRANCH_LINKS.release.version },
     { key: 'alpha' as const, label: t('branchAlpha', 'Alpha'), url: BRANCH_LINKS.alpha.url, version: BRANCH_LINKS.alpha.version }
@@ -94,7 +121,7 @@ export const Sidebar = ({
 
       <div className="border-t border-border px-4 py-3 bg-surface-2/50 space-y-3">
         <div className="grid grid-cols-2 gap-2 items-center">
-          <div className="relative">
+          <div className="relative" ref={branchMenuRef}>
             <button
               onClick={() => setIsBranchOpen(open => !open)}
               className="w-full flex items-center gap-2 justify-center bg-surface border border-border rounded-lg px-3 py-2 text-sm text-foreground hover:border-primary transition-colors whitespace-nowrap"
@@ -112,9 +139,9 @@ export const Sidebar = ({
                   <button
                     key={opt.key}
                     onClick={() => {
+                      setIsBranchOpen(false);
                       if (!opt.url) return;
                       window.location.href = opt.url;
-                      setIsBranchOpen(false);
                     }}
                     disabled={!opt.url}
                     className={`w-full text-left px-3 py-2 text-sm transition-colors ${
@@ -134,7 +161,7 @@ export const Sidebar = ({
               </div>
             )}
           </div>
-          <div className="relative">
+          <div className="relative" ref={langMenuRef}>
             <button
               onClick={() => setIsLangOpen(open => !open)}
               className="w-full flex items-center gap-2 justify-center bg-surface border border-border rounded-lg px-3 py-2 text-sm text-foreground hover:border-primary transition-colors whitespace-nowrap"

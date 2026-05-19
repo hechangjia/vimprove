@@ -2,7 +2,7 @@
   "title": "按键历史",
   "subtitle": "实时记录所有按键动作",
   "empty": "还没有按键记录",
-  "truncated": "仅显示最近 {{count}} 条，共 {{total}} 条",
+  "truncated": "仅显示最近 {{count}} 条，共 {{total}} 条命令",
   "cancelled": "已取消",
   "ignored": "无效果",
   "replay": "重放",

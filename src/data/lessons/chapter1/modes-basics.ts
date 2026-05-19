@@ -68,11 +68,13 @@ Watch how Insert changes the buffer immediately, while Esc drops you back to com
         ],
         steps: [
           { key: 'i', description: 'i: enter Insert mode before "int".', cursorIndex: 0 },
-          { key: '/', description: 'Type "/" – the code changes while in Insert.', cursorIndex: 0 },
+          { key: '/', description: 'Type "/" – any character you type appears immediately in Insert mode.', cursorIndex: 0 },
+          { key: '/', description: 'Type "/" again to make "//", a real C++ comment marker.', cursorIndex: 0 },
           { key: 'Escape', description: 'Escape: go back to Normal mode.', cursorIndex: 0 },
           { key: '$', description: '$: jump to the end of the line in Normal mode.', cursorIndex: 0 },
           { key: 'a', description: 'a: enter Insert mode after the semicolon.', cursorIndex: 0 },
-          { key: '/', description: 'Type "/" to start a trailing comment.', cursorIndex: 0 },
+          { key: '/', description: 'Type "/" to start a trailing comment marker.', cursorIndex: 0 },
+          { key: '/', description: 'Type "/" again to complete "//".', cursorIndex: 0 },
           { key: 'Escape', description: 'Escape: return to Normal again.', cursorIndex: 0 }
         ]
       }

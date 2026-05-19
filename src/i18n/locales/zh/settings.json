@@ -17,7 +17,16 @@
     "supportMatrix": "命令支持矩阵",
     "supported": "支持",
     "partial": "部分支持",
-    "notSupported": "不支持"
+    "notSupported": "不支持",
+    "category": {
+      "basicMotions": "基础移动",
+      "findTill": "行内查找",
+      "search": "搜索",
+      "operators": "操作符",
+      "textObjects": "文本对象",
+      "insertMode": "插入模式",
+      "notSupported": "暂不支持"
+    }
   },
   "playground": {
     "tab": "练习场",

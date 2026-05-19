@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Menu, X, Settings, Github, SkipBack, SkipForward, Languages } from 'lucide-react';
 import { useTranslationSafe, useLocale } from '@/hooks/useI18n';
 import { supportedLocales } from '@/i18n';
@@ -27,34 +27,53 @@ export const MobileHeader = ({
   const { t } = useTranslationSafe('layout');
   const { locale, setLocale } = useLocale();
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  // lastScrollY 仅在 scroll 回调里读写，放进 ref 避免触发 effect 反复 detach/attach。
+  const lastScrollYRef = useRef(0);
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
+
+  // 点击外部 / Esc 关闭语言菜单。
+  useEffect(() => {
+    if (!isLangOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) {
+        setIsLangOpen(false);
+      }
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsLangOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [isLangOpen]);
 
   useEffect(() => {
-    // Find the scrollable content container
-    const scrollContainer = document.querySelector('.flex-1.h-screen.overflow-y-auto') as HTMLElement;
+    // 通过显式契约 data-scroll-container 找滚动容器，避免依赖 Tailwind 类名组合。
+    const scrollContainer = document.querySelector('[data-scroll-container]') as HTMLElement | null;
     if (!scrollContainer) return;
 
     const handleScroll = () => {
       const currentScrollY = scrollContainer.scrollTop;
+      const lastScrollY = lastScrollYRef.current;
 
       if (currentScrollY < 10) {
-        // At top, always show header
         setIsHeaderVisible(true);
       } else if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        // Scrolling down, hide header (only after scrolling past 50px)
         setIsHeaderVisible(false);
       } else if (currentScrollY < lastScrollY) {
-        // Scrolling up, show header
         setIsHeaderVisible(true);
       }
 
-      setLastScrollY(currentScrollY);
+      lastScrollYRef.current = currentScrollY;
     };
 
     scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
     return () => scrollContainer.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   if (!isVisible) return null;
 
@@ -96,7 +115,7 @@ export const MobileHeader = ({
             </button>
           )}
           {/* Language Switcher */}
-          <div className="relative">
+          <div className="relative" ref={langMenuRef}>
             <button
               onClick={() => setIsLangOpen(!isLangOpen)}
               className="p-2 hover:bg-surface-3 rounded-lg transition-colors"

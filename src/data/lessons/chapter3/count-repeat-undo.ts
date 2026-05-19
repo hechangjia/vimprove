@@ -54,9 +54,9 @@ and finally use **u** / **Ctrl-r** to demonstrate undo and redo on the repeated 
           { label: 'Counts + dot + undo', keys: [] }
         ],
         steps: [
-          { key: 'w', description: 'w: jump to "int".', cursorIndex: 0 },
-          { key: 'w', description: 'w: jump to "value1".', cursorIndex: 0 },
-          { key: 'w', description: 'w: jump to "0;".', cursorIndex: 0 },
+          { key: 'w', description: 'w: jump from "int" to "value1".', cursorIndex: 0 },
+          { key: 'w', description: 'w: skip "value1" and land on "=".', cursorIndex: 0 },
+          { key: 'w', description: 'w: jump to "0" of "0;".', cursorIndex: 0 },
           { key: 'c', description: 'c: start a change on the initializer.', cursorIndex: 0 },
           { key: 'w', description: 'w: cw – delete "0;".', cursorIndex: 0 },
           { key: '4', description: 'Type "4" in Insert mode.', cursorIndex: 0 },

@@ -5,12 +5,14 @@ type SupportStatus = 'full' | 'partial' | 'none';
 
 type CommandCategory = {
   name: string;
+  nameKey: string;
   commands: { cmd: string; status: SupportStatus; note?: string }[];
 };
 
 const COMMAND_MATRIX: CommandCategory[] = [
   {
     name: 'Basic Motions',
+    nameKey: 'vimStatus.category.basicMotions',
     commands: [
       { cmd: 'h j k l', status: 'full' },
       { cmd: '0 ^ $ _', status: 'full' },
@@ -21,6 +23,7 @@ const COMMAND_MATRIX: CommandCategory[] = [
   },
   {
     name: 'Find/Till',
+    nameKey: 'vimStatus.category.findTill',
     commands: [
       { cmd: 'f F t T', status: 'full' },
       { cmd: '; ,', status: 'full' },
@@ -28,6 +31,7 @@ const COMMAND_MATRIX: CommandCategory[] = [
   },
   {
     name: 'Search',
+    nameKey: 'vimStatus.category.search',
     commands: [
       { cmd: '/ ?', status: 'full' },
       { cmd: 'n N', status: 'full' },
@@ -36,6 +40,7 @@ const COMMAND_MATRIX: CommandCategory[] = [
   },
   {
     name: 'Operators',
+    nameKey: 'vimStatus.category.operators',
     commands: [
       { cmd: 'd c y', status: 'full' },
       { cmd: 'dd yy', status: 'full' },
@@ -47,6 +52,7 @@ const COMMAND_MATRIX: CommandCategory[] = [
   },
   {
     name: 'Text Objects',
+    nameKey: 'vimStatus.category.textObjects',
     commands: [
       { cmd: 'iw aw', status: 'full' },
       { cmd: 'ip ap', status: 'full' },
@@ -56,6 +62,7 @@ const COMMAND_MATRIX: CommandCategory[] = [
   },
   {
     name: 'Insert Mode',
+    nameKey: 'vimStatus.category.insertMode',
     commands: [
       { cmd: 'i a I A', status: 'full' },
       { cmd: 'o O', status: 'full' },
@@ -64,6 +71,7 @@ const COMMAND_MATRIX: CommandCategory[] = [
   },
   {
     name: 'Not Supported',
+    nameKey: 'vimStatus.category.notSupported',
     commands: [
       { cmd: 'Visual mode', status: 'none' },
       { cmd: 'Registers "a', status: 'none' },
@@ -149,7 +157,7 @@ export const VimStatusTab = () => {
               className="bg-surface-3/50 rounded-lg p-3"
             >
               <h4 className="text-sm font-medium text-foreground-subtle mb-2">
-                {category.name}
+                {t(category.nameKey, category.name)}
               </h4>
               <div className="space-y-1">
                 {category.commands.map((cmd, idx) => (

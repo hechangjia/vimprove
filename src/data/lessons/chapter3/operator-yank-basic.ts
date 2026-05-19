@@ -50,10 +50,10 @@ It highlights how y and p pair to move text without deleting the source.`
           { label: 'Yank + paste', keys: [] }
         ],
         steps: [
-          { key: 'w', description: 'w: jump to "name".', cursorIndex: 0 },
-          { key: 'w', description: 'w: jump to the string literal "\"Ada\"".', cursorIndex: 0 },
-          { key: 'y', description: 'y: start the yank operator on the string.', cursorIndex: 0 },
-          { key: 'w', description: 'w: yw – yank the word "\"Ada\"".', cursorIndex: 0 },
+          { key: 'w', description: 'w: move forward by word — punctuation like :: counts as its own chunk.', cursorIndex: 0 },
+          { key: 'w', description: 'w: keep advancing toward the string literal on this line.', cursorIndex: 0 },
+          { key: 'y', description: 'y: start the yank operator (waiting for a motion).', cursorIndex: 0 },
+          { key: 'w', description: 'w: yw – yank the chunk at the cursor.', cursorIndex: 0 },
 
           { key: 'j', description: 'j: move down to the "copy" line.', cursorIndex: 0 },
           { key: '$', description: '$: jump to the end of the line (after ";").', cursorIndex: 0 },

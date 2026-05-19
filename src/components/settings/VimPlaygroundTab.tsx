@@ -239,7 +239,6 @@ export const VimPlaygroundTab = () => {
         <input
           type="text"
           className="opacity-0 absolute top-0 left-0 h-0 w-0"
-          autoFocus
           onKeyDown={handleKeyDown}
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}

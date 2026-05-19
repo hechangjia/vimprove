@@ -60,9 +60,9 @@ This shows how x/r/s keep you in flow without a long insert session.`
           { label: 'Fix with r and x', keys: [] }
         ],
         steps: [
-          { key: 'l', description: 'l: move to the wrong letter "u".', cursorIndex: 0 },
-          { key: 'l', description: 'l: move to the wrong letter "u".', cursorIndex: 0 },
-          { key: 'l', description: 'l: move to the wrong letter "u".', cursorIndex: 0 },
+          { key: 'l', description: 'l: step right one character.', cursorIndex: 0 },
+          { key: 'l', description: 'l: step right again.', cursorIndex: 0 },
+          { key: 'l', description: 'l: now the cursor lands on the wrong letter "u".', cursorIndex: 0 },
           { key: 'r', description: 'r: prepare to replace "u".', cursorIndex: 0 },
           { key: 'i', description: 'Type "i" to fix "actuve" → "active".', cursorIndex: 0 },
           { key: 'j', description: 'j: move down to line 2.', cursorIndex: 0 },

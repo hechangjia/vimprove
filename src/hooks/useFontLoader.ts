@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type FontConfig = {
   name: string;
@@ -20,10 +20,19 @@ export const FONT_CONFIGS: FontConfig[] = [
 ];
 
 const loadedFonts = new Set<string>();
+const pendingLinks = new Map<string, HTMLLinkElement>();
 
 export function useFontLoader(fontName: string) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     const config = FONT_CONFIGS.find(f => f.name === fontName);
@@ -44,25 +53,33 @@ export function useFontLoader(fontName: string) {
       return;
     }
 
-    // Load Google Font
     if (config.googleFont) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = `https://fonts.googleapis.com/css2?family=${config.googleFont}&display=swap`;
+      // 复用已 pending 的 link，避免 StrictMode 双 mount 时插入两份相同 <link>。
+      let link = pendingLinks.get(fontName);
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = `https://fonts.googleapis.com/css2?family=${config.googleFont}&display=swap`;
+        pendingLinks.set(fontName, link);
+        document.head.appendChild(link);
+      }
 
-      link.onload = () => {
+      const handleLoad = () => {
         loadedFonts.add(fontName);
-        setIsLoaded(true);
+        pendingLinks.delete(fontName);
+        if (isMountedRef.current) setIsLoaded(true);
+      };
+      const handleError = () => {
+        pendingLinks.delete(fontName);
+        if (isMountedRef.current) setError(true);
       };
 
-      link.onerror = () => {
-        setError(true);
-      };
-
-      document.head.appendChild(link);
+      link.addEventListener('load', handleLoad);
+      link.addEventListener('error', handleError);
 
       return () => {
-        // Keep fonts loaded (don't remove)
+        link.removeEventListener('load', handleLoad);
+        link.removeEventListener('error', handleError);
       };
     }
   }, [fontName]);

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { tokenizeLine, getTokenClassName } from '@/core/syntaxHighlight';
 import type { EditorSettings } from '@/hooks/useSettings';
 import { useTranslationSafe, useLocale } from '@/hooks/useI18n';
@@ -17,7 +18,15 @@ export const AppearanceTab = ({ settings, theme, onUpdate, onUpdateTheme }: Appe
   const { locale, setLocale } = useLocale();
   useFontLoader(settings.fontFamily);
 
-  const isMobile = window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const renderPreview = () => {
     const code = isMobile

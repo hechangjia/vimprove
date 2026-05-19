@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Terminal, Play, Keyboard, Trophy, Code2, Languages, ChevronDown } from 'lucide-react';
 import { VERSION, VERSION_LABEL } from '@/version';
 import { useTranslationSafe, useLocale } from '@/hooks/useI18n';
@@ -12,6 +12,26 @@ export const HomePage = ({ onStart }: HomePageProps) => {
   const { t } = useTranslationSafe('home');
   const { locale, setLocale } = useLocale();
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
+
+  // 点击外部 / 按 Esc 关闭语言菜单，避免只能靠再次点击按钮才能合上。
+  useEffect(() => {
+    if (!isLangOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) {
+        setIsLangOpen(false);
+      }
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsLangOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [isLangOpen]);
 
   const features = [
     {
@@ -40,7 +60,7 @@ export const HomePage = ({ onStart }: HomePageProps) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] text-center max-w-2xl mx-auto px-6 animate-in fade-in duration-500 relative">
       <div className="w-full flex justify-end mb-6">
-        <div className="relative">
+        <div className="relative" ref={langMenuRef}>
           <button
             onClick={() => setIsLangOpen(open => !open)}
             className="flex items-center gap-2 bg-surface/80 border border-border text-foreground rounded-full px-3 py-1.5 text-sm hover:border-primary transition-colors"
