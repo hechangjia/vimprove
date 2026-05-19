@@ -18,6 +18,11 @@ import {
   recordKey,
   startRecording,
 } from './stateUtils';
+import {
+  applyCaseOperatorLinewise,
+  applyCaseOperatorWithMotion,
+  applyCaseRange,
+} from './caseOperators';
 
 const buildTextObjectMotion = (prefix: 'i' | 'a', key: string): TextObject | null => {
   const mapping: Record<string, string> = {
@@ -770,7 +775,7 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
     return { ...state, count: '' };
   }
 
-  if (key === 'u' && !ctrlKey && !pendingReplace) {
+  if (key === 'u' && !ctrlKey && !pendingReplace && !state.pendingG && !pendingOperator) {
     if (state.historyIndex > 0) {
       const currentSnapshot = state.history[state.historyIndex];
       let targetIndex = state.historyIndex - 1;
@@ -959,6 +964,18 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
     if (key === 'i' || key === 'a') {
       const recorded = recordKey(state, key, ctrlKey || false);
       return { ...recorded, pendingTextObject: key as 'i' | 'a' };
+    }
+
+    if (operator === 'gu' || operator === 'gU' || operator === 'g~') {
+      const op = operator;
+      // Linewise: guu / gUU / g~~
+      if ((op === 'gu' && key === 'u') || (op === 'gU' && key === 'U') || (op === 'g~' && key === '~')) {
+        return applyCaseOperatorLinewise(state, op);
+      }
+      if (['h', 'j', 'k', 'l', 'w', 'b', 'e', 'W', 'B', 'E', '0', '$', '^', '_', '{', '}', '%'].includes(key)) {
+        return applyCaseOperatorWithMotion(state, key, op);
+      }
+      return { ...state, pendingOperator: null, count: '' };
     }
 
     if (['h', 'j', 'k', 'l', 'w', 'b', 'e', '0', '$', '^', '_', 'W', 'B', 'E', '{', '}', '%', 'G'].includes(key)) {
@@ -1173,6 +1190,29 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
       };
     }
     return { ...state, count: '' };
+  }
+
+  // ~ — toggle case of N chars under cursor and move right
+  if (key === '~') {
+    const lineText = buffer[cursor.line] ?? '';
+    if (cursor.col >= lineText.length) return { ...state, count: '' };
+    const count = getCount(state);
+    const endCol = Math.min(lineText.length - 1, cursor.col + count - 1);
+    const stateWithHistory = pushHistory(state);
+    const newBuffer = applyCaseRange(
+      buffer,
+      cursor,
+      { line: cursor.line, col: endCol },
+      'toggle',
+    );
+    const newCol = Math.min(endCol + 1, Math.max(0, (newBuffer[cursor.line]?.length ?? 0) - 1));
+    return {
+      ...stateWithHistory,
+      buffer: newBuffer,
+      cursor: { line: cursor.line, col: Math.max(0, newCol) },
+      count: '',
+      lastCommand: { type: 'delete-char' },
+    };
   }
 
   // ----- Uppercase shortcuts: D = d$, C = c$, Y = yy -----
