@@ -127,6 +127,10 @@ then use \`n\` and \`.\` to repeat the same change on the remaining occurrences.
           }
         ]
       }
+    },
+    {
+      type: 'cheat-sheet',
+      config: { chapterId: 'chapter6' }
     }
   ]
 };

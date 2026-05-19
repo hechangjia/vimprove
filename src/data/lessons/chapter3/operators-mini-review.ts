@@ -162,6 +162,10 @@ It demonstrates how operator + motion pairs read like short sentences you can st
           }
         ]
       }
+    },
+    {
+      type: 'cheat-sheet',
+      config: { chapterId: 'chapter3' }
     }
   ]
 };

@@ -133,6 +133,10 @@ then drop another comment below. It highlights the Normal → Insert → Normal 
           }
         ]
       }
+    },
+    {
+      type: 'cheat-sheet',
+      config: { chapterId: 'chapter1' }
     }
   ]
 };

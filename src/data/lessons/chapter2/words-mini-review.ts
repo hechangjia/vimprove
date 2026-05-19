@@ -127,6 +127,10 @@ Watch how word and WORD motions reach targets in far fewer keystrokes than singl
           }
         ]
       }
+    },
+    {
+      type: 'cheat-sheet',
+      config: { chapterId: 'chapter2' }
     }
   ]
 };

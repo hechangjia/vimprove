@@ -136,6 +136,10 @@ and use \`ct)\` to replace the remaining arguments with a single \`42\`, without
           }
         ]
       }
+    },
+    {
+      type: 'cheat-sheet',
+      config: { chapterId: 'chapter4' }
     }
   ]
 };

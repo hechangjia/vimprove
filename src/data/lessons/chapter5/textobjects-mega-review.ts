@@ -171,6 +171,10 @@ It shows how different text objects can be combined back-to-back to reshape stru
           }
         ]
       }
+    },
+    {
+      type: 'cheat-sheet',
+      config: { chapterId: 'chapter5' }
     }
   ]
 };

@@ -30,5 +30,9 @@
       "silver": "白银（512）",
       "gold": "黄金（2048）"
     }
+  },
+  "cheatSheet": {
+    "download": "把这张卡片存下来",
+    "exporting": "正在生成图片…"
   }
 }
