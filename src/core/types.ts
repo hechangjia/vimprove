@@ -5,9 +5,16 @@ export type Cursor = {
 
 export type Mode = 'normal' | 'insert';
 
-export type Operator = 'd' | 'c' | 'y';
+export type Operator = 'd' | 'c' | 'y' | 'gu' | 'gU' | 'g~';
 
-export type Motion = 'h' | 'j' | 'k' | 'l' | 'w' | 'b' | 'e' | '0' | '$' | '^' | '_' | 'W' | 'B' | 'E';
+export type Motion =
+  | 'h' | 'j' | 'k' | 'l'
+  | 'w' | 'b' | 'e'
+  | 'W' | 'B' | 'E'
+  | '0' | '$' | '^' | '_'
+  | 'gg' | 'G'
+  | '{' | '}'
+  | '%';
 
 export type TextObject =
   | 'iw' | 'aw'
@@ -152,13 +159,20 @@ export type Game2048Config = {
   goldTile?: number;    // 默认 2048
 };
 
+export type CheatSheetConfig = {
+  chapterId: string;       // 'chapter1' | 'chapter3' | ...
+  title?: string;          // 可选覆盖默认 "Chapter X — Cheat Sheet"
+  // entries 由组件根据 chapterId 在运行时从 LESSONS 聚合
+};
+
 export type ContentBlock =
   | { type: 'markdown'; content: string; i18nKey?: string }
   | { type: 'key-list'; keys: KeyItem[]; i18nKey?: string }
   | { type: 'challenge'; config: ChallengeConfig; i18nKey?: string }
   | { type: 'run-example'; config: RunExampleConfig; i18nKey?: string }
   | { type: 'hjkl-snake'; config?: HjklSnakeGameConfig; i18nKey?: string }
-  | { type: 'game-2048'; config?: Game2048Config; i18nKey?: string };
+  | { type: 'game-2048'; config?: Game2048Config; i18nKey?: string }
+  | { type: 'cheat-sheet'; config: CheatSheetConfig; i18nKey?: string };
 
 export type KeyItem = {
   chars: string[];
