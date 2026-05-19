@@ -33,6 +33,9 @@ const expectedTypeForBlock = (blockType: string): 'string' | 'object' => {
   return 'object';
 };
 
+// Block types that don't carry translatable content (use dedicated UI namespaces).
+const SKIP_BLOCK_TYPES = new Set(['hjkl-snake', 'game-2048', 'cheat-sheet']);
+
 describe('i18n lesson translations structure', () => {
   LOCALES.forEach(locale => {
     const localeData = readLocaleLessons(locale);
@@ -56,6 +59,7 @@ describe('i18n lesson translations structure', () => {
 
         const content = entry.content as Record<string, unknown>;
         lesson.contentBlocks.forEach((block, idx) => {
+          if (SKIP_BLOCK_TYPES.has(block.type)) return;
           const key = String(idx);
           const val = content[key];
           expect(val, `content[${key}] missing for ${lesson.slug}`).toBeDefined();
