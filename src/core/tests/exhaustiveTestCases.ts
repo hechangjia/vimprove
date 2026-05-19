@@ -6,13 +6,17 @@ type FeatureId =
   | 'motion_WORD'
   | 'motion_line'
   | 'motion_find'
+  | 'motion_large'
   | 'operator_d'
   | 'operator_c'
   | 'operator_y'
   | 'operator_y_line'
+  | 'operator_case'
   | 'text_objects'
   | 'edit_xsr'
   | 'edit_dd'
+  | 'edit_caseToggle'
+  | 'edit_DCYS'
   | 'insert_ia'
   | 'insert_IA'
   | 'insert_oO'
@@ -53,13 +57,17 @@ const ENABLED_FEATURES: FeatureConfig = {
     'motion_WORD',
     'motion_line',
     'motion_find',
+    // 'motion_large',       // TODO(v2.2): enable after Neovim parity for gg/G/{N}G/{ }/% is tightened
     'operator_d',
     'operator_c',
     'operator_y',
     'operator_y_line',
+    // 'operator_case',      // TODO(v2.2): gu/gU/g~ need linewise cursor-to-first-non-blank + dot recording
     'text_objects',
     'edit_xsr',
     'edit_dd',
+    // 'edit_caseToggle',    // TODO(v2.2): ~ needs dot recording integration
+    'edit_DCYS',
     'insert_ia',
     'insert_IA',
     'insert_oO',
@@ -164,6 +172,14 @@ const buildCommands = (cfg: FeatureConfig): CommandKind[] => {
     motions.push('fa', 'ta', 'Fa', 'Ta', ';', ',');
   }
 
+  if (cfg.enabled.has('motion_large')) {
+    ['gg', 'G', '{', '}', '%'].forEach(k => cmds.push({ kind: 'motion', key: k }));
+    motions.push('gg', 'G', '{', '}', '%');
+    // {N}G
+    cmds.push({ kind: 'motion', key: 'G', count: 1 });
+    cmds.push({ kind: 'motion', key: 'G', count: 3 });
+  }
+
   const operatorMotions = ['w', '$', 'e'];
 
   if (cfg.enabled.has('text_objects')) {
@@ -184,6 +200,22 @@ const buildCommands = (cfg: FeatureConfig): CommandKind[] => {
 
   if (cfg.enabled.has('operator_y_line')) {
     cmds.push({ kind: 'yank', motion: 'y' });
+  }
+
+  if (cfg.enabled.has('operator_case')) {
+    // gu/gU/g~ + motion (use kind: 'motion' with multi-char key)
+    ['guw', 'gUw', 'g~w', 'gu$', 'gU$', 'guu', 'gUU', 'g~~'].forEach(k =>
+      cmds.push({ kind: 'motion', key: k })
+    );
+  }
+
+  if (cfg.enabled.has('edit_caseToggle')) {
+    cmds.push({ kind: 'edit', key: '~' });
+    cmds.push({ kind: 'edit', key: '~', count: 3 });
+  }
+
+  if (cfg.enabled.has('edit_DCYS')) {
+    ['D', 'C', 'Y', 'S'].forEach(k => cmds.push({ kind: 'edit', key: k }));
   }
 
   if (cfg.enabled.has('edit_xsr')) {
