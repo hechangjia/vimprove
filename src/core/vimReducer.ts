@@ -1175,6 +1175,38 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
     return { ...state, count: '' };
   }
 
+  // ----- Uppercase shortcuts: D = d$, C = c$, Y = yy -----
+  if (key === 'D' || key === 'C' || key === 'Y') {
+    const mapping: Record<string, [string, string]> = {
+      D: ['d', '$'],
+      C: ['c', '$'],
+      Y: ['y', 'y'],
+    };
+    const [first, second] = mapping[key];
+    const afterFirst = vimReducer(state, { type: 'KEYDOWN', payload: { key: first, ctrlKey } });
+    return vimReducer(afterFirst, { type: 'KEYDOWN', payload: { key: second, ctrlKey } });
+  }
+
+  // S = substitute line: clear current line, enter insert mode at col 0
+  if (key === 'S') {
+    const stateWithHistory = pushHistory(state);
+    const stateWithRecording = startRecording(stateWithHistory, key, ctrlKey || false);
+    const newBuffer = [...buffer];
+    const lineText = buffer[cursor.line] ?? '';
+    newBuffer[cursor.line] = '';
+    return {
+      ...stateWithRecording,
+      buffer: newBuffer,
+      cursor: { line: cursor.line, col: 0 },
+      mode: 'insert',
+      insertStart: { line: cursor.line, col: 0 },
+      insertCol: 0,
+      register: lineText + '\n',
+      count: '',
+      lastCommand: { type: 'enter-insert' },
+    };
+  }
+
   if (key === 's') {
     const stateWithHistory = pushHistory(state);
     const stateWithRecording = startRecording(stateWithHistory, key, ctrlKey || false);
