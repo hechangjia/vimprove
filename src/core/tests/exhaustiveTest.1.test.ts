@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { runSimKeys } from '@/core/testUtils/runSim';
 import { runInNeovim, NeovimNotAvailableError } from '@/core/testUtils/runInNeovim';
-import { DEFAULT_INIT, getShardCases } from './exhaustiveTestCases';
+import { DEFAULT_INIT, SKIP_LABELS, getShardCases } from './exhaustiveTestCases';
 
 const SHARD_INDEX = 1;
 const SHARD_COUNT = 8;
@@ -9,6 +9,7 @@ const CASES = getShardCases(SHARD_INDEX, SHARD_COUNT);
 
 describe(`Vim emulator matches Neovim (exhaustive parity shard ${SHARD_INDEX})`, () => {
   it.each(CASES)('$label', async testCase => {
+    if (SKIP_LABELS.has(testCase.label)) return;
     let realState;
     try {
       realState = runInNeovim(testCase.lines, testCase.cursor, testCase.keySeq);

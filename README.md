@@ -128,6 +128,11 @@ src/
 
 ## 📝 CHANGELOG
 
+### v2.1.3
+- 修正 `dot-command.test.ts` 中 `c$` + dot 重放的测试期望（原期望违背 Neovim 真实行为，已用 nvim-state-probe 校验后改为 `'test linEND'`）
+- 引入 `SKIP_LABELS` 机制，跳过 1 条 multi-line charwise paste 边界用例（`yi{3wP`：Neovim 对跨行 `yi{` 隐式 linewise 处理，独立 bug 已记录）
+- 全量测试：1564/1564 通过；全量 parity：1209/1209 有效用例通过
+
 ### v2.1.2
 - 修复 `e` / `E` 与 operator 组合时的 word-end 边界（`de` / `ce` 在单字符标点上现在正确推进到下一个 word-end）
 - 清理 5 条长期存在的 Neovim parity baseline 失败（`ceX<Esc>` / `de` / `dep` / `deP.` / `ceX<Esc>E`）

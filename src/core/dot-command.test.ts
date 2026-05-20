@@ -216,8 +216,11 @@ describe('Dot command (.) - repeat last change', () => {
       state = typeKeys(state, 'c$END<Esc>'); // change 'world' to 'END'
       expect(state.buffer[0]).toBe('hello END');
 
-      state = typeKeys(state, 'jw.'); // go to 'line' and repeat
-      expect(state.buffer[1]).toBe('test END');
+      // After c$END<Esc>, cursor is at (0, 8) on 'D'. j → (1, 8) on 'e' of 'line'.
+      // w → no next word on this line, cursor stays at (1, 8). Dot replays c$END:
+      // delete from col 8 (just 'e'), insert 'END' → 'test linEND' (matches Neovim).
+      state = typeKeys(state, 'jw.');
+      expect(state.buffer[1]).toBe('test linEND');
     });
 
     it('should repeat change with motion (cb)', () => {
