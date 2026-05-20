@@ -52,6 +52,17 @@
     "target": "Target",
     "emptyInput": "type..."
   },
+  "textObjectNinja": {
+    "title": "Text Object Ninja",
+    "score": "Score",
+    "misses": "Misses",
+    "restart": "Restart",
+    "focus": "Click to focus",
+    "complete": "Target score reached. Press r to restart.",
+    "prompt": "Type the Vim command to select the highlighted text.",
+    "target": "Target",
+    "emptyInput": "type..."
+  },
   "scrollSurfer": {
     "title": "Scroll Surfer",
     "score": "Score",

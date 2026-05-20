@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 graph TD
     A["(根) vimprove"] --> SRC["src"]
     SRC --> CORE["core - Vim 引擎（纯函数）"]
-    SRC --> DATA["data - 课程数据（69 节可见课程）"]
+    SRC --> DATA["data - 课程数据（76 节可见课程）"]
     SRC --> HOOKS["hooks - 业务逻辑封装"]
     SRC --> COMPONENTS["components - UI 组件"]
     SRC --> PAGES["pages - 页面壳"]
@@ -34,7 +34,7 @@ graph TD
 | 模块 | 路径 | 一句话职责 | 模块级文档 |
 | --- | --- | --- | --- |
 | core | `src/core/` | 纯函数 Vim 引擎：types / vimReducer / motions / operators / 工具 / 对拍测试 | [`src/core/CLAUDE.md`](./src/core/CLAUDE.md) |
-| data | `src/data/` | 配置驱动的课程内容（14 章 × 69 节可见课程） | [`src/data/CLAUDE.md`](./src/data/CLAUDE.md) |
+| data | `src/data/` | 配置驱动的课程内容（15 章 × 76 节可见课程） | [`src/data/CLAUDE.md`](./src/data/CLAUDE.md) |
 | hooks | `src/hooks/` | 业务 React Hook（引擎封装、挑战、进度、i18n、设置、按键历史等） | [`src/hooks/CLAUDE.md`](./src/hooks/CLAUDE.md) |
 | components | `src/components/` | UI 组件，按功能域分目录（common / lesson / challenge / example / minigame / layout / settings） | [`src/components/CLAUDE.md`](./src/components/CLAUDE.md) |
 | pages | `src/pages/` | 页面壳：HomePage / LessonPage | [`src/pages/CLAUDE.md`](./src/pages/CLAUDE.md) |
@@ -51,7 +51,7 @@ Vimprove 是一个交互式 Vim 学习网站。核心功能是通过浏览器中
 
 **当前状态**: ✅ 重构完成。项目已从单文件原型（`tmp/vimprove.html`）重构为模块化的 React + TypeScript 架构。
 
-**课程范围**: 已完成 Chapter 1-14（基础、进阶编辑、行内 find/till、文本对象、搜索/重构、Visual Mode、宏与寄存器、标记与跳转历史、真实世界 Vim 工作流、日常 Vim 熟练度、项目导航、屏幕导航、项目工作区），共 69 节可见课程。
+**课程范围**: 已完成 Chapter 1-15（基础、进阶编辑、行内 find/till、文本对象、搜索/重构、Visual Mode、宏与寄存器、标记与跳转历史、真实世界 Vim 工作流、日常 Vim 熟练度、项目导航、屏幕导航、项目工作区、VimGolf 挑战），共 76 节可见课程。
 
 **版本管理**: 版本号在 `src/version.ts` 和 `package.json` 中维护，CHANGELOG 见 `README.md`
 
@@ -397,6 +397,11 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 - Challenge UI 显示当前 buffer 名和 quickfix 面板。
 - Chapter 14 项目工作区课程，开始支持多文件项目任务训练。
 
+**v3.1.0 新增**:
+- Insert Mode shortcuts：`Ctrl-w` 删除前一词、`Ctrl-u` 删到行首、`Ctrl-t` / `Ctrl-d` 调整缩进。
+- Visual mode 支持 `viw` / `vaw` / `vi(`/`vi{` / `vi"` 等 text object 选择，供小游戏与课程训练使用。
+- Chapter 15 VimGolf 挑战课程与 Text Object Ninja 小游戏。
+
 ### ❌ 尚未支持
 
 - 完整 blockwise paste / block insert replay 语义（等待寄存器类型元数据）
@@ -549,7 +554,7 @@ ls src/data/lessons/chapter3/
 ### 当前已完成
 
 - ✅ 模块化架构（Core/Data/Hooks/Components）
-- ✅ 69 个可见课程（Chapter 1-14：基础、进阶、文本对象、搜索重构、Visual Mode、宏与寄存器、标记与跳转历史、真实世界 Vim 工作流、日常 Vim 熟练度、项目导航、屏幕导航、项目工作区）
+- ✅ 76 个可见课程（Chapter 1-15：基础、进阶、文本对象、搜索重构、Visual Mode、宏与寄存器、标记与跳转历史、真实世界 Vim 工作流、日常 Vim 熟练度、项目导航、屏幕导航、项目工作区、VimGolf 挑战）
 - ✅ 完整的 Vim 引擎（支持文本对象、搜索 `/ ? n N * #`、find/till、`.`、Command-line mode 基础、模拟 buffers/windows、屏幕导航、quickfix 项目搜索等命令）
 - ✅ Undo/Redo 系统
 - ✅ Yank/Paste 功能

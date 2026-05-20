@@ -6,9 +6,10 @@ import {
   applyOperatorWithTextObjectCount,
   buildRegisterText,
   deleteRange,
+  getTextObjectRange,
   isTextObjectMotion
 } from './operators';
-import { clampCursor, isWhitespace, isWordChar } from './utils';
+import { clampCursor, isWhitespace, isWordChar, deleteWordBackward } from './utils';
 import {
   clearPendingStates,
   finishRecording,
@@ -796,6 +797,77 @@ const handleInsertKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
   }
 
   const stateAfterRecord = recordKey(state, key, ctrlKey || false);
+
+  // Insert mode shortcuts
+  if (ctrlKey && key === 'w') {
+    // Ctrl-w: Delete word backward
+    const lineText = stateAfterRecord.buffer[cursor.line];
+    const insertCol = stateAfterRecord.insertCol ?? cursor.col;
+    const { newLine, newCol } = deleteWordBackward(lineText, insertCol);
+    const newBuffer = [...stateAfterRecord.buffer];
+    newBuffer[cursor.line] = newLine;
+    return {
+      ...stateAfterRecord,
+      buffer: newBuffer,
+      cursor: { ...cursor, col: newCol },
+      insertCol: newCol
+    };
+  }
+
+  if (ctrlKey && key === 'u') {
+    // Ctrl-u: Delete to line start
+    const lineText = stateAfterRecord.buffer[cursor.line];
+    const insertCol = stateAfterRecord.insertCol ?? cursor.col;
+    if (insertCol > 0) {
+      const newLine = lineText.slice(insertCol);
+      const newBuffer = [...stateAfterRecord.buffer];
+      newBuffer[cursor.line] = newLine;
+      return {
+        ...stateAfterRecord,
+        buffer: newBuffer,
+        cursor: { ...cursor, col: 0 },
+        insertCol: 0
+      };
+    }
+    return stateAfterRecord;
+  }
+
+  if (ctrlKey && key === 't') {
+    // Ctrl-t: Increase indent (add 2 spaces at line start)
+    const lineText = stateAfterRecord.buffer[cursor.line];
+    const insertCol = stateAfterRecord.insertCol ?? cursor.col;
+    const newLine = '  ' + lineText;
+    const newBuffer = [...stateAfterRecord.buffer];
+    newBuffer[cursor.line] = newLine;
+    const newInsertCol = insertCol + 2;
+    return {
+      ...stateAfterRecord,
+      buffer: newBuffer,
+      cursor: { ...cursor, col: newInsertCol },
+      insertCol: newInsertCol
+    };
+  }
+
+  if (ctrlKey && key === 'd') {
+    // Ctrl-d: Decrease indent (remove up to 2 spaces from line start)
+    const lineText = stateAfterRecord.buffer[cursor.line];
+    const insertCol = stateAfterRecord.insertCol ?? cursor.col;
+    let deleteCount = 0;
+    while (deleteCount < 2 && lineText[deleteCount] === ' ') deleteCount++;
+    if (deleteCount > 0) {
+      const newLine = lineText.slice(deleteCount);
+      const newBuffer = [...stateAfterRecord.buffer];
+      newBuffer[cursor.line] = newLine;
+      const newInsertCol = Math.max(0, insertCol - deleteCount);
+      return {
+        ...stateAfterRecord,
+        buffer: newBuffer,
+        cursor: { ...cursor, col: newInsertCol },
+        insertCol: newInsertCol
+      };
+    }
+    return stateAfterRecord;
+  }
 
   if (key === 'Backspace') {
     const lineText = stateAfterRecord.buffer[cursor.line];
@@ -1967,6 +2039,42 @@ const moveVisualCursor = (state: VimState, motion: Motion): VimState => {
   };
 };
 
+const visualCursorFromRange = (state: VimState, range: { start: Cursor; end: Cursor; isLinewise?: boolean }): Cursor => {
+  if (range.isLinewise) {
+    const lineText = state.buffer[range.end.line] ?? '';
+    return { line: range.end.line, col: Math.max(0, lineText.length - 1) };
+  }
+
+  if (range.start.line === range.end.line) {
+    return { line: range.end.line, col: Math.max(range.start.col, range.end.col - 1) };
+  }
+
+  if (range.end.col > 0) {
+    return { line: range.end.line, col: range.end.col - 1 };
+  }
+
+  const previousLine = Math.max(range.start.line, range.end.line - 1);
+  const previousLineText = state.buffer[previousLine] ?? '';
+  return { line: previousLine, col: Math.max(0, previousLineText.length - 1) };
+};
+
+const applyVisualTextObject = (state: VimState, motion: TextObject): VimState => {
+  const range = getTextObjectRange(state, motion);
+  if (!range) {
+    return { ...state, pendingTextObject: null, count: '' };
+  }
+
+  return {
+    ...state,
+    mode: range.isLinewise ? 'visual-line' : 'visual',
+    visualAnchor: { ...range.start },
+    cursor: visualCursorFromRange(state, range),
+    pendingTextObject: null,
+    count: '',
+    lastCommand: { type: 'move', motion }
+  };
+};
+
 const applyVisualOperator = (state: VimState, operator: 'd' | 'y' | 'c'): VimState => {
   if (state.mode === 'visual-block') {
     const { startLine, startCol } = getVisualBlockBounds(state);
@@ -2109,6 +2217,18 @@ const handleVisualKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
 
   if ((key === 'd' || key === 'y' || key === 'c') && !ctrlKey) {
     return applyVisualOperator(state, key);
+  }
+
+  if (state.pendingTextObject) {
+    const textObjectMotion = buildTextObjectMotion(state.pendingTextObject, key);
+    if (textObjectMotion) {
+      return applyVisualTextObject(state, textObjectMotion);
+    }
+    return { ...state, pendingTextObject: null, count: '' };
+  }
+
+  if ((key === 'i' || key === 'a') && state.mode === 'visual' && !ctrlKey) {
+    return { ...state, pendingTextObject: key };
   }
 
   if (state.pendingG) {

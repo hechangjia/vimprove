@@ -585,4 +585,154 @@ describe('vimReducer', () => {
       expect(result.buffer).toEqual(['hello']); // no changes
     });
   });
+
+  describe('Insert mode shortcuts', () => {
+    describe('Ctrl-w: Delete word backward', () => {
+      it('should delete word backward', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: [''], cursor: { line: 0, col: 0 } };
+        state = pressKey(state, 'i');
+        state = typeKeys(state, 'hello world');
+        expect(state.buffer[0]).toBe('hello world');
+        expect(state.insertCol).toBe(11);
+
+        state = pressKey(state, 'w', true); // Ctrl-w
+        expect(state.buffer[0]).toBe('hello ');
+        expect(state.insertCol).toBe(6);
+      });
+
+      it('should stop at punctuation when deleting word backward', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: [''], cursor: { line: 0, col: 0 } };
+        state = pressKey(state, 'i');
+        state = typeKeys(state, 'foo.bar');
+
+        state = pressKey(state, 'w', true); // Ctrl-w
+
+        expect(state.buffer[0]).toBe('foo.');
+        expect(state.insertCol).toBe(4);
+      });
+
+      it('should delete to line start if only whitespace before', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: [''], cursor: { line: 0, col: 0 } };
+        state = pressKey(state, 'i');
+        state = typeKeys(state, '   word');
+        expect(state.insertCol).toBe(7);
+
+        state = pressKey(state, 'w', true); // Ctrl-w
+        expect(state.buffer[0]).toBe('   ');
+        expect(state.insertCol).toBe(3);
+      });
+
+      it('should do nothing at line start', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: ['hello'], cursor: { line: 0, col: 0 } };
+        state = pressKey(state, 'i');
+        expect(state.insertCol).toBe(0);
+
+        state = pressKey(state, 'w', true); // Ctrl-w
+        expect(state.buffer[0]).toBe('hello');
+        expect(state.insertCol).toBe(0);
+      });
+    });
+
+    describe('Ctrl-u: Delete to line start', () => {
+      it('should delete to line start', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: ['hello world'], cursor: { line: 0, col: 0 } };
+        state = pressKey(state, 'A'); // go to end and enter insert
+        expect(state.insertCol).toBe(11);
+
+        state = pressKey(state, 'u', true); // Ctrl-u
+        expect(state.buffer[0]).toBe('');
+        expect(state.insertCol).toBe(0);
+      });
+
+      it('should delete partial line', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: ['hello world'], cursor: { line: 0, col: 5 } };
+        state = pressKey(state, 'i');
+        expect(state.insertCol).toBe(5);
+
+        state = pressKey(state, 'u', true); // Ctrl-u
+        expect(state.buffer[0]).toBe(' world');
+        expect(state.insertCol).toBe(0);
+      });
+
+      it('should do nothing at line start', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: ['hello'], cursor: { line: 0, col: 0 } };
+        state = pressKey(state, 'i');
+
+        state = pressKey(state, 'u', true); // Ctrl-u
+        expect(state.buffer[0]).toBe('hello');
+        expect(state.insertCol).toBe(0);
+      });
+    });
+
+    describe('Ctrl-t: Increase indent', () => {
+      it('should add 2 spaces at line start', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: ['hello'], cursor: { line: 0, col: 2 } };
+        state = pressKey(state, 'i');
+        expect(state.insertCol).toBe(2);
+
+        state = pressKey(state, 't', true); // Ctrl-t
+        expect(state.buffer[0]).toBe('  hello');
+        expect(state.insertCol).toBe(4);
+      });
+
+      it('should work at line start', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: ['hello'], cursor: { line: 0, col: 0 } };
+        state = pressKey(state, 'i');
+
+        state = pressKey(state, 't', true); // Ctrl-t
+        expect(state.buffer[0]).toBe('  hello');
+        expect(state.insertCol).toBe(2);
+      });
+
+      it('should work at line end', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: ['hello'], cursor: { line: 0, col: 5 } };
+        state = pressKey(state, 'a');
+        expect(state.insertCol).toBe(5);
+
+        state = pressKey(state, 't', true); // Ctrl-t
+        expect(state.buffer[0]).toBe('  hello');
+        expect(state.insertCol).toBe(7);
+      });
+    });
+
+    describe('Ctrl-d: Decrease indent', () => {
+      it('should remove 2 spaces from line start', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: ['    hello'], cursor: { line: 0, col: 4 } };
+        state = pressKey(state, 'i');
+        expect(state.insertCol).toBe(4);
+
+        state = pressKey(state, 'd', true); // Ctrl-d
+        expect(state.buffer[0]).toBe('  hello');
+        expect(state.insertCol).toBe(2);
+      });
+
+      it('should remove only 1 space if only 1 exists', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: [' hello'], cursor: { line: 0, col: 1 } };
+        state = pressKey(state, 'i');
+
+        state = pressKey(state, 'd', true); // Ctrl-d
+        expect(state.buffer[0]).toBe('hello');
+        expect(state.insertCol).toBe(0);
+      });
+
+      it('should do nothing if no leading spaces', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: ['hello'], cursor: { line: 0, col: 2 } };
+        state = pressKey(state, 'i');
+
+        state = pressKey(state, 'd', true); // Ctrl-d
+        expect(state.buffer[0]).toBe('hello');
+        expect(state.insertCol).toBe(2);
+      });
+
+      it('should adjust cursor when deleting indent', () => {
+        let state = { ...INITIAL_VIM_STATE, buffer: ['  hello'], cursor: { line: 0, col: 5 } };
+        state = pressKey(state, 'i');
+        expect(state.insertCol).toBe(5);
+
+        state = pressKey(state, 'd', true); // Ctrl-d
+        expect(state.buffer[0]).toBe('hello');
+        expect(state.insertCol).toBe(3); // 5 - 2 = 3
+      });
+    });
+  });
 });

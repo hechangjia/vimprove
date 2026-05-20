@@ -16,6 +16,7 @@ import { motionsWords } from './lessons/chapter2/motions-words';
 import { wordsFixSmallThings } from './lessons/chapter2/words-fix-small-things';
 import { motionsWORDs } from './lessons/chapter2/motions-words-big';
 import { smallEditsChars } from './lessons/chapter2/small-edits-chars';
+import { insertModeShortcuts } from './lessons/chapter2/insert-mode-shortcuts';
 import { wordsMiniReview } from './lessons/chapter2/words-mini-review';
 
 // Chapter 3: Advanced Editing
@@ -40,6 +41,7 @@ import { textobjectsParagraphs } from './lessons/chapter5/textobjects-paragraphs
 import { textobjectsBrackets } from './lessons/chapter5/textobjects-brackets';
 import { textobjectsQuotes } from './lessons/chapter5/textobjects-quotes';
 import { textobjectsMegaReview } from './lessons/chapter5/textobjects-mega-review';
+import { textobjectsNinjaGame } from './lessons/chapter5/textobjects-ninja-game';
 
 // Chapter 6: Search & Refactor
 import { searchBasic } from './lessons/chapter6/search-basic';
@@ -98,6 +100,9 @@ import { projectSearchVimgrep } from './lessons/chapter14/project-search-vimgrep
 import { quickfixNavigation } from './lessons/chapter14/quickfix-navigation';
 import { projectWorkspaceReview } from './lessons/chapter14/project-workspace-review';
 
+// Chapter 15: VimGolf Challenges
+import { vimgolfIntro, vimgolfBasicEditing, vimgolfTextObjects, vimgolfMacros, vimgolfAdvanced } from './lessons/chapter15/vimgolf-challenges';
+
 export { CATEGORIES };
 
 export const LESSONS: Lesson[] = [
@@ -114,6 +119,7 @@ export const LESSONS: Lesson[] = [
   wordsFixSmallThings,
   motionsWORDs,
   smallEditsChars,
+  insertModeShortcuts,
   wordsMiniReview,
 
   // Chapter 3: Advanced Editing
@@ -138,6 +144,7 @@ export const LESSONS: Lesson[] = [
   textobjectsBrackets,
   textobjectsQuotes,
   textobjectsMegaReview,
+  textobjectsNinjaGame,
 
   // Chapter 6: Search & Refactor
   searchBasic,
@@ -194,5 +201,12 @@ export const LESSONS: Lesson[] = [
   workspaceMentalModel,
   projectSearchVimgrep,
   quickfixNavigation,
-  projectWorkspaceReview
+  projectWorkspaceReview,
+
+  // Chapter 15: VimGolf Challenges
+  vimgolfIntro,
+  vimgolfBasicEditing,
+  vimgolfTextObjects,
+  vimgolfMacros,
+  vimgolfAdvanced
 ];

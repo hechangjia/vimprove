@@ -137,6 +137,32 @@ describe('Visual mode foundation', () => {
     expect(state.buffer).toEqual(['Bravoa beta']);
     expect(state.cursor).toEqual({ line: 0, col: 4 });
   });
+
+  it('selects the current inner word with viw', () => {
+    let state = pressKey(initialWith(['const foo = "bar";'], { line: 0, col: 6 }), 'v');
+    state = pressKey(state, 'i');
+    state = pressKey(state, 'w');
+
+    expect(state.mode).toBe('visual');
+    expect(state.visualAnchor).toEqual({ line: 0, col: 6 });
+    expect(state.cursor).toEqual({ line: 0, col: 8 });
+  });
+
+  it('selects inside delimiters with visual text objects', () => {
+    let paren = pressKey(initialWith(['foo(bar, baz)'], { line: 0, col: 5 }), 'v');
+    paren = pressKey(paren, 'i');
+    paren = pressKey(paren, '(');
+
+    expect(paren.visualAnchor).toEqual({ line: 0, col: 4 });
+    expect(paren.cursor).toEqual({ line: 0, col: 11 });
+
+    let quote = pressKey(initialWith(['const str = "hello world";'], { line: 0, col: 14 }), 'v');
+    quote = pressKey(quote, 'i');
+    quote = pressKey(quote, '"');
+
+    expect(quote.visualAnchor).toEqual({ line: 0, col: 13 });
+    expect(quote.cursor).toEqual({ line: 0, col: 23 });
+  });
 });
 
 describe('Visual-line mode foundation', () => {

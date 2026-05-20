@@ -3,7 +3,7 @@ import { getMotionTarget } from './motions';
 import { clampCursor, isWhitespace, isWordChar } from './utils';
 import { finishRecording, pushHistory } from './stateUtils';
 
-type Range = {
+export type Range = {
   start: Cursor;
   end: Cursor;
   isLinewise?: boolean;
@@ -225,7 +225,7 @@ const buildDelimitedRange = (
   };
 };
 
-const getTextObjectRange = (state: VimState, motion: TextObject): Range | null => {
+export const getTextObjectRange = (state: VimState, motion: TextObject): Range | null => {
   switch (motion) {
     case 'iw':
       return getInnerWordRange(state);

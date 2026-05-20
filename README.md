@@ -74,10 +74,10 @@ src/
 │   ├── categories.ts # 课程分类
 │   └── lessons/      # 课程文件（按章节组织）
 │       ├── chapter1/ # 模式与基础移动（8 课）
-│       ├── chapter2/ # 单词移动与小编辑（5 课）
+│       ├── chapter2/ # 单词移动与小编辑（6 课）
 │       ├── chapter3/ # 高级编辑（8 课）
 │       ├── chapter4/ # 行内查找与精确编辑（4 课）
-│       ├── chapter5/ # 文本对象（5 课）
+│       ├── chapter5/ # 文本对象（6 课）
 │       ├── chapter6/ # 搜索与重构（4 课）
 │       ├── chapter7/ # Visual Mode（5 课）
 │       ├── chapter8/ # 宏与寄存器（5 课）
@@ -86,7 +86,8 @@ src/
 │       ├── chapter11/ # 日常 Vim 熟练度（4 课）
 │       ├── chapter12/ # 项目导航（4 课）
 │       ├── chapter13/ # 屏幕导航（4 课）
-│       └── chapter14/ # 项目工作区（4 课）
+│       ├── chapter14/ # 项目工作区（4 课）
+│       └── chapter15/ # VimGolf 挑战（5 课）
 │
 ├── hooks/             # 自定义 hooks
 │   ├── useVimEngine.ts    # Vim 引擎封装
@@ -177,6 +178,12 @@ src/
 - [x] 新增 Scroll Surfer 小游戏，训练半页/整页滚动与视口定位
 - [x] 引擎新增 deterministic viewport state，供课程 challenge 校验
 
+### v3.1.0
+- [x] 新增 Insert Mode Shortcuts 课程与 `Ctrl-w/u/t/d` 插入模式快捷键训练
+- [x] 新增 Text Object Ninja 小游戏，训练 `viw` / `vaw` / `vi(`/`vi{` / `vi"` 选择
+- [x] 新增 Chapter 15：5 节 VimGolf 挑战课程
+- [x] 修复 Visual mode text object 选择闭环，使小游戏命令与引擎语义一致
+
 ### v3.0.0
 - [x] 新增 quickfix 项目工作流：`:vimgrep` / `:cnext` / `:cprev` / `:copen` / `:cclose`
 - [x] Challenge 编辑器显示当前 buffer 名和 quickfix 面板
@@ -185,6 +192,12 @@ src/
 
 
 ## 📝 CHANGELOG
+
+### v3.1.0
+- 新增日常插入流畅度训练：Insert 模式支持 `Ctrl-w`、`Ctrl-u`、`Ctrl-t`、`Ctrl-d`
+- 新增 Text Object Ninja 小游戏，并补齐 Visual text object 选择支持
+- 新增 Chapter 15「VimGolf Challenges」5 节课程，课程总数达到 76 节
+- 同步 v3.1 版本号、课程注册表、中文/活泼中文翻译与文档
 
 ### v3.0.0
 - 新增 Project Workspace foundation：多 buffer 搜索、quickfix 列表、结果跳转与面板显示

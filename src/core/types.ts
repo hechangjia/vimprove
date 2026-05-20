@@ -199,6 +199,7 @@ export type RunExampleStep = {
   key: string;
   description: string;
   cursorIndex?: number;
+  ctrlKey?: boolean;
 };
 
 export type RunExampleTrack = {
@@ -253,6 +254,18 @@ export type OperatorGymGameConfig = {
   targetScore?: number;
 };
 
+export type TextObjectNinjaGameConfig = {
+  challenges?: Array<{
+    code: string[];
+    initialCursor?: Cursor;
+    target: { start: { line: number; col: number }; end: { line: number; col: number } };
+    optimalCommand: string;
+    hint: string;
+    description: string;
+  }>;
+  targetScore?: number;
+};
+
 export type ScrollSurferGameConfig = {
   targetScore?: number;
 };
@@ -273,6 +286,7 @@ export type ContentBlock =
   | { type: 'find-target'; config?: FindTargetGameConfig; i18nKey?: string }
   | { type: 'window-navigator'; config?: WindowNavigatorGameConfig; i18nKey?: string }
   | { type: 'operator-gym'; config?: OperatorGymGameConfig; i18nKey?: string }
+  | { type: 'text-object-ninja'; config?: TextObjectNinjaGameConfig; i18nKey?: string }
   | { type: 'scroll-surfer'; config?: ScrollSurferGameConfig; i18nKey?: string }
   | { type: 'cheat-sheet'; config: CheatSheetConfig; i18nKey?: string };
 

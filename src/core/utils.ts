@@ -19,3 +19,20 @@ export const isWordChar = (char: string): boolean => /[a-zA-Z0-9_]/.test(char);
 export const isPunctuation = (char: string): boolean => {
   return !isWhitespace(char) && !isWordChar(char);
 };
+
+export const deleteWordBackward = (line: string, col: number): { newLine: string; newCol: number } => {
+  if (col === 0) return { newLine: line, newCol: 0 };
+
+  let pos = col - 1;
+  // Skip trailing whitespace
+  while (pos >= 0 && isWhitespace(line[pos])) pos--;
+  if (pos < 0) {
+    return { newLine: line.slice(col), newCol: 0 };
+  }
+
+  const targetIsWord = isWordChar(line[pos]);
+  while (pos >= 0 && !isWhitespace(line[pos]) && isWordChar(line[pos]) === targetIsWord) pos--;
+
+  const newLine = line.slice(0, pos + 1) + line.slice(col);
+  return { newLine, newCol: pos + 1 };
+};

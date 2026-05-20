@@ -71,6 +71,17 @@
     "target": "目标",
     "emptyInput": "输入..."
   },
+  "textObjectNinja": {
+    "title": "Text Object Ninja",
+    "score": "得分",
+    "misses": "按错次数",
+    "restart": "再来一局",
+    "focus": "点一下开始",
+    "complete": "目标分到手。按 r 再练一轮。",
+    "prompt": "输入 Vim 命令，精准选中高亮那一段。",
+    "target": "目标",
+    "emptyInput": "输入..."
+  },
   "scrollSurfer": {
     "title": "Scroll Surfer",
     "score": "得分",
