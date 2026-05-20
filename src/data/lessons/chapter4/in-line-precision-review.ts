@@ -29,8 +29,8 @@ Together they let you do surgical edits like:
       content: `## Example: precise edits inside add(10, 20, 30)
 
 The example focuses on the call \`add(10, 20, 30)\` inside a small C++ program.
-We first use \`dt,\` to delete the leading \`10,\`, then move to the end of the argument list
-and use \`ct)\` to replace the remaining arguments with a single \`42\`, without disturbing the rest of the line.`
+We use \`f(\` to reach the argument list, step inside it, then use \`ct)\` to replace
+the whole argument list with a single \`42\`, without disturbing the rest of the line.`
     },
     {
       type: 'run-example',
@@ -46,22 +46,15 @@ and use \`ct)\` to replace the remaining arguments with a single \`42\`, without
         initialCursor: { line: 3, col: 15 },
         autoPlaySpeed: 900,
         tracks: [
-          { label: 'Precise in-line edits', keys: ['f', '(', 'd', 't', ',', 'f', ')', 'c', 't', ')', '4', '2', 'Escape'] }
+          { label: 'Precise in-line edits', keys: ['f', '(', 'l', 'c', 't', ')', '4', '2', 'Escape'] }
         ],
         steps: [
           { key: 'f', description: 'f: move forward inside the call.', cursorIndex: 0 },
           { key: '(', description: '"f(" jumps to the opening parenthesis.', cursorIndex: 0 },
-
-          { key: 'd', description: 'd: start delete to remove the first argument.', cursorIndex: 0 },
-          { key: 't', description: 't: till motion (stop before a character).', cursorIndex: 0 },
-          { key: ',', description: '"dt," deletes "10," but keeps the comma after the remaining arguments.', cursorIndex: 0 },
-
-          { key: 'f', description: 'f: move again towards the end of the argument list.', cursorIndex: 0 },
-          { key: ')', description: '"f)" jumps to the closing parenthesis.', cursorIndex: 0 },
-
+          { key: 'l', description: 'l: step inside the argument list.', cursorIndex: 0 },
           { key: 'c', description: 'c: start a change to rewrite the remaining arguments.', cursorIndex: 0 },
           { key: 't', description: 't: "ct)" will change up to but not including ")".', cursorIndex: 0 },
-          { key: ')', description: '"ct)" deletes the current arguments and enters Insert mode.', cursorIndex: 0 },
+          { key: ')', description: '"ct)" deletes the arguments and enters Insert mode.', cursorIndex: 0 },
           { key: '4', description: 'Type "4".', cursorIndex: 0 },
           { key: '2', description: 'Type "2" to make a single argument 42.', cursorIndex: 0 },
           { key: 'Escape', description: 'Escape: finish the change with add(42).', cursorIndex: 0 }
@@ -72,8 +65,7 @@ and use \`ct)\` to replace the remaining arguments with a single \`42\`, without
       type: 'key-list',
       keys: [
         { chars: ['f', '('], desc: 'Jump to the next "(" in the line' },
-        { chars: ['t', ','], desc: 'Move just before the next comma' },
-        { chars: ['d', 't', ','], desc: 'Delete until (but not including) the next comma' },
+        { chars: ['l'], desc: 'Step one character into the argument list after f(' },
         { chars: ['c', 't', ')'], desc: 'Change until (but not including) the closing parenthesis' },
         { chars: [';'], desc: 'Repeat last in-line search forward' },
         { chars: [','], desc: 'Repeat last in-line search backward' }

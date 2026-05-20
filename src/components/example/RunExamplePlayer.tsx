@@ -76,10 +76,10 @@ export const RunExamplePlayer = ({
       if (!prevState) return;
       const nextState = vimReducer(prevState, {
         type: 'KEYDOWN',
-        payload: { key: step.key, ctrlKey: false }
+        payload: { key: step.key, ctrlKey: step.ctrlKey ?? false }
       });
 
-      recordKey(step.key, false, prevState, nextState);
+      recordKey(step.key, step.ctrlKey ?? false, prevState, nextState);
 
       const newStates = [...statesRef.current];
       newStates[cursorIdx] = nextState;
@@ -163,10 +163,10 @@ export const RunExamplePlayer = ({
       const prevState = trackStates[cursorIdx];
       const nextState = vimReducer(prevState, {
         type: 'KEYDOWN',
-        payload: { key: step.key, ctrlKey: false }
+        payload: { key: step.key, ctrlKey: step.ctrlKey ?? false }
       });
 
-      recordKey(step.key, false, prevState, nextState);
+      recordKey(step.key, step.ctrlKey ?? false, prevState, nextState);
 
       trackStates = [...trackStates];
       trackStates[cursorIdx] = nextState;

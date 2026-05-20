@@ -47,7 +47,7 @@ Then add keybindings only for actions you actually repeat every day.`
           '  "vim.smartRelativeLine": true',
           '}'
         ],
-        initialCursor: { line: 1, col: 29 },
+        initialCursor: { line: 1, col: 28 },
         autoPlaySpeed: 850,
         language: 'javascript',
         tracks: [

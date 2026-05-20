@@ -65,13 +65,15 @@ and finally use **u** / **Ctrl-r** to demonstrate undo and redo on the repeated 
           { key: 'Escape', description: 'Escape: back to Normal. One line is fixed.', cursorIndex: 0 },
 
           { key: 'j', description: 'j: move down to value2.', cursorIndex: 0 },
+          { key: 'h', description: 'h: land back on the initializer before repeating.', cursorIndex: 0 },
           { key: '.', description: '.: repeat the last change – set initializer to 42 again.', cursorIndex: 0 },
 
           { key: 'j', description: 'j: move down to value3.', cursorIndex: 0 },
+          { key: 'h', description: 'h: land back on the initializer before repeating.', cursorIndex: 0 },
           { key: '.', description: '.: repeat once more for value3.', cursorIndex: 0 },
 
           { key: 'u', description: 'u: undo – revert the last change on value3.', cursorIndex: 0 },
-          { key: 'Ctrl-r', description: 'Ctrl-r: redo – apply the change again.', cursorIndex: 0 }
+          { key: 'r', ctrlKey: true, description: 'Ctrl-r: redo – apply the change again.', cursorIndex: 0 }
         ]
       }
     },

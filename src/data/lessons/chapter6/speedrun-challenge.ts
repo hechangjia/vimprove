@@ -27,8 +27,9 @@ Try to perform them **cleanly and quickly** – even if the website does not tim
       content: `## Example: rename a repeated variable
 
 The example works on a short function that uses the variable \`value\` several times.
-We search for "value" with \`*\`, rename it once with \`ciw\`,
-then use \`n\` and \`.\` to repeat the same change on the remaining occurrences.`
+We use \`*\` to seed the search for "value", jump back to the first match with \`N\`,
+rename it once with \`ciw\`, then use \`n\` and \`.\` to repeat the same change on
+the remaining occurrences.`
     },
     {
       type: 'run-example',
@@ -44,17 +45,20 @@ then use \`n\` and \`.\` to repeat the same change on the remaining occurrences.
         initialCursor: { line: 1, col: 8 },
         autoPlaySpeed: 800,
         tracks: [
-          { label: 'Search + ciw + dot', keys: ['*', 'c', 'i', 'w', 'x', 'Escape', 'n', '.'] }
+          { label: 'Search + ciw + dot', keys: ['*', 'N', 'c', 'i', 'w', 'x', 'Escape', 'n', '.', 'n', '.'] }
         ],
         steps: [
           { key: '*', description: '*: search for the word "value" and jump to the next match.', cursorIndex: 0 },
+          { key: 'N', description: 'N: jump back to the first "value" so the declaration is included.', cursorIndex: 0 },
           { key: 'c', description: 'c: start a change on the word under the cursor.', cursorIndex: 0 },
           { key: 'i', description: 'i: choose inner word.', cursorIndex: 0 },
           { key: 'w', description: 'w: ciw – delete the word and enter Insert mode.', cursorIndex: 0 },
           { key: 'x', description: 'Type "x" as the new short name.', cursorIndex: 0 },
           { key: 'Escape', description: 'Escape: finish editing this occurrence.', cursorIndex: 0 },
           { key: 'n', description: 'n: jump to the next "value".', cursorIndex: 0 },
-          { key: '.', description: '.: repeat the change and rename the next occurrence to "x".', cursorIndex: 0 }
+          { key: '.', description: '.: repeat the change and rename the next occurrence to "x".', cursorIndex: 0 },
+          { key: 'n', description: 'n: jump to the final "value".', cursorIndex: 0 },
+          { key: '.', description: '.: repeat the change one more time.', cursorIndex: 0 }
         ]
       }
     },
