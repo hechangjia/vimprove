@@ -83,7 +83,10 @@ src/
 │       ├── chapter8/ # 宏与寄存器（5 课）
 │       ├── chapter9/ # 标记与跳转历史（3 课）
 │       ├── chapter10/ # 真实世界 Vim 工作流（6 课）
-│       └── chapter11/ # 日常 Vim 熟练度（4 课）
+│       ├── chapter11/ # 日常 Vim 熟练度（4 课）
+│       ├── chapter12/ # 项目导航（4 课）
+│       ├── chapter13/ # 屏幕导航（4 课）
+│       └── chapter14/ # 项目工作区（4 课）
 │
 ├── hooks/             # 自定义 hooks
 │   ├── useVimEngine.ts    # Vim 引擎封装
@@ -156,8 +159,56 @@ src/
 - [x] 新增 Chapter 11：4 节日常 Vim 工作流课程
 - [x] 新增 Find Target 小游戏，训练 `f/F/t/T/;/,` 行内精准定位
 
+### v2.7.0
+- [x] 新增模拟 buffer 导航：`:ls` / `:buffers` / `:bnext` / `:bprevious` / `:buffer N`
+- [x] 新增模拟 window split：`:split` / `:vsplit` / `:close` / `Ctrl-w h/j/k/l`
+- [x] 新增 Chapter 12：4 节项目导航课程
+- [x] 新增 Window Navigator 小游戏，训练 `Ctrl-w` 窗口焦点移动
+
+### v2.8.0
+- [x] 修正 Settings 中过时的 Vim 支持矩阵
+- [x] 首页新增 30 分钟、7 天日常、项目导航三条学习路线入口
+- [x] Ex substitute 新增数字范围与 `:g/pattern/s/old/new/g` 窄实现
+- [x] 新增 Operator Gym 小游戏，训练 operator + text object 选择
+
+### v2.9.0
+- [x] 新增屏幕导航命令：`Ctrl-d/u/f/b`、`zz/zt/zb`、`H/M/L`
+- [x] 新增 Chapter 13：4 节屏幕导航课程
+- [x] 新增 Scroll Surfer 小游戏，训练半页/整页滚动与视口定位
+- [x] 引擎新增 deterministic viewport state，供课程 challenge 校验
+
+### v3.0.0
+- [x] 新增 quickfix 项目工作流：`:vimgrep` / `:cnext` / `:cprev` / `:copen` / `:cclose`
+- [x] Challenge 编辑器显示当前 buffer 名和 quickfix 面板
+- [x] 新增 Chapter 14：4 节项目工作区课程
+- [x] 从单 buffer 命令练习升级到多文件项目任务基础
+
 
 ## 📝 CHANGELOG
+
+### v3.0.0
+- 新增 Project Workspace foundation：多 buffer 搜索、quickfix 列表、结果跳转与面板显示
+- 新增 `:vimgrep /pattern/`、`:cnext`、`:cprev`、`:copen`、`:cclose` 的浏览器内模拟实现
+- 新增 Chapter 14「Project Workspace」4 节课程，课程总数达到 69 节
+- Challenge UI 显示当前文件名和 quickfix 结果，标志 v3 从命令教学迈向项目级任务训练
+
+### v2.9.0
+- 新增屏幕级导航：半页/整页滚动、视口定位、可见屏幕行跳转
+- 新增 Chapter 13「Screen Navigation」4 节课程，课程总数达到 65 节
+- 新增 Scroll Surfer 小游戏，覆盖 `Ctrl-d/u/f/b` 与 `zz/zt/zb` 训练
+- 引擎新增 `viewportTop` / `viewportHeight` / `pendingZ` 状态，方便 challenge 精准校验
+
+### v2.8.0
+- 修正 Vim Status 支持矩阵，准确展示 Visual、宏、寄存器、marks、Ex 与项目导航能力
+- 首页新增学习路线入口，帮助用户从 61 节课程中选择合适起点
+- 新增 `:1,3s/old/new/g` 与 `:g/pattern/s/old/new/g`，增强日常批量编辑训练
+- 新增 Operator Gym 小游戏，覆盖 `di"` / `ciw` / `di(` 等语义编辑训练
+
+### v2.7.0
+- 新增项目导航引擎层，支持模拟 buffers、windows、buffer 切换与 split 状态
+- 新增 `Ctrl-w h/j/k/l` 与 `:wincmd h/j/k/l`，训练键盘窗口焦点移动
+- 新增 Chapter 12「Project Navigation」4 节课程，课程总数达到 61 节
+- 新增 Window Navigator 小游戏，覆盖 `Ctrl-w` 窗口导航训练
 
 ### v2.6.0
 - 新增 Command-line mode 基础能力，支持 `:` 提示符、取消、执行与状态显示

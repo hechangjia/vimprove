@@ -80,6 +80,24 @@ import { substituteCurrentLine } from './lessons/chapter11/substitute-current-li
 import { substituteWholeBuffer } from './lessons/chapter11/substitute-whole-buffer';
 import { firstWeekWorkflowReview } from './lessons/chapter11/first-week-workflow-review';
 
+// Chapter 12: Project Navigation
+import { bufferListBasics } from './lessons/chapter12/buffer-list-basics';
+import { switchBuffers } from './lessons/chapter12/switch-buffers';
+import { splitWindows } from './lessons/chapter12/split-windows';
+import { projectNavigationReview } from './lessons/chapter12/project-navigation-review';
+
+// Chapter 13: Screen Navigation
+import { screenScrollBasics } from './lessons/chapter13/screen-scroll-basics';
+import { viewportPositioning } from './lessons/chapter13/viewport-positioning';
+import { screenLineJumps } from './lessons/chapter13/screen-line-jumps';
+import { screenNavigationReview } from './lessons/chapter13/screen-navigation-review';
+
+// Chapter 14: Project Workspace
+import { workspaceMentalModel } from './lessons/chapter14/workspace-mental-model';
+import { projectSearchVimgrep } from './lessons/chapter14/project-search-vimgrep';
+import { quickfixNavigation } from './lessons/chapter14/quickfix-navigation';
+import { projectWorkspaceReview } from './lessons/chapter14/project-workspace-review';
+
 export { CATEGORIES };
 
 export const LESSONS: Lesson[] = [
@@ -158,5 +176,23 @@ export const LESSONS: Lesson[] = [
   commandLineBasics,
   substituteCurrentLine,
   substituteWholeBuffer,
-  firstWeekWorkflowReview
+  firstWeekWorkflowReview,
+
+  // Chapter 12: Project Navigation
+  bufferListBasics,
+  switchBuffers,
+  splitWindows,
+  projectNavigationReview,
+
+  // Chapter 13: Screen Navigation
+  screenScrollBasics,
+  viewportPositioning,
+  screenLineJumps,
+  screenNavigationReview,
+
+  // Chapter 14: Project Workspace
+  workspaceMentalModel,
+  projectSearchVimgrep,
+  quickfixNavigation,
+  projectWorkspaceReview
 ];

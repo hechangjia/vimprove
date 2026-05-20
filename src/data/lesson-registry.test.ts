@@ -36,14 +36,14 @@ describe('lesson registry', () => {
 
       lesson.contentBlocks.forEach((block, index) => {
         expect(block.type, `${lesson.slug} content block ${index}`).toMatch(
-          /^(markdown|key-list|challenge|run-example|hjkl-snake|game-2048|find-target|cheat-sheet)$/
+          /^(markdown|key-list|challenge|run-example|hjkl-snake|game-2048|find-target|window-navigator|operator-gym|scroll-surfer|cheat-sheet)$/
         );
       });
     }
   });
 
-  it('keeps visible curriculum at the published v2.5 size', () => {
-    expect(LESSONS.length).toBe(57);
-    expect(CATEGORIES.length).toBe(11);
+  it('keeps visible curriculum at the published v3.0 size', () => {
+    expect(LESSONS.length).toBe(69);
+    expect(CATEGORIES.length).toBe(14);
   });
 });

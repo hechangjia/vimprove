@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Terminal, Play, Keyboard, Trophy, Code2, Languages, ChevronDown } from 'lucide-react';
+import { Terminal, Play, Keyboard, Trophy, Code2, Languages, ChevronDown, CalendarDays, Map, Route } from 'lucide-react';
 import { VERSION, VERSION_LABEL } from '@/version';
 import { useTranslationSafe, useLocale } from '@/hooks/useI18n';
 import { supportedLocales } from '@/i18n';
@@ -7,9 +7,10 @@ import { supportedLocales } from '@/i18n';
 type HomePageProps = {
   onStart: () => void;
   onSurvivalPack: () => void;
+  onLearningPath: (slug: string) => void;
 };
 
-export const HomePage = ({ onStart, onSurvivalPack }: HomePageProps) => {
+export const HomePage = ({ onStart, onSurvivalPack, onLearningPath }: HomePageProps) => {
   const { t } = useTranslationSafe('home');
   const { locale, setLocale } = useLocale();
   const [isLangOpen, setIsLangOpen] = useState(false);
@@ -58,8 +59,32 @@ export const HomePage = ({ onStart, onSurvivalPack }: HomePageProps) => {
     }
   ];
 
+  const learningPaths = [
+    {
+      icon: Keyboard,
+      slug: 'modes-basics',
+      title: t('paths.survival.title', '30-Minute Survival'),
+      desc: t('paths.survival.desc', 'Modes, hjkl, line bounds, small edits, and safe exits.'),
+      action: t('paths.survival.action', 'Start survival path')
+    },
+    {
+      icon: CalendarDays,
+      slug: 'command-line-basics',
+      title: t('paths.daily.title', '7-Day Daily Driver'),
+      desc: t('paths.daily.desc', 'Command-line mode, substitute, search, and daily cleanup loops.'),
+      action: t('paths.daily.action', 'Start daily path')
+    },
+    {
+      icon: Map,
+      slug: 'buffer-list-basics',
+      title: t('paths.project.title', 'Project Navigation'),
+      desc: t('paths.project.desc', 'Buffers, splits, and Ctrl-w movement for real projects.'),
+      action: t('paths.project.action', 'Start project path')
+    }
+  ];
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] text-center max-w-2xl mx-auto px-6 animate-in fade-in duration-500 relative">
+    <div className="flex flex-col items-center justify-center min-h-[80vh] text-center max-w-5xl mx-auto px-6 animate-in fade-in duration-500 relative">
       <div className="w-full flex justify-end mb-6">
         <div className="relative" ref={langMenuRef}>
           <button
@@ -141,6 +166,29 @@ export const HomePage = ({ onStart, onSurvivalPack }: HomePageProps) => {
             <p className="text-sm text-foreground-faint">{feat.desc}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-14 w-full text-left">
+        <div className="flex items-center gap-2 text-foreground-subtle mb-4">
+          <Route size={18} />
+          <h2 className="font-bold text-foreground-strong">
+            {t('paths.title', 'Choose a learning path')}
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {learningPaths.map(path => (
+            <button
+              key={path.slug}
+              onClick={() => onLearningPath(path.slug)}
+              className="text-left bg-surface border border-border rounded-lg p-4 hover:border-primary hover:bg-surface-2 transition-colors"
+            >
+              <path.icon className="text-primary mb-3" size={20} />
+              <div className="font-bold text-foreground-strong mb-1">{path.title}</div>
+              <p className="text-sm text-foreground-faint mb-3">{path.desc}</p>
+              <span className="text-xs font-semibold text-primary">{path.action}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="mt-16 text-xs text-foreground-dim font-mono">

@@ -22,6 +22,19 @@ type VimChallengeProps = {
   disableContentI18n?: boolean;
 };
 
+const buildInitialVimState = (config: ChallengeConfig) => ({
+  buffer: config.initialBuffer,
+  cursor: config.initialCursor,
+  buffers: config.initialBuffers ?? [
+    { id: 1, name: '[No Name]', lines: config.initialBuffer, cursor: config.initialCursor }
+  ],
+  currentBufferIndex: config.initialCurrentBufferIndex ?? 0,
+  windows: config.initialWindows ?? [
+    { id: 1, bufferIndex: config.initialCurrentBufferIndex ?? 0, row: 0, col: 0 }
+  ],
+  currentWindowIndex: config.initialCurrentWindowIndex ?? 0
+});
+
 export const VimChallenge = ({
   config,
   onComplete,
@@ -29,10 +42,7 @@ export const VimChallenge = ({
   i18nBaseKey,
   disableContentI18n
 }: VimChallengeProps) => {
-  const { state, dispatch } = useVimEngine({
-    buffer: config.initialBuffer,
-    cursor: config.initialCursor
-  });
+  const { state, dispatch } = useVimEngine(buildInitialVimState(config));
 
   const { goalsStatus, elapsed, isComplete, restart, startTimer, completedCount } = useChallenge(
     config,
@@ -60,7 +70,7 @@ export const VimChallenge = ({
     // 只依赖 config 引用变化，避免 dispatch/clearHistory 引用波动导致编辑器反复重置。
     dispatchRef.current({
       type: 'RESET',
-      payload: { buffer: config.initialBuffer, cursor: config.initialCursor }
+      payload: buildInitialVimState(config)
     });
     clearHistoryRef.current();
     setIsFocused(false);
@@ -162,7 +172,7 @@ export const VimChallenge = ({
   const handleRestart = () => {
     dispatch({
       type: 'RESET',
-      payload: { buffer: config.initialBuffer, cursor: config.initialCursor }
+      payload: buildInitialVimState(config)
     });
     restart();
     clearHistory();
@@ -227,6 +237,8 @@ export const VimChallenge = ({
     });
   };
   const suggestion = isComplete ? getCommandSuggestion(getHistory()) : null;
+  const activeBufferName = state.buffers[state.currentBufferIndex]?.name;
+  const showWorkspaceSignal = state.buffers.length > 1 && activeBufferName;
 
   return (
     <div className="bg-surface rounded-xl overflow-hidden border border-border shadow-2xl flex flex-row gap-0 h-[500px] md:h-[600px]">
@@ -250,6 +262,11 @@ export const VimChallenge = ({
               {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}
             </span>
           </div>
+          {showWorkspaceSignal && (
+            <div className="hidden md:block text-foreground-faint">
+              {activeBufferName}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -326,6 +343,19 @@ export const VimChallenge = ({
         )}
 
         <div className="vim-editor-root">{renderBuffer()}</div>
+        {state.quickfixOpen && state.quickfixList.length > 0 && (
+          <div className="border-t border-border bg-surface-2 px-4 py-2 font-mono text-xs text-foreground-muted max-h-28 overflow-y-auto">
+            <div className="mb-1 text-foreground-subtle">quickfix</div>
+            {state.quickfixList.map((item, index) => (
+              <div
+                key={`${item.bufferIndex}-${item.line}-${item.col}-${index}`}
+                className={index === state.quickfixIndex ? 'text-primary' : ''}
+              >
+                {index + 1}. {state.buffers[item.bufferIndex]?.name ?? `buffer ${item.bufferIndex + 1}`}:{item.line + 1}:{item.col + 1} {item.text}
+              </div>
+            ))}
+          </div>
+        )}
         {(state.mode === 'command' || state.commandStatus) && (
           <div className="sticky bottom-0 border-t border-border bg-surface-2 px-4 py-2 font-mono text-sm text-foreground-muted">
             {state.mode === 'command' ? `:${state.commandLine}` : state.commandStatus}

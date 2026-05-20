@@ -43,6 +43,27 @@ export type FindMotion = {
   char: string;
 };
 
+export type VimBuffer = {
+  id: number;
+  name: string;
+  lines: string[];
+  cursor: Cursor;
+};
+
+export type VimWindow = {
+  id: number;
+  bufferIndex: number;
+  row: number;
+  col: number;
+};
+
+export type QuickfixItem = {
+  bufferIndex: number;
+  line: number;
+  col: number;
+  text: string;
+};
+
 export type LowercaseLetter =
   | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'
   | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z';
@@ -56,14 +77,27 @@ export type VimState = {
   visualAnchor: Cursor | null;
   commandLine: string;
   commandStatus: string | null;
+  viewportTop: number;
+  viewportHeight: number;
   pendingOperator: Operator | null;
   pendingReplace: boolean;
   pendingFind: 'f' | 'F' | 't' | 'T' | null;
   pendingTextObject: 'i' | 'a' | null;
   pendingSearch: SearchState | null;
   pendingG: boolean;
+  pendingZ: boolean;
+  pendingCtrlW: boolean;
   lastSearch: SearchState | null;
   lastCommand: Command | null;
+
+  // Simulated project navigation state
+  buffers: VimBuffer[];
+  currentBufferIndex: number;
+  windows: VimWindow[];
+  currentWindowIndex: number;
+  quickfixList: QuickfixItem[];
+  quickfixIndex: number;
+  quickfixOpen: boolean;
 
   // Undo/Redo support
   history: VimState[];
@@ -151,6 +185,10 @@ export type ChallengeGoal = {
 export type ChallengeConfig = {
   initialBuffer: string[];
   initialCursor: Cursor;
+  initialBuffers?: VimBuffer[];
+  initialWindows?: VimWindow[];
+  initialCurrentBufferIndex?: number;
+  initialCurrentWindowIndex?: number;
   goalsRequired: number;
   enabledCommands: string[];
   goals: ChallengeGoal[];
@@ -202,6 +240,23 @@ export type FindTargetGameConfig = {
   targetScore?: number;
 };
 
+export type WindowNavigatorGameConfig = {
+  targetScore?: number;
+};
+
+export type OperatorGymGameConfig = {
+  rounds?: Array<{
+    prompt: string;
+    command: string;
+    hint?: string;
+  }>;
+  targetScore?: number;
+};
+
+export type ScrollSurferGameConfig = {
+  targetScore?: number;
+};
+
 export type CheatSheetConfig = {
   chapterId: string;       // 'chapter1' | 'chapter3' | ...
   title?: string;          // 可选覆盖默认 "Chapter X — Cheat Sheet"
@@ -216,6 +271,9 @@ export type ContentBlock =
   | { type: 'hjkl-snake'; config?: HjklSnakeGameConfig; i18nKey?: string }
   | { type: 'game-2048'; config?: Game2048Config; i18nKey?: string }
   | { type: 'find-target'; config?: FindTargetGameConfig; i18nKey?: string }
+  | { type: 'window-navigator'; config?: WindowNavigatorGameConfig; i18nKey?: string }
+  | { type: 'operator-gym'; config?: OperatorGymGameConfig; i18nKey?: string }
+  | { type: 'scroll-surfer'; config?: ScrollSurferGameConfig; i18nKey?: string }
   | { type: 'cheat-sheet'; config: CheatSheetConfig; i18nKey?: string };
 
 export type KeyItem = {

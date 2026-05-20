@@ -50,5 +50,34 @@
     "focus": "点一下开始",
     "complete": "目标分到手。按 r 再练一轮。",
     "prompt": "用 f/F/t/T 瞄准高亮的 {{char}}，再用 ; 或 , 连续追踪。"
+  },
+  "windowNavigator": {
+    "title": "Window Navigator",
+    "score": "得分",
+    "misses": "走错次数",
+    "restart": "再来一局",
+    "focus": "点一下开始",
+    "complete": "目标分到手。按 r 再练一轮。",
+    "prompt": "用 Ctrl-w h/j/k/l 切到窗格 {{pane}}。"
+  },
+  "operatorGym": {
+    "title": "Operator Gym",
+    "score": "得分",
+    "misses": "按错次数",
+    "restart": "再来一局",
+    "focus": "点一下开始",
+    "complete": "目标分到手。按 r 再练一轮。",
+    "prompt": "输入最适合这次编辑的 Vim 命令。",
+    "target": "目标",
+    "emptyInput": "输入..."
+  },
+  "scrollSurfer": {
+    "title": "Scroll Surfer",
+    "score": "得分",
+    "misses": "走错次数",
+    "restart": "再来一局",
+    "focus": "点一下开始",
+    "complete": "目标分到手。按 r 再练一轮。",
+    "prompt": "用 {{command}} 冲到第 {{line}} 行，或者摆好视图。"
   }
 }

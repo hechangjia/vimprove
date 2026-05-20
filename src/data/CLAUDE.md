@@ -9,7 +9,7 @@
 ## 入口与启动
 
 - `index.ts` — 汇总所有 Lesson 并按章节顺序导出 `LESSONS: Lesson[]`，同时 re-export `CATEGORIES`
-- `categories.ts` — 11 个章节的 id / title / order
+- `categories.ts` — 14 个章节的 id / title / order
 
 被 `src/App.tsx` 直接消费：根据 `currentLessonSlug` 在 `LESSONS` 中查找当前 Lesson。
 
@@ -39,8 +39,11 @@ import type { Lesson, Category, ContentBlock } from '@/core/types';
 | chapter9 | Marks & Jump History | 3 |
 | chapter10 | Vim in the Real World | 6 |
 | chapter11 | Daily Vim Mastery | 4 |
+| chapter12 | Project Navigation | 4 |
+| chapter13 | Screen Navigation | 4 |
+| chapter14 | Project Workspace | 4 |
 
-**合计 57 节可见课程。**
+**合计 69 节可见课程。**
 
 ### Lesson 文件分布（来自 `index.ts`）
 
@@ -103,17 +106,32 @@ src/data/lessons/
 │   ├── jumplist.ts
 │   └── changelist.ts
 ├── chapter10/
-    ├── install-and-minimal-config.ts
-    ├── vim-in-vscode.ts
-    ├── vim-in-jetbrains.ts
-    ├── vim-in-terminal.ts
-    ├── editor-shortcut-migration.ts
-    └── realworld-refactor-demo.ts
-└── chapter11/
-    ├── command-line-basics.ts
-    ├── substitute-current-line.ts
-    ├── substitute-whole-buffer.ts
-    └── first-week-workflow-review.ts
+│   ├── install-and-minimal-config.ts
+│   ├── vim-in-vscode.ts
+│   ├── vim-in-jetbrains.ts
+│   ├── vim-in-terminal.ts
+│   ├── editor-shortcut-migration.ts
+│   └── realworld-refactor-demo.ts
+├── chapter11/
+│   ├── command-line-basics.ts
+│   ├── substitute-current-line.ts
+│   ├── substitute-whole-buffer.ts
+│   └── first-week-workflow-review.ts
+└── chapter12/
+    ├── buffer-list-basics.ts
+    ├── switch-buffers.ts
+    ├── split-windows.ts
+    └── project-navigation-review.ts
+└── chapter13/
+    ├── screen-scroll-basics.ts
+    ├── viewport-positioning.ts
+    ├── screen-line-jumps.ts
+    └── screen-navigation-review.ts
+└── chapter14/
+    ├── workspace-mental-model.ts
+    ├── project-search-vimgrep.ts
+    ├── quickfix-navigation.ts
+    └── project-workspace-review.ts
 ```
 
 ### 单个 Lesson 形状
@@ -122,7 +140,7 @@ src/data/lessons/
 {
   slug: string;                  // 路由/i18n 主键，全局唯一
   title: string;                 // 英文标题（同时作为 en 默认值）
-  categoryId: string;            // 'chapter1' ~ 'chapter11'
+  categoryId: string;            // 'chapter1' ~ 'chapter14'
   shortDescription: string;      // 列表/页眉副标题
   contentBlocks: ContentBlock[]; // markdown | key-list | challenge | run-example | minigame | cheat-sheet
   i18nKey?: string;              // 可选；缺省时按 `lessons.{slug}.*` 解析
@@ -161,7 +179,7 @@ npm run test                       # 跑核心引擎不会回归
 ```
 src/data/
 ├── index.ts            # 汇总入口（注册新课在此）
-├── categories.ts       # 7 个章节定义
+├── categories.ts       # 14 个章节定义
 └── lessons/
     ├── chapter1/  (8 lessons)
     ├── chapter2/  (5 lessons)
@@ -172,7 +190,11 @@ src/data/
     ├── chapter7/  (5 lessons)
     ├── chapter8/  (5 lessons)
     ├── chapter9/  (3 lessons)
-    └── chapter10/ (6 lessons)
+    ├── chapter10/ (6 lessons)
+    ├── chapter11/ (4 lessons)
+    ├── chapter12/ (4 lessons)
+    ├── chapter13/ (4 lessons)
+    └── chapter14/ (4 lessons)
 ```
 
 外部协作文档（位于 .gitignore 的 `tmp/`，但仓库可见）：

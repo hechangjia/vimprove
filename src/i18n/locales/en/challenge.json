@@ -31,5 +31,34 @@
     "focus": "Click to focus",
     "complete": "Target score reached. Press r to restart.",
     "prompt": "Reach the highlighted {{char}} with f/F/t/T, then repeat with ; or ,."
+  },
+  "windowNavigator": {
+    "title": "Window Navigator",
+    "score": "Score",
+    "misses": "Misses",
+    "restart": "Restart",
+    "focus": "Click to focus",
+    "complete": "Target score reached. Press r to restart.",
+    "prompt": "Focus pane {{pane}} with Ctrl-w h/j/k/l."
+  },
+  "operatorGym": {
+    "title": "Operator Gym",
+    "score": "Score",
+    "misses": "Misses",
+    "restart": "Restart",
+    "focus": "Click to focus",
+    "complete": "Target score reached. Press r to restart.",
+    "prompt": "Type the Vim command for the target edit.",
+    "target": "Target",
+    "emptyInput": "type..."
+  },
+  "scrollSurfer": {
+    "title": "Scroll Surfer",
+    "score": "Score",
+    "misses": "Misses",
+    "restart": "Restart",
+    "focus": "Click to focus",
+    "complete": "Target score reached. Press r to restart.",
+    "prompt": "Use {{command}} to hit line {{line}} or place the viewport."
   }
 }

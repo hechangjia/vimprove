@@ -114,6 +114,13 @@ const App = () => {
     setCurrentLessonSlug(survivalSlug);
   };
 
+  const handleLearningPath = (slug: string) => {
+    if (!LESSONS.some(lesson => lesson.slug === slug)) return;
+    localStorage.setItem(CURRENT_LESSON_KEY, slug);
+    setCurrentView('lesson');
+    setCurrentLessonSlug(slug);
+  };
+
   const handleHomeClick = () => {
     localStorage.removeItem(CURRENT_LESSON_KEY);
     setCurrentView('home');
@@ -154,7 +161,11 @@ const App = () => {
 
         <div className="flex-1 h-screen overflow-y-auto bg-background relative" data-scroll-container>
           {currentView === 'home' ? (
-            <HomePage onStart={handleStartLearning} onSurvivalPack={handleSurvivalPack} />
+            <HomePage
+              onStart={handleStartLearning}
+              onSurvivalPack={handleSurvivalPack}
+              onLearningPath={handleLearningPath}
+            />
           ) : (
             <LessonPage
               lesson={currentLesson}

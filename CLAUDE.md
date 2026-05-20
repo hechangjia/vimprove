@@ -11,13 +11,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 graph TD
     A["(根) vimprove"] --> SRC["src"]
     SRC --> CORE["core - Vim 引擎（纯函数）"]
-    SRC --> DATA["data - 课程数据（57 节可见课程）"]
+    SRC --> DATA["data - 课程数据（69 节可见课程）"]
     SRC --> HOOKS["hooks - 业务逻辑封装"]
     SRC --> COMPONENTS["components - UI 组件"]
     SRC --> PAGES["pages - 页面壳"]
     SRC --> I18N["i18n - 多语言"]
     SRC --> CONTEXTS["contexts - React Context"]
-    DATA --> LESSONS["lessons/chapter1..10"]
+    DATA --> LESSONS["lessons/chapter1..12"]
     CORE --> CORE_TESTS["tests + testUtils (Neovim 对拍)"]
     I18N --> LOCALES["locales/{en,zh,zh-lively}"]
 
@@ -34,7 +34,7 @@ graph TD
 | 模块 | 路径 | 一句话职责 | 模块级文档 |
 | --- | --- | --- | --- |
 | core | `src/core/` | 纯函数 Vim 引擎：types / vimReducer / motions / operators / 工具 / 对拍测试 | [`src/core/CLAUDE.md`](./src/core/CLAUDE.md) |
-| data | `src/data/` | 配置驱动的课程内容（11 章 × 57 节可见课程） | [`src/data/CLAUDE.md`](./src/data/CLAUDE.md) |
+| data | `src/data/` | 配置驱动的课程内容（14 章 × 69 节可见课程） | [`src/data/CLAUDE.md`](./src/data/CLAUDE.md) |
 | hooks | `src/hooks/` | 业务 React Hook（引擎封装、挑战、进度、i18n、设置、按键历史等） | [`src/hooks/CLAUDE.md`](./src/hooks/CLAUDE.md) |
 | components | `src/components/` | UI 组件，按功能域分目录（common / lesson / challenge / example / minigame / layout / settings） | [`src/components/CLAUDE.md`](./src/components/CLAUDE.md) |
 | pages | `src/pages/` | 页面壳：HomePage / LessonPage | [`src/pages/CLAUDE.md`](./src/pages/CLAUDE.md) |
@@ -51,7 +51,7 @@ Vimprove 是一个交互式 Vim 学习网站。核心功能是通过浏览器中
 
 **当前状态**: ✅ 重构完成。项目已从单文件原型（`tmp/vimprove.html`）重构为模块化的 React + TypeScript 架构。
 
-**课程范围**: 已完成 Chapter 1-11（基础、进阶编辑、行内 find/till、文本对象、搜索/重构、Visual Mode、宏与寄存器、标记与跳转历史、真实世界 Vim 工作流、日常 Vim 熟练度），共 57 节可见课程。
+**课程范围**: 已完成 Chapter 1-14（基础、进阶编辑、行内 find/till、文本对象、搜索/重构、Visual Mode、宏与寄存器、标记与跳转历史、真实世界 Vim 工作流、日常 Vim 熟练度、项目导航、屏幕导航、项目工作区），共 69 节可见课程。
 
 **版本管理**: 版本号在 `src/version.ts` 和 `package.json` 中维护，CHANGELOG 见 `README.md`
 
@@ -274,6 +274,9 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 - `w`, `b`, `e` - 单词移动（word）
 - `W`, `B`, `E` - WORD 移动（空白分隔）
 - `0`, `^`, `_`, `$` - 行首/首字符/行尾
+- `Ctrl-d`, `Ctrl-u`, `Ctrl-f`, `Ctrl-b` - 半页 / 整页屏幕滚动
+- `zz`, `zt`, `zb` - 当前行居中 / 置顶 / 置底
+- `H`, `M`, `L` - 顶部 / 中间 / 底部可见行跳转
 
 **编辑命令**:
 - `x` - 删除字符
@@ -312,6 +315,12 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 - `Enter` - 执行当前 Ex 命令
 - `:w`, `:q`, `:wq`, `:q!` - 浏览器内模拟文件命令状态（不触碰真实文件系统）
 - `:s/old/new/`, `:s/old/new/g`, `:%s/old/new/g` - 当前行 / 全 buffer 字面量替换
+- `:{N},{M}s/old/new/g` - 数字行范围内的字面量替换
+- `:g/pattern/s/old/new/g` - 在匹配行上执行窄版 substitute
+- `:ls`, `:buffers` - 列出浏览器内模拟 buffers
+- `:bnext`, `:bn`, `:bprevious`, `:bp`, `:buffer {N}` - 在模拟 buffers 间切换
+- `:split`, `:vsplit`, `:close`, `:wincmd h/j/k/l` - 模拟 window split 与焦点移动
+- `:vimgrep /pattern/`, `:cnext`, `:cprev`, `:copen`, `:cclose` - 模拟 quickfix 项目搜索与结果跳转
 
 **文本对象**:
 - 词与段落：`iw/aw`, `ip/ap`
@@ -322,6 +331,7 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 **其他命令**:
 - `u` - 撤销（undo）
 - `Ctrl-r` - 重做（redo）
+- `Ctrl-w h/j/k/l` - 在模拟 windows 间移动焦点
 - `.` - 重复上次修改操作
 - 数字前缀（`3w`, `5dd`, `2.`）- 重复命令 n 次
 
@@ -365,6 +375,27 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 - Command-line mode 基础与窄 Ex 命令执行器。
 - Substitute 工作流：支持当前行和全 buffer 的字面量替换。
 - Chapter 11 日常 Vim 熟练度课程与 Find Target 行内定位小游戏。
+
+**v2.7.0 新增**:
+- 项目导航模拟层：buffers / windows 元数据、buffer 切换、split 与 close。
+- `Ctrl-w h/j/k/l` 与 `:wincmd h/j/k/l` 窗口焦点移动。
+- Chapter 12 项目导航课程与 Window Navigator 小游戏。
+
+**v2.8.0 新增**:
+- 首页学习路线入口：30 分钟生存包、7 天日常主力、项目导航。
+- Ex batch-edit 增强：数字范围 substitute 与窄版 `:g/pattern/s/.../g`。
+- Settings Vim Status 支持矩阵更新到当前 v2.8 能力。
+- Operator Gym 小游戏训练 operator + text object 选择。
+
+**v2.9.0 新增**:
+- 屏幕导航：`Ctrl-d/u/f/b`、`zz/zt/zb`、`H/M/L`。
+- `VimState` 增加 deterministic viewport state：`viewportTop` / `viewportHeight` / `pendingZ`。
+- Chapter 13 屏幕导航课程与 Scroll Surfer 小游戏。
+
+**v3.0.0 新增**:
+- Project Workspace foundation：quickfix state、`:vimgrep` 搜索、`:cnext` / `:cprev` 跳转。
+- Challenge UI 显示当前 buffer 名和 quickfix 面板。
+- Chapter 14 项目工作区课程，开始支持多文件项目任务训练。
 
 ### ❌ 尚未支持
 
@@ -518,8 +549,8 @@ ls src/data/lessons/chapter3/
 ### 当前已完成
 
 - ✅ 模块化架构（Core/Data/Hooks/Components）
-- ✅ 57 个可见课程（Chapter 1-11：基础、进阶、文本对象、搜索重构、Visual Mode、宏与寄存器、标记与跳转历史、真实世界 Vim 工作流、日常 Vim 熟练度）
-- ✅ 完整的 Vim 引擎（支持文本对象、搜索 `/ ? n N * #`、find/till、`.`、Command-line mode 基础等命令）
+- ✅ 69 个可见课程（Chapter 1-14：基础、进阶、文本对象、搜索重构、Visual Mode、宏与寄存器、标记与跳转历史、真实世界 Vim 工作流、日常 Vim 熟练度、项目导航、屏幕导航、项目工作区）
+- ✅ 完整的 Vim 引擎（支持文本对象、搜索 `/ ? n N * #`、find/till、`.`、Command-line mode 基础、模拟 buffers/windows、屏幕导航、quickfix 项目搜索等命令）
 - ✅ Undo/Redo 系统
 - ✅ Yank/Paste 功能
 - ✅ 数字前缀（Count Multiplier）
@@ -527,7 +558,10 @@ ls src/data/lessons/chapter3/
 - ✅ `.` 命令（重复上次修改操作）
 - ✅ Visual Mode 基础（字符/行/块选择 + y/d/c + 编辑器选区高亮）
 - ✅ Macros / Registers / Marks / Jumplist / Changelist 基础能力
-- ✅ Command-line mode 基础与 `:s` / `:%s` substitute 工作流
+- ✅ Command-line mode 基础、`:s` / `:%s` substitute 工作流与模拟项目导航
+- ✅ 首页学习路线入口与 Operator Gym 语义编辑小游戏
+- ✅ Scroll Surfer 屏幕导航小游戏
+- ✅ quickfix 项目工作区基础能力
 - ✅ 30 分钟生存包入口、本地按键统计、完成后短路径建议
 - ✅ 完整的单元测试系统（Vitest，覆盖核心功能与新增命令）
 - ✅ Challenge 系统（目标验证、计时）

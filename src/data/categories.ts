@@ -11,5 +11,8 @@ export const CATEGORIES: Category[] = [
   { id: 'chapter8', title: 'Chapter 8: Macros & Registers', order: 8 },
   { id: 'chapter9', title: 'Chapter 9: Marks & Jump History', order: 9 },
   { id: 'chapter10', title: 'Chapter 10: Vim in the Real World', order: 10 },
-  { id: 'chapter11', title: 'Chapter 11: Daily Vim Mastery', order: 11 }
+  { id: 'chapter11', title: 'Chapter 11: Daily Vim Mastery', order: 11 },
+  { id: 'chapter12', title: 'Chapter 12: Project Navigation', order: 12 },
+  { id: 'chapter13', title: 'Chapter 13: Screen Navigation', order: 13 },
+  { id: 'chapter14', title: 'Chapter 14: Project Workspace', order: 14 }
 ];

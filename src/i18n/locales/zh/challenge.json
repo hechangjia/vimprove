@@ -50,5 +50,34 @@
     "focus": "点击聚焦",
     "complete": "已达到目标分数。按 r 重新开始。",
     "prompt": "用 f/F/t/T 到达高亮的 {{char}}，再用 ; 或 , 重复查找。"
+  },
+  "windowNavigator": {
+    "title": "Window Navigator",
+    "score": "分数",
+    "misses": "误操作",
+    "restart": "重新开始",
+    "focus": "点击聚焦",
+    "complete": "已达到目标分数。按 r 重新开始。",
+    "prompt": "用 Ctrl-w h/j/k/l 聚焦窗格 {{pane}}。"
+  },
+  "operatorGym": {
+    "title": "Operator Gym",
+    "score": "分数",
+    "misses": "误操作",
+    "restart": "重新开始",
+    "focus": "点击聚焦",
+    "complete": "已达到目标分数。按 r 重新开始。",
+    "prompt": "输入符合目标编辑的 Vim 命令。",
+    "target": "目标",
+    "emptyInput": "输入..."
+  },
+  "scrollSurfer": {
+    "title": "Scroll Surfer",
+    "score": "分数",
+    "misses": "误操作",
+    "restart": "重新开始",
+    "focus": "点击聚焦",
+    "complete": "已达到目标分数。按 r 重新开始。",
+    "prompt": "使用 {{command}} 到达第 {{line}} 行或调整视图位置。"
   }
 }

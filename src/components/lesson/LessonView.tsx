@@ -7,6 +7,9 @@ import { RunExamplePlayer } from '@/components/example/RunExamplePlayer';
 import { HjklSnakeGame } from '@/components/minigame/HjklSnakeGame';
 import { Game2048Game } from '@/components/minigame/Game2048Game';
 import { FindTargetGame } from '@/components/minigame/FindTargetGame';
+import { WindowNavigatorGame } from '@/components/minigame/WindowNavigatorGame';
+import { OperatorGymGame } from '@/components/minigame/OperatorGymGame';
+import { ScrollSurferGame } from '@/components/minigame/ScrollSurferGame';
 import { CheatSheetBlock } from '@/components/common/CheatSheetBlock';
 import { useProgress } from '@/hooks/useProgress';
 import { useTranslationSafe } from '@/hooks/useI18n';
@@ -101,6 +104,15 @@ export const LessonView = ({ lesson, onNext, onPrev }: LessonViewProps) => {
         }
         if (block.type === 'find-target') {
           return <FindTargetGame key={reactKey} config={block.config} />;
+        }
+        if (block.type === 'window-navigator') {
+          return <WindowNavigatorGame key={reactKey} config={block.config} />;
+        }
+        if (block.type === 'operator-gym') {
+          return <OperatorGymGame key={reactKey} config={block.config} />;
+        }
+        if (block.type === 'scroll-surfer') {
+          return <ScrollSurferGame key={reactKey} config={block.config} />;
         }
         if (block.type === 'cheat-sheet') {
           return <CheatSheetBlock key={reactKey} config={block.config} />;

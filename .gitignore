@@ -28,3 +28,4 @@ tmp/
 .nvimlog
 .ccg/
 .claude/
+.ace-tool/

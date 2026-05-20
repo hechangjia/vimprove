@@ -20,6 +20,24 @@
       "desc": "Don't just read. Type. Edit. Delete. Practice makes perfect."
     }
   },
+  "paths": {
+    "title": "Choose a learning path",
+    "survival": {
+      "title": "30-Minute Survival",
+      "desc": "Modes, hjkl, line bounds, small edits, and safe exits.",
+      "action": "Start survival path"
+    },
+    "daily": {
+      "title": "7-Day Daily Driver",
+      "desc": "Command-line mode, substitute, search, and daily cleanup loops.",
+      "action": "Start daily path"
+    },
+    "project": {
+      "title": "Project Navigation",
+      "desc": "Buffers, splits, and Ctrl-w movement for real projects.",
+      "action": "Start project path"
+    }
+  },
   "language": {
     "menuTitle": "Choose language"
   }

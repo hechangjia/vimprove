@@ -20,6 +20,24 @@
       "desc": "不仅是阅读，而是敲键、编辑、删除、不断练习。"
     }
   },
+  "paths": {
+    "title": "选择学习路线",
+    "survival": {
+      "title": "30 分钟生存包",
+      "desc": "模式、hjkl、行边界、小编辑和安全退出。",
+      "action": "开始生存路线"
+    },
+    "daily": {
+      "title": "7 天日常主力",
+      "desc": "命令行模式、substitute、搜索和日常清理流程。",
+      "action": "开始日常路线"
+    },
+    "project": {
+      "title": "项目导航",
+      "desc": "Buffers、splits 和 Ctrl-w 移动，面向真实项目。",
+      "action": "开始项目路线"
+    }
+  },
   "language": {
     "menuTitle": "选择语言"
   }

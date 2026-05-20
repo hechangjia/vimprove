@@ -18,7 +18,7 @@ const COMMAND_MATRIX: CommandCategory[] = [
       { cmd: '0 ^ $ _', status: 'full' },
       { cmd: 'w b e', status: 'full' },
       { cmd: 'W B E', status: 'full' },
-      { cmd: 'gg G', status: 'none' },
+      { cmd: 'gg G { } %', status: 'full' },
     ],
   },
   {
@@ -51,6 +51,15 @@ const COMMAND_MATRIX: CommandCategory[] = [
     ],
   },
   {
+    name: 'Visual Mode',
+    nameKey: 'vimStatus.category.visualMode',
+    commands: [
+      { cmd: 'v V Ctrl-v', status: 'full' },
+      { cmd: 'visual y d c', status: 'full' },
+      { cmd: 'block paste / insert replay', status: 'partial' },
+    ],
+  },
+  {
     name: 'Text Objects',
     nameKey: 'vimStatus.category.textObjects',
     commands: [
@@ -58,6 +67,42 @@ const COMMAND_MATRIX: CommandCategory[] = [
       { cmd: 'ip ap', status: 'full' },
       { cmd: 'i( a( i{ a{ i[ a[', status: 'full' },
       { cmd: 'i" a" i\' a\' i` a`', status: 'full' },
+    ],
+  },
+  {
+    name: 'Macros & Registers',
+    nameKey: 'vimStatus.category.macrosRegisters',
+    commands: [
+      { cmd: 'q{a-z} @{a-z} @@', status: 'full' },
+      { cmd: '"a-"z "0 "_', status: 'full' },
+      { cmd: '"+ "*', status: 'partial' },
+    ],
+  },
+  {
+    name: 'Marks & Jumps',
+    nameKey: 'vimStatus.category.marksJumps',
+    commands: [
+      { cmd: 'm{a-z} `{mark} \'{mark}', status: 'full' },
+      { cmd: 'Ctrl-o Ctrl-i', status: 'full' },
+      { cmd: 'g; g,', status: 'full' },
+    ],
+  },
+  {
+    name: 'Command-line',
+    nameKey: 'vimStatus.category.commandLine',
+    commands: [
+      { cmd: ':w :q :wq :q!', status: 'full' },
+      { cmd: ':s :%s', status: 'full' },
+      { cmd: 'full Ex grammar', status: 'partial' },
+    ],
+  },
+  {
+    name: 'Project Navigation',
+    nameKey: 'vimStatus.category.projectNavigation',
+    commands: [
+      { cmd: ':ls :buffer :bn :bp', status: 'full' },
+      { cmd: ':split :vsplit :close', status: 'full' },
+      { cmd: 'Ctrl-w h/j/k/l', status: 'full' },
     ],
   },
   {
@@ -70,13 +115,12 @@ const COMMAND_MATRIX: CommandCategory[] = [
     ],
   },
   {
-    name: 'Not Supported',
+    name: 'Still Limited',
     nameKey: 'vimStatus.category.notSupported',
     commands: [
-      { cmd: 'Visual mode', status: 'none' },
-      { cmd: 'Registers "a', status: 'none' },
-      { cmd: 'Marks m\'', status: 'none' },
-      { cmd: 'Macros q@', status: 'none' },
+      { cmd: 'real file IO', status: 'none' },
+      { cmd: 'tabs / quickfix / LSP', status: 'none' },
+      { cmd: 'full regex replacement', status: 'partial' },
     ],
   },
 ];

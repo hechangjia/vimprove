@@ -8,7 +8,7 @@ import {
   deleteRange,
   isTextObjectMotion
 } from './operators';
-import { isWhitespace, isWordChar } from './utils';
+import { clampCursor, isWhitespace, isWordChar } from './utils';
 import {
   clearPendingStates,
   finishRecording,
@@ -25,6 +25,11 @@ import {
 import { executeExCommand } from './exCommands';
 
 const LOWERCASE_LETTERS = 'abcdefghijklmnopqrstuvwxyz';
+
+const firstNonBlankCol = (lineText: string): number => {
+  const idx = lineText.search(/\S/);
+  return idx === -1 ? 0 : idx;
+};
 
 const isLowercaseLetter = (key: string): key is LowercaseLetter =>
   key.length === 1 && LOWERCASE_LETTERS.includes(key);
@@ -80,11 +85,6 @@ const applyRegisterWrite = (
     pendingRegister: false,
     selectedRegister: null
   };
-};
-
-const firstNonBlankCol = (lineText: string): number => {
-  const idx = lineText.search(/\S/);
-  return idx === -1 ? 0 : idx;
 };
 
 const pushJump = (state: VimState, from: Cursor, to: Cursor): VimState => {
@@ -556,6 +556,66 @@ const handleCommandKey = (state: VimState, key: string): VimState => {
   return state;
 };
 
+const getViewportHeight = (state: VimState): number => Math.max(1, state.viewportHeight || 10);
+
+const maxViewportTop = (state: VimState): number =>
+  Math.max(0, state.buffer.length - getViewportHeight(state));
+
+const clampViewportTop = (state: VimState, top: number): number =>
+  Math.max(0, Math.min(maxViewportTop(state), top));
+
+const cursorAtLine = (state: VimState, line: number): Cursor => {
+  const targetLine = Math.max(0, Math.min(state.buffer.length - 1, line));
+  return clampCursor(
+    { line: targetLine, col: firstNonBlankCol(state.buffer[targetLine] ?? '') },
+    state.buffer
+  );
+};
+
+const applyScreenScroll = (state: VimState, direction: 1 | -1, amount: number): VimState => {
+  const nextViewportTop = clampViewportTop(state, state.viewportTop + direction * amount);
+  const nextLine = Math.max(0, Math.min(state.buffer.length - 1, state.cursor.line + direction * amount));
+  return {
+    ...state,
+    cursor: clampCursor({ line: nextLine, col: state.cursor.col }, state.buffer),
+    viewportTop: nextViewportTop,
+    count: '',
+    pendingZ: false,
+    lastCommand: { type: 'move' }
+  };
+};
+
+const applyViewportPlacement = (state: VimState, placement: 'top' | 'middle' | 'bottom'): VimState => {
+  const height = getViewportHeight(state);
+  const rawTop = placement === 'top'
+    ? state.cursor.line
+    : placement === 'bottom'
+      ? state.cursor.line - height + 1
+      : state.cursor.line - Math.floor(height / 2);
+  return {
+    ...state,
+    viewportTop: clampViewportTop(state, rawTop),
+    pendingZ: false,
+    count: '',
+    lastCommand: { type: 'move' }
+  };
+};
+
+const applyScreenLineJump = (state: VimState, key: 'H' | 'M' | 'L'): VimState => {
+  const height = getViewportHeight(state);
+  const line = key === 'H'
+    ? state.viewportTop
+    : key === 'M'
+      ? state.viewportTop + Math.floor(height / 2)
+      : state.viewportTop + height - 1;
+  const cursor = cursorAtLine(state, line);
+  return {
+    ...pushJump(state, state.cursor, cursor),
+    count: '',
+    lastCommand: { type: 'move' }
+  };
+};
+
 const applyPaste = (state: VimState, before: boolean): VimState => {
   const registerText = getReadableRegister(state);
   if (!registerText) return { ...clearSelectedRegister(state), count: '' };
@@ -815,6 +875,55 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
       commandLine: '',
       commandStatus: null,
       lastCommand: { type: 'mode-switch', to: 'command' }
+    };
+  }
+
+  if (state.pendingZ) {
+    if (key === 'z') return applyViewportPlacement(state, 'middle');
+    if (key === 't') return applyViewportPlacement(state, 'top');
+    if (key === 'b') return applyViewportPlacement(state, 'bottom');
+    return { ...state, pendingZ: false, count: '' };
+  }
+
+  if (key === 'z' && !ctrlKey && !pendingOperator && !pendingReplace) {
+    return {
+      ...clearPendingStates(state),
+      pendingZ: true
+    };
+  }
+
+  if ((key === 'd' || key === 'u' || key === 'f' || key === 'b') && ctrlKey) {
+    const count = state.count ? getCount(state) : 0;
+    const halfPage = Math.max(1, Math.floor(getViewportHeight(state) / 2));
+    const fullPage = getViewportHeight(state);
+    const amount = count || (key === 'd' || key === 'u' ? halfPage : fullPage);
+    return applyScreenScroll(state, key === 'd' || key === 'f' ? 1 : -1, amount);
+  }
+
+  if ((key === 'H' || key === 'M' || key === 'L') && !ctrlKey && !pendingOperator && !pendingReplace) {
+    return applyScreenLineJump(state, key);
+  }
+
+  if (state.pendingCtrlW) {
+    if (key === 'h' || key === 'j' || key === 'k' || key === 'l') {
+      return executeExCommand(state, `wincmd ${key}`);
+    }
+    if (key === 's') {
+      return executeExCommand(state, 'split');
+    }
+    if (key === 'v') {
+      return executeExCommand(state, 'vsplit');
+    }
+    if (key === 'c') {
+      return executeExCommand(state, 'close');
+    }
+    return { ...state, pendingCtrlW: false };
+  }
+
+  if (key === 'w' && ctrlKey && !pendingOperator && !pendingReplace) {
+    return {
+      ...clearPendingStates(state),
+      pendingCtrlW: true
     };
   }
 
@@ -2036,14 +2145,29 @@ export const INITIAL_VIM_STATE: VimState = {
   visualAnchor: null,
   commandLine: '',
   commandStatus: null,
+  viewportTop: 0,
+  viewportHeight: 10,
   pendingOperator: null,
   pendingReplace: false,
   pendingFind: null,
   pendingTextObject: null,
   pendingSearch: null,
   pendingG: false,
+  pendingZ: false,
+  pendingCtrlW: false,
   lastSearch: null,
   lastCommand: null,
+  buffers: [
+    { id: 1, name: '[No Name]', lines: [''], cursor: { line: 0, col: 0 } }
+  ],
+  currentBufferIndex: 0,
+  windows: [
+    { id: 1, bufferIndex: 0, row: 0, col: 0 }
+  ],
+  currentWindowIndex: 0,
+  quickfixList: [],
+  quickfixIndex: -1,
+  quickfixOpen: false,
   history: [],
   historyIndex: -1,
   register: '',

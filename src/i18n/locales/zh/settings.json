@@ -23,9 +23,14 @@
       "findTill": "行内查找",
       "search": "搜索",
       "operators": "操作符",
+      "visualMode": "Visual Mode",
       "textObjects": "文本对象",
+      "macrosRegisters": "宏与寄存器",
+      "marksJumps": "标记与跳转",
+      "commandLine": "命令行模式",
+      "projectNavigation": "项目导航",
       "insertMode": "插入模式",
-      "notSupported": "暂不支持"
+      "notSupported": "仍有限制"
     }
   },
   "playground": {

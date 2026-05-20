@@ -17,7 +17,21 @@
     "supportMatrix": "Command Support Matrix",
     "supported": "Supported",
     "partial": "Partial",
-    "notSupported": "Not Supported"
+    "notSupported": "Not Supported",
+    "category": {
+      "basicMotions": "Basic Motions",
+      "findTill": "Find/Till",
+      "search": "Search",
+      "operators": "Operators",
+      "visualMode": "Visual Mode",
+      "textObjects": "Text Objects",
+      "macrosRegisters": "Macros & Registers",
+      "marksJumps": "Marks & Jumps",
+      "commandLine": "Command-line",
+      "projectNavigation": "Project Navigation",
+      "insertMode": "Insert Mode",
+      "notSupported": "Still Limited"
+    }
   },
   "playground": {
     "tab": "Playground",

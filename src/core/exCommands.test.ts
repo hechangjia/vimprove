@@ -41,6 +41,25 @@ describe('Ex command execution', () => {
     expect(result.buffer).toEqual(['bar bar', 'bar']);
     expect(result.commandStatus).toBe('3 substitutions on 2 lines');
   });
+
+  it('substitutes within a numeric line range', () => {
+    const result = executeExCommand(seed(['foo', 'foo foo', 'foo'], 0, 0), '1,2s/foo/bar/g');
+
+    expect(result.buffer).toEqual(['bar', 'bar bar', 'foo']);
+    expect(result.commandStatus).toBe('3 substitutions on 2 lines');
+    expect(result.lastCommand).toEqual({ type: 'ex', command: '1,2s/foo/bar/g' });
+  });
+
+  it('substitutes only matching lines with a global command', () => {
+    const result = executeExCommand(
+      seed(['debug foo', 'info foo', 'debug foo foo'], 0, 0),
+      'g/debug/s/foo/bar/g'
+    );
+
+    expect(result.buffer).toEqual(['debug bar', 'info foo', 'debug bar bar']);
+    expect(result.commandStatus).toBe('3 substitutions on 2 lines');
+    expect(result.lastCommand).toEqual({ type: 'ex', command: 'g/debug/s/foo/bar/g' });
+  });
 });
 
 describe('Command-line mode reducer integration', () => {

@@ -10,7 +10,10 @@
     "chapter10": "第 10 章：Vim 在真实世界",
     "chapter8": "第 8 章：宏与寄存器",
     "chapter9": "第 9 章：标记与跳转历史",
-    "chapter11": "第 11 章：日常 Vim 熟练度"
+    "chapter11": "第 11 章：日常 Vim 熟练度",
+    "chapter12": "第 12 章：项目导航",
+    "chapter13": "第 13 章：屏幕导航",
+    "chapter14": "第 14 章：项目工作区"
   },
   "lessons": {
     "modes-basics": {
@@ -1919,6 +1922,225 @@
           "goals": {
             "replace-pending-with-ready": "用 :%s/pending/ready/g 更新所有状态。",
             "ex-command-used": "通过命令行模式完成这次编辑。"
+          }
+        }
+      }
+    },
+    "buffer-list-basics": {
+      "title": "Buffers：已经载入内存的文件",
+      "shortDescription": "把 Vim 的 buffer 列表读成你的打开文件地图。",
+      "content": {
+        "0": "## Buffer 是打开的文件\n\n在 Vim 中，**buffer** 是已经载入内存的文件；window 只是查看某个 buffer 的窗口。\n\n第一个项目导航命令是 **:ls**，它会列出 Vim 当前知道的 buffers。\n\n- **%** 标记当前 buffer。\n- 左侧数字是 buffer 编号。\n- 右侧名称是之后可以切换到的文件名。\n\nVimprove 只模拟这些 buffers，不会真的打开或保存本地文件。",
+        "1": {
+          "keys": {
+            "0": "列出打开的 buffers",
+            "1": "同一个命令的长写法",
+            "2": "列表中的当前 buffer 标记"
+          }
+        },
+        "2": {
+          "goals": {
+            "list-buffers": "运行 :ls 列出项目 buffers。"
+          }
+        }
+      }
+    },
+    "switch-buffers": {
+      "title": "不用鼠标切换 buffers",
+      "shortDescription": "用 :bnext、:bprevious 和 :buffer N 在打开文件间移动。",
+      "content": {
+        "0": "## 按编号或方向切换文件\n\n能读懂 **:ls** 之后，切换 buffer 就很直接。\n\n- **:bnext** 或 **:bn** 到下一个 buffer。\n- **:bprevious** 或 **:bp** 到上一个 buffer。\n- **:buffer 3** 直接跳到 3 号 buffer。\n\n日常使用时，先用 **:ls** 找地图，再按编号直达目标。",
+        "1": {
+          "keys": {
+            "0": "移动到下一个 buffer",
+            "1": "移动到上一个 buffer",
+            "2": "直接跳到 3 号 buffer"
+          }
+        },
+        "2": {
+          "goals": {
+            "next-buffer": "运行 :bnext 或 :bn 打开 src/App.tsx。",
+            "readme-buffer": "运行 :buffer 3 跳到 README.md。"
+          }
+        }
+      }
+    },
+    "split-windows": {
+      "title": "Windows：查看 buffer 的多个视图",
+      "shortDescription": "打开 split，并用 Ctrl-w 导航移动焦点。",
+      "content": {
+        "0": "## Window 是视图\n\nVim 把 buffer 和 window 分开：\n\n- **buffer** 是内存里的文件。\n- **window** 是查看 buffer 的视图。\n- split 会创建另一个 window，不是复制一份文件。\n\n用 **:split** 打开水平分屏，用 **:vsplit** 打开垂直分屏，然后用 **Ctrl-w h/j/k/l** 移动焦点。",
+        "1": {
+          "keys": {
+            "0": "打开水平分屏",
+            "1": "打开垂直分屏",
+            "2": "焦点移到左侧窗口",
+            "3": "焦点移到下方窗口",
+            "4": "焦点移到上方窗口",
+            "5": "焦点移到右侧窗口",
+            "6": "关闭当前窗口"
+          }
+        },
+        "2": {
+          "goals": {
+            "open-split": "运行 :split 创建另一个窗口。",
+            "move-focus": "用 Ctrl-w j 或 Ctrl-w k 移动窗口焦点。"
+          }
+        }
+      }
+    },
+    "project-navigation-review": {
+      "title": "项目导航复习",
+      "shortDescription": "把 buffer 切换、split 和 Ctrl-w 移动串成一个项目导航流程。",
+      "content": {
+        "0": "## 键盘优先的项目导航流程\n\n使用一个很小的循环：\n\n1. 需要看打开文件时运行 **:ls**。\n2. 知道目标编号时用 **:buffer N**。\n3. 需要对照两个位置时用 **:split** 或 **:vsplit**。\n4. 用 **Ctrl-w h/j/k/l** 移动焦点，不离开主键区。\n\n在加入插件或 fuzzy finder 之前，这已经足够导航很多小项目。",
+        "2": {
+          "goals": {
+            "inspect-list": "运行 :ls 查看 buffer 列表。",
+            "jump-to-app": "运行 :buffer 2 跳到 src/App.tsx。",
+            "create-project-view": "用 :split 或 :vsplit 打开一个分屏。"
+          }
+        }
+      }
+    },
+    "screen-scroll-basics": {
+      "title": "屏幕滚动：半页与整页",
+      "shortDescription": "用 Ctrl-d/u 和 Ctrl-f/b 浏览长文件，替代反复 j/k。",
+      "content": {
+        "0": "## 按屏幕移动，而不是逐行移动\n\n文件比视口长时，反复按 **j** 和 **k** 太小步。\n\n- **Ctrl-d** 向下移动约半页。\n- **Ctrl-u** 向上移动约半页。\n- **Ctrl-f** 向前移动一整页。\n- **Ctrl-b** 向后移动一整页。\n\n阅读和扫描时用它们接近目标，再切回精准 motion。",
+        "1": {
+          "keys": {
+            "0": "向下滚动半页",
+            "1": "向上滚动半页",
+            "2": "向前滚动一页",
+            "3": "向后滚动一页"
+          }
+        },
+        "2": {
+          "goals": {
+            "half-page-down": "用 Ctrl-d 向下移动半页。",
+            "page-forward": "用 Ctrl-f 向前移动一整页。"
+          }
+        }
+      }
+    },
+    "viewport-positioning": {
+      "title": "视口定位：zz、zt、zb",
+      "shortDescription": "把当前行放到眼睛最舒服的位置。",
+      "content": {
+        "0": "## 把当前行摆到合适位置\n\n滚动不只是移动光标。很多时候你想让当前行出现在更适合阅读的位置：\n\n- **zz** 居中当前行。\n- **zt** 把当前行放到顶部。\n- **zb** 把当前行放到底部。\n\n这些是视图命令：它们改变文件的取景，不改变文本。",
+        "1": {
+          "keys": {
+            "0": "居中当前行",
+            "1": "把当前行放到顶部",
+            "2": "把当前行放到底部"
+          }
+        },
+        "2": {
+          "goals": {
+            "center-line": "用 zz 居中当前行。",
+            "top-line": "用 zt 把当前行放到顶部。"
+          }
+        }
+      }
+    },
+    "screen-line-jumps": {
+      "title": "可见屏幕跳转：H、M、L",
+      "shortDescription": "跳到可见区域的顶部、中间或底部行。",
+      "content": {
+        "0": "## 在可见屏幕内跳转\n\n目标已经在屏幕上时，用屏幕相对跳转：\n\n- **H** 跳到顶部可见行。\n- **M** 跳到中间可见行。\n- **L** 跳到底部可见行。\n\n它们和翻页滚动很搭：先滚到附近，再用 **H/M/L** 快速落点。",
+        "1": {
+          "keys": {
+            "0": "跳到顶部可见行",
+            "1": "跳到中间可见行",
+            "2": "跳到底部可见行"
+          }
+        },
+        "2": {
+          "goals": {
+            "jump-top": "用 H 跳到顶部可见行。",
+            "jump-bottom": "用 L 跳到底部可见行。"
+          }
+        }
+      }
+    },
+    "screen-navigation-review": {
+      "title": "屏幕导航复习",
+      "shortDescription": "组合翻页移动、视口定位和可见行跳转。",
+      "content": {
+        "0": "## 长文件阅读循环\n\n在长文件中使用这个节奏：\n\n1. **Ctrl-d/u** 按半页扫描。\n2. 需要大跳时用 **Ctrl-f/b**。\n3. 用 **zz/zt/zb** 重新取景当前行。\n4. 目标已可见时用 **H/M/L**。\n\n这是细小 motion 和项目导航之间缺失的一层。",
+        "2": {
+          "goals": {
+            "move-by-screen": "用 Ctrl-d 或 Ctrl-f 移动到第 10 行之后。",
+            "reframe-line": "用 zz、zt 或 zb 改变视口取景。",
+            "visible-line-jump": "滚动后用 H、M 或 L 跳转。"
+          }
+        }
+      }
+    },
+    "workspace-mental-model": {
+      "title": "项目工作区：文件、buffers 与结果列表",
+      "shortDescription": "从单 buffer 练习进入项目级编辑。",
+      "content": {
+        "0": "## Vim 项目工作有三层\n\n真实项目里你很少只编辑一个文件。常见循环是：\n\n1. 文件以 **buffers** 形式存在。\n2. 跨项目搜索。\n3. 结果进入 **quickfix list**。\n4. 逐条跳转并编辑当前 buffer。\n\nVimprove 会模拟这个项目，但工作习惯和真实 Vim 一样。",
+        "1": {
+          "keys": {
+            "0": "列出打开的项目 buffers",
+            "1": "在项目 buffers 中搜索字面量模式",
+            "2": "打开 quickfix 面板"
+          }
+        },
+        "2": {
+          "goals": {
+            "list-buffers": "运行 :ls 查看项目 buffers。",
+            "open-quickfix": "运行 :vimgrep /debug/ 生成 quickfix 结果。"
+          }
+        }
+      }
+    },
+    "project-search-vimgrep": {
+      "title": "用 :vimgrep 做项目搜索",
+      "shortDescription": "搜索每个模拟项目 buffer，并把匹配收集到 quickfix。",
+      "content": {
+        "0": "## 先搜索，再编辑\n\n需要项目级地图时，使用 **:vimgrep /pattern/**。\n\n在 Vimprove 中它是在模拟 buffers 中做字面量搜索。真实 Vim 里的 `:vimgrep` 可以使用 Vim regex 和文件 glob。\n\n重要习惯一样：先收集结果，再修改代码。",
+        "1": {
+          "goals": {
+            "search-debug": "运行 :vimgrep /debug/ 构建 quickfix 列表。"
+          }
+        }
+      }
+    },
+    "quickfix-navigation": {
+      "title": "Quickfix 导航：cnext 与 cprev",
+      "shortDescription": "在项目搜索结果之间跳转，而不丢失上下文。",
+      "content": {
+        "0": "## Quickfix 是项目待办列表\n\n**:vimgrep** 填充 quickfix 后，使用：\n\n- **:cnext** 跳到下一个结果。\n- **:cprev** 跳到上一个结果。\n- **:copen** / **:cclose** 显示或隐藏列表。\n\n每次跳转都会切到匹配 buffer，并把光标放到匹配位置。",
+        "1": {
+          "keys": {
+            "0": "跳到下一个 quickfix 结果",
+            "1": "跳到上一个 quickfix 结果",
+            "2": "打开 quickfix 面板",
+            "3": "关闭 quickfix 面板"
+          }
+        },
+        "2": {
+          "goals": {
+            "build-quickfix": "运行 :vimgrep /debug/ 构建 quickfix。",
+            "jump-next-result": "运行 :cnext 跳到 src/logger.ts。"
+          }
+        }
+      }
+    },
+    "project-workspace-review": {
+      "title": "项目工作区复习",
+      "shortDescription": "在模拟项目工作区中搜索、查看、跳转并编辑。",
+      "content": {
+        "0": "## v3 工作流\n\n真实 Vim 项目编辑的形状是：\n\n1. 跨项目 buffers 搜索。\n2. 打开 quickfix。\n3. 逐个跳转结果。\n4. 在目标位置使用普通 Vim 编辑。\n\n命令很小，但工作流已经是项目级。",
+        "1": {
+          "goals": {
+            "project-search": "运行 :vimgrep /debug/ 收集所有 debug 结果。",
+            "jump-quickfix": "用 :cnext 跳到第一个 buffer 之外的结果。",
+            "open-panel": "导航时保持 quickfix 面板打开。"
           }
         }
       }

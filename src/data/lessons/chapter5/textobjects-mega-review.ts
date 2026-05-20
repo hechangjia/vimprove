@@ -173,6 +173,12 @@ It shows how different text objects can be combined back-to-back to reshape stru
       }
     },
     {
+      type: 'operator-gym',
+      config: {
+        targetScore: 5
+      }
+    },
+    {
       type: 'cheat-sheet',
       config: { chapterId: 'chapter5' }
     }
