@@ -1,12 +1,21 @@
 import { useState, useRef } from 'react';
 import { useVimEngine } from '@/hooks/useVimEngine';
 import { tokenizeLine, getTokenClassName } from '@/core/syntaxHighlight';
+import type { Language as SyntaxLanguage } from '@/core/syntaxHighlight';
 import { getLigatureRange } from '@/core/ligatures';
+import { isInVisualSelection } from '@/core/visualSelection';
+import { usesBlockCursor } from '@/core/modeUtils';
 import { useTranslationSafe } from '@/hooks/useI18n';
-import { useSettingsContext } from '@/contexts/SettingsContext';
+import { useSettingsContext } from '@/contexts/useSettingsContext';
 import { getFontFamily } from '@/hooks/useFontLoader';
 
 type Language = 'cpp' | 'js' | 'py' | 'auto';
+
+const toSyntaxLanguage = (value: Language): SyntaxLanguage => {
+  if (value === 'js') return 'javascript';
+  if (value === 'py') return 'python';
+  return value;
+};
 
 const LANGUAGE_OPTIONS: { value: Language; label: string }[] = [
   { value: 'cpp', label: 'C++' },
@@ -135,8 +144,9 @@ export const VimPlaygroundTab = () => {
   };
 
   const renderBuffer = () => {
+    const syntaxLanguage = toSyntaxLanguage(language);
     return state.buffer.map((line, r) => {
-      const tokens = tokenizeLine(line, language, state.buffer);
+      const tokens = tokenizeLine(line, syntaxLanguage, state.buffer);
       const ligatureRange = state.cursor.line === r ? getLigatureRange(line, state.cursor.col) : null;
       let charIndex = 0;
 
@@ -151,14 +161,16 @@ export const VimPlaygroundTab = () => {
               return tokenChars.map((char, localIdx) => {
                 const c = charIndex++;
                 const isCursor = state.cursor.line === r && state.cursor.col === c;
-                const isNormalMode = state.mode === 'normal';
+                const isBlockCursorMode = usesBlockCursor(state.mode);
+                const isSelected = isInVisualSelection(state, { line: r, col: c });
                 const disableLigatures =
                   ligatureRange != null && c >= ligatureRange.start && c <= ligatureRange.end;
                 const cursorTextClass = isCursor
-                  ? isNormalMode
+                  ? isBlockCursorMode
                     ? 'vim-cursor-text'
                     : 'relative z-10'
                   : '';
+                const selectionClass = isSelected ? 'vim-visual-selection' : '';
 
                 return (
                   <span
@@ -167,10 +179,10 @@ export const VimPlaygroundTab = () => {
                   >
                     {isCursor && (
                       <span
-                        className={isNormalMode ? 'vim-cursor-block' : 'vim-cursor-bar'}
+                        className={isBlockCursorMode ? 'vim-cursor-block' : 'vim-cursor-bar'}
                       />
                     )}
-                    <span className={`${cursorTextClass} ${disableLigatures ? 'vim-no-ligatures' : ''}`.trim()}>
+                    <span className={`${selectionClass} ${cursorTextClass} ${disableLigatures ? 'vim-no-ligatures' : ''}`.trim()}>
                       {char}
                     </span>
                   </span>
@@ -178,7 +190,7 @@ export const VimPlaygroundTab = () => {
               });
             })}
             {state.cursor.line === r && state.cursor.col === line.length && (
-              <span className={state.mode === 'normal' ? 'vim-cursor-eol-block' : 'vim-cursor-eol-bar'}>
+              <span className={usesBlockCursor(state.mode) ? 'vim-cursor-eol-block' : 'vim-cursor-eol-bar'}>
                 &nbsp;
               </span>
             )}
@@ -253,6 +265,11 @@ export const VimPlaygroundTab = () => {
         >
           {renderBuffer()}
         </div>
+        {(state.mode === 'command' || state.commandStatus) && (
+          <div className="border-t border-border bg-surface-2 px-4 py-2 font-mono text-sm text-foreground-muted">
+            {state.mode === 'command' ? `:${state.commandLine}` : state.commandStatus}
+          </div>
+        )}
       </div>
 
       {/* Tip */}

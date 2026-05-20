@@ -4,6 +4,7 @@ import type { RunExampleConfig, VimState } from '@/core/types';
 import { vimReducer, INITIAL_VIM_STATE } from '@/core/vimReducer';
 import { tokenizeLine, getTokenClassName } from '@/core/syntaxHighlight';
 import { getLigatureRange } from '@/core/ligatures';
+import { usesBlockCursor } from '@/core/modeUtils';
 import { useTranslationSafe } from '@/hooks/useI18n';
 import { useKeyHistory } from '@/hooks/useKeyHistory';
 import { KeyHistoryPanel } from '@/components/common/KeyHistoryPanel';
@@ -214,13 +215,13 @@ export const RunExamplePlayer = ({
                       const track = config.tracks[idx];
                       if (!track) return null;
                       const bgColor = resolveTrackBg(idx, track.color);
-                      const isNormalMode = states[idx].mode === 'normal';
+                      const isBlockCursorMode = usesBlockCursor(states[idx].mode);
 
                       return (
                         <span
                           key={idx}
                           className={`absolute ${idx === 0 ? '' : bgColor} ${
-                            isNormalMode
+                            isBlockCursorMode
                               ? idx === 0
                                 ? 'vim-cursor-block'
                                 : 'inset-0 opacity-70'
@@ -232,7 +233,7 @@ export const RunExamplePlayer = ({
                       );
                     })}
                     <span
-                      className={`${cursorsAtPos.some(({ idx }) => states[idx].mode === 'normal') ? 'vim-cursor-text' : 'relative z-10'} ${disableLigatures ? 'vim-no-ligatures' : ''}`.trim()}
+                      className={`${cursorsAtPos.some(({ idx }) => usesBlockCursor(states[idx].mode)) ? 'vim-cursor-text' : 'relative z-10'} ${disableLigatures ? 'vim-no-ligatures' : ''}`.trim()}
                     >
                       {char}
                     </span>
@@ -254,17 +255,17 @@ export const RunExamplePlayer = ({
                   .map(({ idx }) => {
                     const track = config.tracks[idx];
                     const bgColor = idx === 0 ? 'bg-caret' : (track.color || (idx === 1 ? 'bg-track-blue' : 'bg-track-green'));
-                    const isNormalMode = states[idx].mode === 'normal';
+                    const isBlockCursorMode = usesBlockCursor(states[idx].mode);
 
                     return (
                       idx === 0 ? (
-                        <span key={idx} className={isNormalMode ? 'vim-cursor-eol-block' : 'vim-cursor-eol-bar'}>
+                        <span key={idx} className={isBlockCursorMode ? 'vim-cursor-eol-block' : 'vim-cursor-eol-bar'}>
                           &nbsp;
                         </span>
                       ) : (
                         <span
                           key={idx}
-                          className={`${bgColor} inline-block h-5 ${isNormalMode ? 'w-2.5 opacity-70' : 'w-0.5 opacity-90'}`}
+                          className={`${bgColor} inline-block h-5 ${isBlockCursorMode ? 'w-2.5 opacity-70' : 'w-0.5 opacity-90'}`}
                         >
                           &nbsp;
                         </span>
@@ -331,6 +332,11 @@ export const RunExamplePlayer = ({
       {/* Editor Area - flex-1 to push controls to bottom */}
       <div className="bg-surface flex-1 overflow-auto">
         <div className="vim-editor-root">{renderBuffer()}</div>
+        {states[0] && (states[0].mode === 'command' || states[0].commandStatus) && (
+          <div className="border-t border-border bg-surface-2 px-4 py-2 font-mono text-sm text-foreground-muted">
+            {states[0].mode === 'command' ? `:${states[0].commandLine}` : states[0].commandStatus}
+          </div>
+        )}
       </div>
 
       {/* Current Step Display */}

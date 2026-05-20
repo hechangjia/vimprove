@@ -7,10 +7,10 @@ type FontConfig = {
 };
 
 export const FONT_CONFIGS: FontConfig[] = [
-  { name: 'Consolas', fallback: 'Consolas, monospace' },
-  { name: 'Fira Code', googleFont: 'Fira+Code:wght@400;500;700' },
   { name: 'JetBrains Mono', googleFont: 'JetBrains+Mono:wght@400;500;700' },
   { name: 'Cascadia Code', googleFont: 'Cascadia+Code:wght@400;500;700' },
+  { name: 'Fira Code', googleFont: 'Fira+Code:wght@400;500;700' },
+  { name: 'Consolas', fallback: 'Consolas, monospace' },
   { name: 'Menlo', fallback: 'Menlo, monospace' },
   { name: 'Source Code Pro', googleFont: 'Source+Code+Pro:wght@400;500;700' },
   { name: 'Roboto Mono', googleFont: 'Roboto+Mono:wght@400;500;700' },
@@ -37,6 +37,8 @@ export function useFontLoader(fontName: string) {
   useEffect(() => {
     const config = FONT_CONFIGS.find(f => f.name === fontName);
     if (!config) {
+      // Font loading state follows the selected font name; invalid names should surface immediately.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError(true);
       return;
     }

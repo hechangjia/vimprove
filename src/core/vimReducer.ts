@@ -1,4 +1,4 @@
-import type { VimState, VimAction, Motion, KeyPress, Operator, OperatorMotion, TextObject, Cursor } from './types';
+import type { VimState, VimAction, Motion, KeyPress, Operator, OperatorMotion, TextObject, Cursor, RegisterName, LowercaseLetter, Command, SearchState } from './types';
 import { getMotionTarget, findCharOnLine } from './motions';
 import {
   applyOperatorWithMotion,
@@ -11,7 +11,6 @@ import {
 import { isWhitespace, isWordChar } from './utils';
 import {
   clearPendingStates,
-  createSnapshot,
   finishRecording,
   getCount,
   pushHistory,
@@ -23,6 +22,126 @@ import {
   applyCaseOperatorWithMotion,
   applyCaseRange,
 } from './caseOperators';
+import { executeExCommand } from './exCommands';
+
+const LOWERCASE_LETTERS = 'abcdefghijklmnopqrstuvwxyz';
+
+const isLowercaseLetter = (key: string): key is LowercaseLetter =>
+  key.length === 1 && LOWERCASE_LETTERS.includes(key);
+
+const isRegisterName = (key: string): key is RegisterName =>
+  isLowercaseLetter(key) || key === '"' || key === '0' || key === '_' || key === '+' || key === '*';
+
+const clearSelectedRegister = (state: VimState): VimState => ({
+  ...state,
+  pendingRegister: false,
+  selectedRegister: null
+});
+
+const getReadableRegister = (state: VimState): string => {
+  const name = state.selectedRegister;
+  if (!name || name === '"') return state.register;
+  if (name === '0') return state.yankRegister || state.registers['0'] || '';
+  if (name === '_') return '';
+  return state.registers[name] ?? '';
+};
+
+const applyRegisterWrite = (
+  before: VimState,
+  after: VimState,
+  text: string,
+  source: 'yank' | 'delete'
+): VimState => {
+  const name = before.selectedRegister;
+  if (name === '_') {
+    return {
+      ...after,
+      register: before.register,
+      yankRegister: before.yankRegister,
+      registers: { ...before.registers },
+      pendingRegister: false,
+      selectedRegister: null
+    };
+  }
+
+  const registers = { ...after.registers };
+  if (name && name !== '"' && name !== '0') {
+    registers[name] = text;
+  }
+  if (source === 'yank') {
+    registers['0'] = text;
+  }
+
+  return {
+    ...after,
+    register: text,
+    yankRegister: source === 'yank' ? text : after.yankRegister,
+    registers,
+    pendingRegister: false,
+    selectedRegister: null
+  };
+};
+
+const firstNonBlankCol = (lineText: string): number => {
+  const idx = lineText.search(/\S/);
+  return idx === -1 ? 0 : idx;
+};
+
+const pushJump = (state: VimState, from: Cursor, to: Cursor): VimState => {
+  if (from.line === to.line && from.col === to.col) return { ...state, cursor: to };
+  const trimmed = state.jumpList.slice(0, state.jumpIndex + 1);
+  const last = trimmed[trimmed.length - 1];
+  const nextList = last && last.line === from.line && last.col === from.col
+    ? trimmed
+    : [...trimmed, { ...from }];
+  return {
+    ...state,
+    cursor: to,
+    previousJumpCursor: { ...from },
+    jumpList: [...nextList, { ...to }],
+    jumpIndex: nextList.length
+  };
+};
+
+const jumpToMark = (state: VimState, name: LowercaseLetter, linewise: boolean): VimState => {
+  const mark = state.marks[name];
+  if (!mark) return { ...state, pendingMarkJump: null };
+  const target = linewise
+    ? { line: mark.line, col: firstNonBlankCol(state.buffer[mark.line] ?? '') }
+    : { ...mark };
+  return {
+    ...pushJump(state, state.cursor, target),
+    pendingMarkJump: null,
+    count: '',
+    lastCommand: { type: 'move' }
+  };
+};
+
+const pushChangePosition = (state: VimState, cursor: Cursor): VimState => {
+  const trimmed = state.changeList.slice(0, state.changeIndex + 1);
+  const last = trimmed[trimmed.length - 1];
+  const nextList = last && last.line === cursor.line && last.col === cursor.col
+    ? trimmed
+    : [...trimmed, { ...cursor }];
+  return {
+    ...state,
+    changeList: nextList,
+    changeIndex: nextList.length - 1
+  };
+};
+
+const moveChangelist = (state: VimState, direction: -1 | 1): VimState => {
+  if (!state.changeList.length) return state;
+  const nextIndex = Math.max(0, Math.min(state.changeList.length - 1, state.changeIndex + direction));
+  return {
+    ...state,
+    cursor: { ...state.changeList[nextIndex] },
+    changeIndex: nextIndex,
+    count: '',
+    pendingG: false,
+    lastCommand: { type: 'move' }
+  };
+};
 
 const buildTextObjectMotion = (prefix: 'i' | 'a', key: string): TextObject | null => {
   const mapping: Record<string, string> = {
@@ -228,7 +347,7 @@ const applyOperatorMotion = (state: VimState, operator: Operator, motion: Operat
     const registerText = buildRegisterText(state.buffer, range);
 
     if (operator === 'y') {
-      return {
+      const yankedState: VimState = {
         ...state,
         register: registerText,
         pendingOperator: null,
@@ -238,6 +357,7 @@ const applyOperatorMotion = (state: VimState, operator: Operator, motion: Operat
         changeRecording: null,
         recordingCount: null
       };
+      return applyRegisterWrite(state, yankedState, registerText, 'yank');
     }
 
     const stateWithHistory = pushHistory(state);
@@ -261,7 +381,7 @@ const applyOperatorMotion = (state: VimState, operator: Operator, motion: Operat
       nextState = finishRecording(nextState);
     }
 
-    return nextState;
+    return applyRegisterWrite(state, nextState, registerText, 'delete');
   }
 
   if ((motion === 'w' || motion === 'W') && count > 1) {
@@ -289,7 +409,7 @@ const applyOperatorMotion = (state: VimState, operator: Operator, motion: Operat
 
     const registerText = buildRegisterText(state.buffer, range);
     if (operator === 'y') {
-      return {
+      const yankedState: VimState = {
         ...state,
         register: registerText,
         pendingOperator: null,
@@ -299,6 +419,7 @@ const applyOperatorMotion = (state: VimState, operator: Operator, motion: Operat
         changeRecording: null,
         recordingCount: null
       };
+      return applyRegisterWrite(state, yankedState, registerText, 'yank');
     }
 
     const stateWithHistory = pushHistory(state);
@@ -321,7 +442,7 @@ const applyOperatorMotion = (state: VimState, operator: Operator, motion: Operat
       nextState = finishRecording(nextState);
     }
 
-    return nextState;
+    return applyRegisterWrite(state, nextState, registerText, 'delete');
   }
 
   if (isTextObjectMotion(motion) && count > 1) {
@@ -345,7 +466,12 @@ const applyOperatorMotion = (state: VimState, operator: Operator, motion: Operat
     resultState = { ...resultState, changeRecording: null, recordingCount: null };
   }
 
-  return { ...resultState, count: '', pendingTextObject: null };
+  resultState = { ...resultState, count: '', pendingTextObject: null };
+  if (operator === 'y' || operator === 'd' || operator === 'c') {
+    return applyRegisterWrite(state, resultState, resultState.register, operator === 'y' ? 'yank' : 'delete');
+  }
+
+  return resultState;
 };
 
 // Helper: replay keys for . command
@@ -366,12 +492,77 @@ const replayKeys = (state: VimState, keys: KeyPress[], countForChange: number): 
   return currentState;
 };
 
-const applyPaste = (state: VimState, before: boolean): VimState => {
-  if (!state.register) return { ...state, count: '' };
+const replayMacro = (state: VimState, register: LowercaseLetter): VimState => {
+  const keys = state.macros[register];
+  if (!keys?.length) {
+    return { ...state, pendingMacroReplay: false, count: '' };
+  }
 
   const count = getCount(state);
-  const register = state.register;
-  const stateWithHistory = pushHistory(state);
+  let currentState: VimState = {
+    ...state,
+    pendingMacroReplay: false,
+    count: '',
+    selectedRegister: null,
+    pendingRegister: false,
+    lastMacroRegister: register
+  };
+
+  for (let repeatIndex = 0; repeatIndex < count; repeatIndex++) {
+    for (const keyPress of keys) {
+      currentState = vimReducer(currentState, {
+        type: 'KEYDOWN',
+        payload: { key: keyPress.key, ctrlKey: keyPress.ctrlKey },
+      });
+      currentState = {
+        ...currentState,
+        pendingMacroReplay: false,
+        lastMacroRegister: register
+      };
+    }
+  }
+
+  return currentState;
+};
+
+const handleCommandKey = (state: VimState, key: string): VimState => {
+  if (key === 'Escape') {
+    return {
+      ...state,
+      mode: 'normal',
+      commandLine: '',
+      lastCommand: { type: 'mode-switch', to: 'normal' }
+    };
+  }
+
+  if (key === 'Enter') {
+    return executeExCommand(state, state.commandLine);
+  }
+
+  if (key === 'Backspace') {
+    return {
+      ...state,
+      commandLine: state.commandLine.slice(0, -1)
+    };
+  }
+
+  if (key.length === 1) {
+    return {
+      ...state,
+      commandLine: `${state.commandLine}${key}`
+    };
+  }
+
+  return state;
+};
+
+const applyPaste = (state: VimState, before: boolean): VimState => {
+  const registerText = getReadableRegister(state);
+  if (!registerText) return { ...clearSelectedRegister(state), count: '' };
+
+  const count = getCount(state);
+  const register = registerText;
+  const stateWithHistory = pushHistory(clearSelectedRegister(state));
   const stateWithRecording = startRecording(stateWithHistory, before ? 'P' : 'p', false);
 
   const pasteOnce = (
@@ -399,11 +590,6 @@ const applyPaste = (state: VimState, before: boolean): VimState => {
       const tail = lineText.slice(insertCol);
       const mid = parts.slice(1, -1);
       const last = parts[parts.length - 1] ?? '';
-      if (process.env.DEBUG_PASTE) {
-        // eslint-disable-next-line no-console
-        console.log('paste-multiline', { lineText, insertCol, parts, before, cursor: currentCursor });
-      }
-
       const newBuffer = [...currentBuffer];
       newBuffer[currentCursor.line] = head;
       newBuffer.splice(currentCursor.line + 1, 0, ...mid, last + tail);
@@ -536,7 +722,7 @@ const handleInsertKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
     const stateAfterRecording = hasBufferChanged
       ? finishRecording({ ...stateWithCursors, mode: 'normal', cursor: exitCursor })
       : { ...state, changeRecording: null, recordingCount: null, recordingExitCursor: null, recordingInsertCursor: null };
-    const lastCommand = hasBufferChanged
+    const lastCommand: Command = hasBufferChanged
       ? stateAfterRecording.lastCommand ?? { type: 'mode-switch', to: 'normal' }
       : { type: 'mode-switch', to: 'normal' };
     return {
@@ -622,6 +808,97 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
     return clearPendingStates(state);
   }
 
+  if (key === ':' && !pendingOperator && !pendingReplace && !ctrlKey) {
+    return {
+      ...clearPendingStates(state),
+      mode: 'command',
+      commandLine: '',
+      commandStatus: null,
+      lastCommand: { type: 'mode-switch', to: 'command' }
+    };
+  }
+
+  if (state.pendingRegister) {
+    if (isRegisterName(key)) {
+      return {
+        ...state,
+        pendingRegister: false,
+        selectedRegister: key
+      };
+    }
+    return {
+      ...state,
+      pendingRegister: false,
+      selectedRegister: null
+    };
+  }
+
+  if (state.pendingMacroRecord) {
+    if (isLowercaseLetter(key)) {
+      return {
+        ...state,
+        pendingMacroRecord: false,
+        macroRecordingRegister: key,
+        macroRecording: []
+      };
+    }
+    return { ...state, pendingMacroRecord: false };
+  }
+
+  if (state.macroRecordingRegister && key === 'q' && !ctrlKey) {
+    return {
+      ...state,
+      macros: {
+        ...state.macros,
+        [state.macroRecordingRegister]: state.macroRecording
+      },
+      lastMacroRegister: state.macroRecordingRegister,
+      macroRecordingRegister: null,
+      macroRecording: [],
+      count: ''
+    };
+  }
+
+  if (state.pendingMacroReplay) {
+    if (key === '@' && state.lastMacroRegister) {
+      return replayMacro(state, state.lastMacroRegister);
+    }
+    if (isLowercaseLetter(key)) {
+      return replayMacro(state, key);
+    }
+    return { ...state, pendingMacroReplay: false, count: '' };
+  }
+
+  if (state.pendingMarkSet) {
+    if (isLowercaseLetter(key)) {
+      return {
+        ...state,
+        marks: {
+          ...state.marks,
+          [key]: { ...state.cursor }
+        },
+        pendingMarkSet: false,
+        count: ''
+      };
+    }
+    return { ...state, pendingMarkSet: false, count: '' };
+  }
+
+  if (state.pendingMarkJump) {
+    if (key === state.pendingMarkJump && state.previousJumpCursor) {
+      return {
+        ...pushJump(state, state.cursor, state.previousJumpCursor),
+        pendingMarkJump: null,
+        count: '',
+        lastCommand: { type: 'move' }
+      };
+    }
+    if (isLowercaseLetter(key)) {
+      return jumpToMark(state, key, state.pendingMarkJump === "'");
+    }
+    return { ...state, pendingMarkJump: null, count: '' };
+  }
+
   if (state.pendingSearch) {
     if (key === 'Escape') {
       return { ...state, pendingSearch: null, count: '' };
@@ -662,7 +939,6 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
     const overrideCount = hasOverrideCount ? getCount(state) : null;
     const firstKey = state.lastChange[0]?.key;
     const insertCommands = new Set(['i', 'I', 'a', 'A', 'o', 'O', 's']);
-    const isInsertReplay = insertCommands.has(firstKey);
     const changeCount = overrideCount ?? state.lastChangeCount;
     const secondKey = state.lastChange[1]?.key;
 
@@ -737,6 +1013,50 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
     return { ...state, count: state.count + key };
   }
 
+  if (key === '"' && !state.pendingG && !pendingOperator && !pendingReplace) {
+    return { ...state, pendingRegister: true };
+  }
+
+  if (key === 'q' && !ctrlKey && !state.pendingG && !pendingOperator && !pendingReplace) {
+    return { ...state, pendingMacroRecord: true };
+  }
+
+  if (key === '@' && !ctrlKey && !state.pendingG && !pendingOperator && !pendingReplace) {
+    return { ...state, pendingMacroReplay: true };
+  }
+
+  if (key === 'm' && !ctrlKey && !state.pendingG && !pendingOperator && !pendingReplace) {
+    return { ...state, pendingMarkSet: true };
+  }
+
+  if ((key === '`' || key === "'") && !ctrlKey && !state.pendingG && !pendingOperator && !pendingReplace) {
+    return { ...state, pendingMarkJump: key };
+  }
+
+  if (key === 'o' && ctrlKey) {
+    if (state.jumpIndex <= 0) return { ...state, count: '' };
+    const nextIndex = state.jumpIndex - 1;
+    return {
+      ...state,
+      cursor: { ...state.jumpList[nextIndex] },
+      jumpIndex: nextIndex,
+      count: '',
+      lastCommand: { type: 'move' }
+    };
+  }
+
+  if (key === 'i' && ctrlKey) {
+    if (state.jumpIndex >= state.jumpList.length - 1) return { ...state, count: '' };
+    const nextIndex = state.jumpIndex + 1;
+    return {
+      ...state,
+      cursor: { ...state.jumpList[nextIndex] },
+      jumpIndex: nextIndex,
+      count: '',
+      lastCommand: { type: 'move' }
+    };
+  }
+
   // Handle find motion keys (can be used standalone or with operators)
   if (['f', 'F', 't', 'T'].includes(key)) {
     return { ...state, pendingFind: key as 'f' | 'F' | 't' | 'T' };
@@ -753,9 +1073,9 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
   if ((key === '*' || key === '#') && !pendingOperator && !pendingReplace) {
     const wordInfo = getWordUnderCursor(buffer, cursor);
     if (!wordInfo) return state;
-    const direction = key === '*' ? 'forward' : 'backward';
+    const direction: SearchState['direction'] = key === '*' ? 'forward' : 'backward';
     const match = findPatternFromCursor(buffer, wordInfo.word, cursor, direction);
-    const lastSearch = { pattern: wordInfo.word, direction };
+    const lastSearch: SearchState = { pattern: wordInfo.word, direction };
     if (match) {
       return { ...state, cursor: match, lastSearch, count: '', lastCommand: { type: 'move' } };
     }
@@ -910,7 +1230,7 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
       const yankedText = linesToProcess.join('\n') + '\n';
 
       if (pendingOperator === 'y') {
-        return {
+        const yankedState: VimState = {
           ...state,
           register: yankedText,
           pendingOperator: null,
@@ -922,6 +1242,7 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
           recordingExitCursor: null,
           recordingInsertCursor: null
         };
+        return applyRegisterWrite(state, yankedState, yankedText, 'yank');
       } else {
         const stateWithHistory = pushHistory(state);
         const stateWithKey = recordKey(stateWithHistory, key, ctrlKey || false);
@@ -941,13 +1262,14 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
           recordingExitCursor: { ...cursor }
         });
 
-        return {
+        const deletedState: VimState = {
           ...stateFinished,
           pendingOperator: null,
           pendingTextObject: null,
           count: '',
           lastCommand: { type: 'delete-line' }
         };
+        return applyRegisterWrite(state, deletedState, yankedText, 'delete');
       }
     }
 
@@ -1070,11 +1392,16 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
   // ----- g pending: 'g' awaits 'g'/'u'/'U'/'~' -----
   if (state.pendingG) {
     const clearedG: VimState = { ...state, pendingG: false };
+    if (key === ';') {
+      return moveChangelist(clearedG, -1);
+    }
+    if (key === ',') {
+      return moveChangelist(clearedG, 1);
+    }
     if (key === 'g') {
       const target = getMotionTarget(clearedG, 'gg');
       return {
-        ...clearedG,
-        cursor: target,
+        ...pushJump(clearedG, clearedG.cursor, target),
         count: '',
         lastCommand: { type: 'move', motion: 'gg' },
       };
@@ -1097,8 +1424,7 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
   if (key === 'G') {
     const target = getMotionTarget(state, 'G');
     return {
-      ...state,
-      cursor: target,
+      ...pushJump(state, state.cursor, target),
       count: '',
       lastCommand: { type: 'move', motion: 'G' },
     };
@@ -1114,8 +1440,7 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
       tempState = { ...tempState, cursor: newPos };
     }
     return {
-      ...state,
-      cursor: newPos,
+      ...pushJump(state, state.cursor, newPos),
       count: '',
       lastCommand: { type: 'move', motion },
     };
@@ -1131,6 +1456,35 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
   }
   if (key === 'y') return { ...state, pendingOperator: 'y', pendingTextObject: null };
 
+  if (key === 'v' && ctrlKey) {
+    return {
+      ...clearPendingStates(state),
+      mode: 'visual-block',
+      visualAnchor: { ...cursor },
+      lastCommand: { type: 'mode-switch', to: 'visual-block' }
+    };
+  }
+
+  if (key === 'v') {
+    return {
+      ...clearPendingStates(state),
+      mode: 'visual',
+      visualAnchor: { ...cursor },
+      lastCommand: { type: 'mode-switch', to: 'visual-line' }
+    };
+  }
+
+  if (key === 'V') {
+    const lineCursor = { line: cursor.line, col: 0 };
+    return {
+      ...clearPendingStates(state),
+      mode: 'visual-line',
+      cursor: lineCursor,
+      visualAnchor: { ...lineCursor },
+      lastCommand: { type: 'mode-switch', to: 'visual' }
+    };
+  }
+
   if (key === 'p') {
     return applyPaste(state, false);
   }
@@ -1144,7 +1498,7 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
     if (lineText.length > 0) {
       const count = getCount(state);
       const deleteCount = Math.min(count, lineText.length - cursor.col);
-      const stateWithHistory = pushHistory(state);
+      const stateWithHistory = pushHistory(pushChangePosition(state, cursor));
       const stateWithRecording = startRecording(stateWithHistory, key, ctrlKey || false);
 
       const deletedText = lineText.slice(cursor.col, cursor.col + deleteCount);
@@ -1161,11 +1515,11 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
         register: deletedText
       });
 
-      return {
+      return applyRegisterWrite(state, {
         ...finished,
         count: '',
         lastCommand: { type: 'delete-char' }
-      };
+      }, deletedText, 'delete');
     }
     return state;
   }
@@ -1408,10 +1762,280 @@ const handleNormalKey = (state: VimState, key: string, ctrlKey: boolean): VimSta
   return state;
 };
 
+const VISUAL_MOTION_KEYS = ['h', 'j', 'k', 'l', 'w', 'b', 'e', '0', '$', '^', '_', 'W', 'B', 'E'] as const;
+
+const compareCursor = (a: Cursor, b: Cursor): number => {
+  if (a.line !== b.line) return a.line - b.line;
+  return a.col - b.col;
+};
+
+const getVisualRange = (state: VimState) => {
+  const anchor = state.visualAnchor ?? state.cursor;
+  if (state.mode === 'visual-line') {
+    const startLine = Math.min(anchor.line, state.cursor.line);
+    const endLine = Math.max(anchor.line, state.cursor.line);
+    return {
+      start: { line: startLine, col: 0 },
+      end: { line: endLine, col: state.buffer[endLine]?.length ?? 0 },
+      isLinewise: true
+    };
+  }
+
+  const anchorFirst = compareCursor(anchor, state.cursor) <= 0;
+  const start = anchorFirst ? anchor : state.cursor;
+  const endInclusive = anchorFirst ? state.cursor : anchor;
+  const endLineText = state.buffer[endInclusive.line] ?? '';
+  const endCol = Math.min(endInclusive.col + 1, endLineText.length);
+
+  return {
+    start: { ...start },
+    end: { line: endInclusive.line, col: endCol }
+  };
+};
+
+const getVisualBlockBounds = (state: VimState) => {
+  const anchor = state.visualAnchor ?? state.cursor;
+  return {
+    startLine: Math.min(anchor.line, state.cursor.line),
+    endLine: Math.max(anchor.line, state.cursor.line),
+    startCol: Math.min(anchor.col, state.cursor.col),
+    endCol: Math.max(anchor.col, state.cursor.col)
+  };
+};
+
+const buildVisualBlockText = (state: VimState): string => {
+  const { startLine, endLine, startCol, endCol } = getVisualBlockBounds(state);
+  const parts: string[] = [];
+  for (let line = startLine; line <= endLine; line++) {
+    parts.push((state.buffer[line] ?? '').slice(startCol, endCol + 1));
+  }
+  return parts.join('\n');
+};
+
+const deleteVisualBlock = (buffer: string[], state: VimState): string[] => {
+  const { startLine, endLine, startCol, endCol } = getVisualBlockBounds(state);
+  const nextBuffer = [...buffer];
+  for (let line = startLine; line <= endLine; line++) {
+    const lineText = nextBuffer[line] ?? '';
+    if (startCol >= lineText.length) continue;
+    nextBuffer[line] = lineText.slice(0, startCol) + lineText.slice(Math.min(endCol + 1, lineText.length));
+  }
+  return nextBuffer;
+};
+
+const moveVisualCursor = (state: VimState, motion: Motion): VimState => {
+  const count = motion === '%' ? 1 : getCount(state);
+
+  if (motion === '$' && count > 1) {
+    const targetLine = state.cursor.line + count - 1;
+    if (targetLine >= state.buffer.length) {
+      return { ...state, count: '', lastCommand: { type: 'move', motion } };
+    }
+    const targetLineText = state.buffer[targetLine] ?? '';
+    return {
+      ...state,
+      cursor: { line: targetLine, col: Math.max(0, targetLineText.length - 1) },
+      count: '',
+      lastCommand: { type: 'move', motion }
+    };
+  }
+
+  let newPos = state.cursor;
+  let tempState = state;
+  for (let i = 0; i < count; i++) {
+    newPos = getMotionTarget(tempState, motion);
+    if (state.mode === 'visual-line') {
+      newPos = { line: newPos.line, col: 0 };
+    }
+    tempState = { ...tempState, cursor: newPos };
+  }
+
+  return {
+    ...state,
+    cursor: newPos,
+    count: '',
+    lastCommand: { type: 'move', motion }
+  };
+};
+
+const applyVisualOperator = (state: VimState, operator: 'd' | 'y' | 'c'): VimState => {
+  if (state.mode === 'visual-block') {
+    const { startLine, startCol } = getVisualBlockBounds(state);
+    const cursor = { line: startLine, col: startCol };
+    const registerText = buildVisualBlockText(state);
+
+    if (operator === 'y') {
+      return {
+        ...clearPendingStates(state),
+        mode: 'normal',
+        cursor,
+        register: registerText,
+        lastCommand: { type: 'yank' }
+      };
+    }
+
+    const stateWithHistory = pushHistory({
+      ...state,
+      mode: 'normal',
+      visualAnchor: null,
+      cursor
+    }, true);
+    const stateWithRecording = startRecording(stateWithHistory, operator, false);
+    const buffer = deleteVisualBlock(stateWithRecording.buffer, state);
+
+    if (operator === 'c') {
+      return {
+        ...stateWithRecording,
+        buffer,
+        cursor,
+        mode: 'insert',
+        visualAnchor: null,
+        count: '',
+        register: registerText,
+        insertCol: cursor.col,
+        insertStart: { ...cursor },
+        lastCommand: { type: 'delete-range', operator }
+      };
+    }
+
+    const finished = finishRecording({
+      ...stateWithRecording,
+      buffer,
+      cursor,
+      mode: 'normal',
+      visualAnchor: null,
+      count: '',
+      register: registerText,
+      recordingExitCursor: cursor,
+      lastCommand: { type: 'delete-range', operator }
+    });
+
+    return { ...finished, visualAnchor: null };
+  }
+
+  const range = getVisualRange(state);
+  const registerText = buildRegisterText(state.buffer, range);
+
+  if (operator === 'y') {
+    return {
+      ...clearPendingStates(state),
+      mode: 'normal',
+      cursor: range.start,
+      register: registerText,
+      lastCommand: { type: 'yank' }
+    };
+  }
+
+  const stateWithHistory = pushHistory({
+    ...state,
+    mode: 'normal',
+    visualAnchor: null,
+    cursor: range.start
+  }, true);
+  const stateWithRecording = startRecording(stateWithHistory, operator, false);
+  const changed = operator === 'c' && range.isLinewise
+    ? (() => {
+        const newBuffer = [...stateWithRecording.buffer];
+        newBuffer.splice(range.start.line, range.end.line - range.start.line + 1, '');
+        return { buffer: newBuffer, cursor: { line: range.start.line, col: 0 } };
+      })()
+    : deleteRange(stateWithRecording.buffer, range);
+  const { buffer, cursor } = changed;
+
+  if (operator === 'c') {
+    return {
+      ...stateWithRecording,
+      buffer,
+      cursor,
+      mode: 'insert',
+      visualAnchor: null,
+      pendingOperator: null,
+      pendingTextObject: null,
+      count: '',
+      register: registerText,
+      insertCol: cursor.col,
+      insertStart: { ...cursor },
+      lastCommand: { type: 'delete-range', operator }
+    };
+  }
+
+  const finished = finishRecording({
+    ...stateWithRecording,
+    buffer,
+    cursor,
+    mode: 'normal',
+    visualAnchor: null,
+    pendingOperator: null,
+    pendingTextObject: null,
+    count: '',
+    register: registerText,
+    recordingExitCursor: cursor,
+    lastCommand: { type: 'delete-range', operator }
+  });
+
+  return {
+    ...finished,
+    visualAnchor: null
+  };
+};
+
+const handleVisualKey = (state: VimState, key: string, ctrlKey: boolean): VimState => {
+  if (
+    key === 'Escape' ||
+    (state.mode === 'visual' && key === 'v' && !ctrlKey) ||
+    (state.mode === 'visual-line' && key === 'V') ||
+    (state.mode === 'visual-block' && key === 'v' && ctrlKey)
+  ) {
+    return {
+      ...clearPendingStates(state),
+      mode: 'normal',
+      visualAnchor: null,
+      lastCommand: { type: 'mode-switch', to: 'normal' }
+    };
+  }
+
+  if (/^[1-9]$/.test(key)) {
+    return { ...state, count: state.count + key };
+  }
+
+  if ((key === 'd' || key === 'y' || key === 'c') && !ctrlKey) {
+    return applyVisualOperator(state, key);
+  }
+
+  if (state.pendingG) {
+    const clearedG: VimState = { ...state, pendingG: false };
+    if (key === 'g') {
+      return moveVisualCursor(clearedG, 'gg');
+    }
+    return clearedG;
+  }
+
+  if (key === 'g') {
+    return { ...state, pendingG: true };
+  }
+
+  if (key === 'G') {
+    return moveVisualCursor(state, 'G');
+  }
+
+  if (key === '{' || key === '}' || key === '%') {
+    return moveVisualCursor(state, key as Motion);
+  }
+
+  if ((VISUAL_MOTION_KEYS as readonly string[]).includes(key)) {
+    return moveVisualCursor(state, key as Motion);
+  }
+
+  return ctrlKey ? state : state;
+};
+
 export const INITIAL_VIM_STATE: VimState = {
   buffer: [''],
   cursor: { line: 0, col: 0 },
   mode: 'normal',
+  visualAnchor: null,
+  commandLine: '',
+  commandStatus: null,
   pendingOperator: null,
   pendingReplace: false,
   pendingFind: null,
@@ -1423,6 +2047,10 @@ export const INITIAL_VIM_STATE: VimState = {
   history: [],
   historyIndex: -1,
   register: '',
+  yankRegister: '',
+  registers: {},
+  pendingRegister: false,
+  selectedRegister: null,
   count: '',
   lastFind: null,
   lastChange: null,
@@ -1435,11 +2063,25 @@ export const INITIAL_VIM_STATE: VimState = {
   recordingExitCursor: null,
   recordingInsertCursor: null,
   insertStart: null,
+  pendingMacroRecord: false,
+  pendingMacroReplay: false,
+  macroRecordingRegister: null,
+  macroRecording: [],
+  macros: {},
+  lastMacroRegister: null,
+  marks: {},
+  pendingMarkSet: false,
+  pendingMarkJump: null,
+  previousJumpCursor: null,
+  jumpList: [],
+  jumpIndex: -1,
+  changeList: [],
+  changeIndex: -1,
 };
 
 export const vimReducer = (state: VimState, action: VimAction): VimState => {
   const { type, payload } = action;
-  const { buffer, mode } = state;
+  const { buffer } = state;
 
   if (!buffer.length) return { ...state, buffer: [''] };
 
@@ -1448,14 +2090,40 @@ export const vimReducer = (state: VimState, action: VimAction): VimState => {
       return { ...INITIAL_VIM_STATE, ...payload };
 
     case 'KEYDOWN': {
-      const { key, ctrlKey } = payload;
+      const key = payload?.key;
+      if (!key) return state;
+      const ctrlKey = payload?.ctrlKey || false;
+      const keyPress = { key, ctrlKey };
+      const shouldRecordMacroKey =
+        state.macroRecordingRegister !== null &&
+        !(state.mode === 'normal' && key === 'q' && !ctrlKey);
+      const inputState = shouldRecordMacroKey
+        ? { ...state, macroRecording: [...state.macroRecording, keyPress] }
+        : state;
+      const inputMode = inputState.mode;
 
-      if (mode === 'insert') {
-        return handleInsertKey(state, key, ctrlKey || false);
+      if (inputMode === 'insert') {
+        return handleInsertKey(inputState, key, ctrlKey);
       }
 
-      if (mode === 'normal') {
-        return handleNormalKey(state, key, ctrlKey || false);
+      if (inputMode === 'command') {
+        return handleCommandKey(inputState, key);
+      }
+
+      if (inputMode === 'normal') {
+        return handleNormalKey(inputState, key, ctrlKey);
+      }
+
+      if (inputMode === 'visual') {
+        return handleVisualKey(inputState, key, ctrlKey);
+      }
+
+      if (inputMode === 'visual-line') {
+        return handleVisualKey(inputState, key, ctrlKey);
+      }
+
+      if (inputMode === 'visual-block') {
+        return handleVisualKey(inputState, key, ctrlKey);
       }
 
       return state;

@@ -47,6 +47,39 @@ import { searchWithOperators } from './lessons/chapter6/search-with-operators';
 import { realworldCleanup1 } from './lessons/chapter6/realworld-cleanup-1';
 import { speedrunChallenge } from './lessons/chapter6/speedrun-challenge';
 
+// Chapter 7: Visual Mode
+import { visualCharBasics } from './lessons/chapter7/visual-char-basics';
+import { visualLineMode } from './lessons/chapter7/visual-line-mode';
+import { visualBlockMode } from './lessons/chapter7/visual-block-mode';
+import { visualOperators } from './lessons/chapter7/visual-operators';
+import { visualRefactorReview } from './lessons/chapter7/visual-refactor-review';
+
+// Chapter 8: Macros & Registers
+import { macrosBasics } from './lessons/chapter8/macros-basics';
+import { macrosCount } from './lessons/chapter8/macros-count';
+import { registersNamed } from './lessons/chapter8/registers-named';
+import { registersSystem } from './lessons/chapter8/registers-system';
+import { macrosMegaChallenge } from './lessons/chapter8/macros-mega-challenge';
+
+// Chapter 9: Marks & Jump History
+import { marksBasics } from './lessons/chapter9/marks-basics';
+import { jumplist } from './lessons/chapter9/jumplist';
+import { changelist } from './lessons/chapter9/changelist';
+
+// Chapter 10: Vim in the Real World
+import { installAndMinimalConfig } from './lessons/chapter10/install-and-minimal-config';
+import { vimInVscode } from './lessons/chapter10/vim-in-vscode';
+import { vimInJetbrains } from './lessons/chapter10/vim-in-jetbrains';
+import { vimInTerminal } from './lessons/chapter10/vim-in-terminal';
+import { editorShortcutMigration } from './lessons/chapter10/editor-shortcut-migration';
+import { realworldRefactorDemo } from './lessons/chapter10/realworld-refactor-demo';
+
+// Chapter 11: Daily Vim Mastery
+import { commandLineBasics } from './lessons/chapter11/command-line-basics';
+import { substituteCurrentLine } from './lessons/chapter11/substitute-current-line';
+import { substituteWholeBuffer } from './lessons/chapter11/substitute-whole-buffer';
+import { firstWeekWorkflowReview } from './lessons/chapter11/first-week-workflow-review';
+
 export { CATEGORIES };
 
 export const LESSONS: Lesson[] = [
@@ -92,5 +125,38 @@ export const LESSONS: Lesson[] = [
   searchBasic,
   searchWithOperators,
   realworldCleanup1,
-  speedrunChallenge
+  speedrunChallenge,
+
+  // Chapter 7: Visual Mode
+  visualCharBasics,
+  visualLineMode,
+  visualBlockMode,
+  visualOperators,
+  visualRefactorReview,
+
+  // Chapter 8: Macros & Registers
+  macrosBasics,
+  macrosCount,
+  registersNamed,
+  registersSystem,
+  macrosMegaChallenge,
+
+  // Chapter 9: Marks & Jump History
+  marksBasics,
+  jumplist,
+  changelist,
+
+  // Chapter 10: Vim in the Real World
+  installAndMinimalConfig,
+  vimInVscode,
+  vimInJetbrains,
+  vimInTerminal,
+  editorShortcutMigration,
+  realworldRefactorDemo,
+
+  // Chapter 11: Daily Vim Mastery
+  commandLineBasics,
+  substituteCurrentLine,
+  substituteWholeBuffer,
+  firstWeekWorkflowReview
 ];

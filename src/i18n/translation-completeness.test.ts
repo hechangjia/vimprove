@@ -92,15 +92,15 @@ describe('i18n completeness vs baselines', () => {
           content[key] = '';
         } else if (block.type === 'key-list') {
           content[key] = {
-            keys: Object.fromEntries(block.keys.map((k, i) => [String(i), '']))
+            keys: Object.fromEntries(block.keys.map((_key, i) => [String(i), '']))
           };
         } else if (block.type === 'run-example') {
           content[key] = {
             tracks: Object.fromEntries(
-              (block.config.tracks || []).map((track, i) => [String(i), ''])
+              (block.config.tracks || []).map((_track, i) => [String(i), ''])
             ),
             steps: Object.fromEntries(
-              (block.config.steps || []).map((step, i) => [String(i), ''])
+              (block.config.steps || []).map((_step, i) => [String(i), ''])
             )
           };
         } else if (block.type === 'challenge') {

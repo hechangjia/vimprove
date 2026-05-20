@@ -111,7 +111,7 @@ Watch how word and WORD motions reach targets in far fewer keystrokes than singl
             id: 'strict-equals-again',
             type: 'change',
             description: 'Change "==" to "===" in the if condition.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 3) return false;
               const line = next.buffer[2];
               return line.includes('===') && !line.includes(' == ');

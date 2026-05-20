@@ -136,7 +136,7 @@ It demonstrates how operator + motion pairs read like short sentences you can st
             id: 'rename-count-to-items',
             type: 'change',
             description: 'Rename all occurrences of "count" to "items" inside main.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\n');
               return text.includes('items') && !text.includes('count');
             }
@@ -145,7 +145,7 @@ It demonstrates how operator + motion pairs read like short sentences you can st
             id: 'remove-debug-line',
             type: 'delete',
             description: 'Remove the whole line that declares "debugValue".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\n');
               return !text.includes('debugValue');
             }
@@ -154,7 +154,7 @@ It demonstrates how operator + motion pairs read like short sentences you can st
             id: 'add-multiplier-3',
             type: 'insert',
             description: 'Create a second assignment line "total = items * 3;" below the existing "total = items * 2;" line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\n');
               return text.includes('total = items * 2;') &&
                      text.includes('total = items * 3;');

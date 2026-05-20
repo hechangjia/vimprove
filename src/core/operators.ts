@@ -601,7 +601,6 @@ export const applyOperatorWithMotion = (
   }
 
   const { buffer, cursor } = state;
-  const originalCursor = cursor;
 
   // Special case: cw and cW behave like ce/cE when cursor is on a word character
   // This matches Vim's behavior where cw doesn't include trailing whitespace

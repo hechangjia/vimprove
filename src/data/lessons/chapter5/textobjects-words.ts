@@ -114,7 +114,7 @@ Because it's a text object, you do not have to measure the motion—Vim knows yo
             id: 'rename-oldValue',
             type: 'change',
             description: 'Rename "oldValue" to "newValue" everywhere.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               // 收紧：要求 newValue 以独立单词出现至少 2 次（与原 oldValue 出现次数一致），
               // 且不再存在 oldValue 整词，避免"删空 buffer 再写 newValue"也能过。
@@ -126,7 +126,7 @@ Because it's a text object, you do not have to measure the motion—Vim knows yo
             id: 'rename-oldCount',
             type: 'change',
             description: 'Rename "oldCount" to "newCount" everywhere.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               const newCountCount = (text.match(/\bnewCount\b/g) || []).length;
               return newCountCount >= 2 && !/\boldCount\b/.test(text);

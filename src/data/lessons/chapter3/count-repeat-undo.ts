@@ -118,7 +118,7 @@ and finally use **u** / **Ctrl-r** to demonstrate undo and redo on the repeated 
             id: 'all-values-42',
             type: 'change',
             description: 'Change all four initializers so that value1..value4 are initialized to 42.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 7) return false;
               const lines = next.buffer.slice(3, 7);
               return lines.every(line => line.includes('= 42;'));

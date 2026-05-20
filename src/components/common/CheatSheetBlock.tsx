@@ -3,6 +3,7 @@ import { CATEGORIES } from '@/data/categories';
 import { LESSONS } from '@/data';
 import type { CheatSheetConfig, KeyItem } from '@/core/types';
 import { useTranslationSafe } from '@/hooks/useI18n';
+import { useProgress } from '@/hooks/useProgress';
 
 type Props = { config: CheatSheetConfig };
 
@@ -27,6 +28,7 @@ const collectKeysForChapter = (chapterId: string): KeyItem[] => {
 
 const CheatSheetBlockImpl = ({ config }: Props) => {
   const { t } = useTranslationSafe('challenge');
+  const { progress } = useProgress();
   const ref = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
 
@@ -34,10 +36,33 @@ const CheatSheetBlockImpl = ({ config }: Props) => {
     () => CATEGORIES.find((c) => c.id === config.chapterId),
     [config.chapterId],
   );
-  const keys = useMemo(
-    () => collectKeysForChapter(config.chapterId),
-    [config.chapterId],
-  );
+  const keys = useMemo(() => {
+    const completedSlugs = new Set(
+      Object.entries(progress)
+        .filter(([, item]) => item.completedGoalsCount >= item.totalGoals)
+        .map(([slug]) => slug)
+    );
+    const chapterLessons = LESSONS.filter(lesson => lesson.categoryId === config.chapterId);
+    const hasCompletedInChapter = chapterLessons.some(lesson => completedSlugs.has(lesson.slug));
+    if (!hasCompletedInChapter) return collectKeysForChapter(config.chapterId);
+
+    const seen = new Set<string>();
+    const out: KeyItem[] = [];
+    for (const lesson of chapterLessons) {
+      if (!completedSlugs.has(lesson.slug)) continue;
+      for (const block of lesson.contentBlocks) {
+        if (block.type !== 'key-list') continue;
+        for (const key of block.keys) {
+          const id = key.chars.join('+');
+          if (!seen.has(id)) {
+            seen.add(id);
+            out.push(key);
+          }
+        }
+      }
+    }
+    return out;
+  }, [config.chapterId, progress]);
   const title = config.title ?? `${chapter?.title ?? config.chapterId} — Cheat Sheet`;
 
   const download = async () => {

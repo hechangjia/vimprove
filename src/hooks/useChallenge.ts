@@ -35,6 +35,8 @@ export const useChallenge = (
   // Reset challenge state when config changes (e.g., switching lessons)
   useEffect(() => {
     if (prevConfigRef.current !== config) {
+      // Challenge state is derived from the current lesson config; reset immediately on lesson switch.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setGoalsStatus({});
       goalsStatusRef.current = {};
       setStartTime(null);

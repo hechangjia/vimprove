@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --editor-font-family: "Consolas", "JetBrains Mono", "Fira Code", monospace;
+    --editor-font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
     --editor-font-size: 16px;
   }
 
@@ -69,6 +69,11 @@
     position: relative;
     z-index: 10;
     color: rgb(var(--color-surface));
+  }
+
+  .vim-visual-selection {
+    background-color: rgb(var(--color-info-muted) / 0.65);
+    color: rgb(var(--color-info-muted-foreground));
   }
 
   .vim-no-ligatures {

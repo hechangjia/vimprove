@@ -26,5 +26,12 @@
     "tip": "This is a mostly functional Vim editor. Try commands like h/j/k/l, w/b/e, d/c/y, i/a/o, and more!"
   },
   "reset": "Reset to Defaults",
-  "done": "Done"
+  "done": "Done",
+  "keyStats": {
+    "tab": "Key Stats",
+    "title": "My Key Stats",
+    "subtitle": "Local-only counts from challenge practice.",
+    "reset": "Reset",
+    "empty": "Practice a challenge to build your key heatmap."
+  }
 }

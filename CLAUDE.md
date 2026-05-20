@@ -11,13 +11,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 graph TD
     A["(根) vimprove"] --> SRC["src"]
     SRC --> CORE["core - Vim 引擎（纯函数）"]
-    SRC --> DATA["data - 课程数据（28 节）"]
+    SRC --> DATA["data - 课程数据（57 节可见课程）"]
     SRC --> HOOKS["hooks - 业务逻辑封装"]
     SRC --> COMPONENTS["components - UI 组件"]
     SRC --> PAGES["pages - 页面壳"]
     SRC --> I18N["i18n - 多语言"]
     SRC --> CONTEXTS["contexts - React Context"]
-    DATA --> LESSONS["lessons/chapter1..6"]
+    DATA --> LESSONS["lessons/chapter1..10"]
     CORE --> CORE_TESTS["tests + testUtils (Neovim 对拍)"]
     I18N --> LOCALES["locales/{en,zh,zh-lively}"]
 
@@ -34,7 +34,7 @@ graph TD
 | 模块 | 路径 | 一句话职责 | 模块级文档 |
 | --- | --- | --- | --- |
 | core | `src/core/` | 纯函数 Vim 引擎：types / vimReducer / motions / operators / 工具 / 对拍测试 | [`src/core/CLAUDE.md`](./src/core/CLAUDE.md) |
-| data | `src/data/` | 配置驱动的课程内容（6 章 × 28 课） | [`src/data/CLAUDE.md`](./src/data/CLAUDE.md) |
+| data | `src/data/` | 配置驱动的课程内容（11 章 × 57 节可见课程） | [`src/data/CLAUDE.md`](./src/data/CLAUDE.md) |
 | hooks | `src/hooks/` | 业务 React Hook（引擎封装、挑战、进度、i18n、设置、按键历史等） | [`src/hooks/CLAUDE.md`](./src/hooks/CLAUDE.md) |
 | components | `src/components/` | UI 组件，按功能域分目录（common / lesson / challenge / example / minigame / layout / settings） | [`src/components/CLAUDE.md`](./src/components/CLAUDE.md) |
 | pages | `src/pages/` | 页面壳：HomePage / LessonPage | [`src/pages/CLAUDE.md`](./src/pages/CLAUDE.md) |
@@ -51,7 +51,7 @@ Vimprove 是一个交互式 Vim 学习网站。核心功能是通过浏览器中
 
 **当前状态**: ✅ 重构完成。项目已从单文件原型（`tmp/vimprove.html`）重构为模块化的 React + TypeScript 架构。
 
-**课程范围**: 已完成 Chapter 1-6（基础、进阶编辑、行内 find/till、文本对象、搜索/重构），共 28 节课。
+**课程范围**: 已完成 Chapter 1-11（基础、进阶编辑、行内 find/till、文本对象、搜索/重构、Visual Mode、宏与寄存器、标记与跳转历史、真实世界 Vim 工作流、日常 Vim 熟练度），共 57 节可见课程。
 
 **版本管理**: 版本号在 `src/version.ts` 和 `package.json` 中维护，CHANGELOG 见 `README.md`
 
@@ -112,18 +112,25 @@ src/
 ├── data/              # 课程数据（只依赖 core/types）
 │   ├── categories.ts # 课程分类定义
 │   └── lessons/      # 每个课程一个文件（按章节组织）
-│       ├── chapter1/ # 模式与基础移动（5课）
+│       ├── chapter1/ # 模式与基础移动（8课）
 │       ├── chapter2/ # 单词移动与小编辑（5课）
-│       ├── chapter3/ # 高级编辑（5课）
+│       ├── chapter3/ # 高级编辑（8课）
 │       ├── chapter4/ # 行内 find/till 精准编辑（4课）
 │       ├── chapter5/ # 文本对象（5课）
-│       └── chapter6/ # 搜索与重构（4课）
+│       ├── chapter6/ # 搜索与重构（4课）
+│       ├── chapter7/ # Visual Mode（5课）
+│       ├── chapter8/ # 宏与寄存器（5课）
+│       ├── chapter9/ # 标记与跳转历史（3课）
+│       ├── chapter10/ # 真实世界 Vim 工作流（6课）
+│       └── chapter11/ # 日常 Vim 熟练度（4课）
 │
 ├── hooks/             # 自定义 hooks（业务逻辑封装）
 │   ├── useVimEngine.ts    # 封装 vimReducer
 │   ├── useChallenge.ts    # 挑战逻辑（目标验证、计时）
 │   ├── useProgress.ts     # 进度持久化（localStorage）
 │   ├── useHjklSnakeStats.ts # hjkl 贪吃蛇本地记录
+│   ├── useKeyStats.ts     # 按键统计（localStorage）
+│   ├── useCommandSuggester.ts # 完成后短路径建议
 │   └── useI18n.ts         # i18n hooks（useTranslationSafe, useLocale）
 │
 ├── components/        # UI 组件
@@ -299,6 +306,13 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 - `n`, `N` - 按搜索方向跳转到下一个/上一个匹配
 - `*`, `#` - 以当前单词为模式搜索正向/反向
 
+**Command-line Mode / Ex 命令**:
+- `:` - 从 Normal mode 进入命令行模式
+- `Escape` - 取消命令行模式
+- `Enter` - 执行当前 Ex 命令
+- `:w`, `:q`, `:wq`, `:q!` - 浏览器内模拟文件命令状态（不触碰真实文件系统）
+- `:s/old/new/`, `:s/old/new/g`, `:%s/old/new/g` - 当前行 / 全 buffer 字面量替换
+
 **文本对象**:
 - 词与段落：`iw/aw`, `ip/ap`
 - 括号：`i(`/`a(`，`i{`/`a{`，`i[`/`a[`
@@ -336,10 +350,26 @@ import { useVimEngine } from '@/hooks/useVimEngine';
 - `o/O` 带 count：一次性创建多行再进入首行插入，退出时按记录的行数补齐。
 - `~` 与 `gu/gU/g~` 已接入 `.` 重放与 linewise cursor-to-first-non-blank 行为（v2.1.1 对齐 Neovim）。`~` 在非字母字符上为无操作（不写入历史，避免与 runSim baseline seed 冲突）。
 
+**v2.2.0 新增**:
+- Visual Mode 基础：`v` / `V` / `Ctrl-v` 进入字符、行、块选择模式。
+- Visual 模式移动与高亮：支持常用 motion 扩展选择，并在 Challenge / Playground 编辑器中显示选区。
+- Visual 操作：选区后支持 `y` / `d` / `c`，包括 linewise 与 rectangular block 的基础复制、删除、修改。
+
+**v2.3.0 新增**:
+- 宏：`q{a-z}` 录制，`@{a-z}` 回放，`@@` 重复上一个宏，`{N}@a` 计数回放。
+- 寄存器：`"a`-`"z` 命名寄存器，`"0` 最近 yank，`"_` 黑洞寄存器。
+- 标记与跳转历史：`m{a-z}`、`` `{a-z}``、`'{a-z}`、`` `` ``、`''`、`Ctrl-o` / `Ctrl-i`。
+- 修改历史：`g;` / `g,` 在最近修改位置之间跳转。
+
+**v2.6.0 新增**:
+- Command-line mode 基础与窄 Ex 命令执行器。
+- Substitute 工作流：支持当前行和全 buffer 的字面量替换。
+- Chapter 11 日常 Vim 熟练度课程与 Find Target 行内定位小游戏。
+
 ### ❌ 尚未支持
 
-- Visual Mode
-- 寄存器选择（`"a`, `"b` 等）
+- 完整 blockwise paste / block insert replay 语义（等待寄存器类型元数据）
+- 系统剪贴板寄存器 `"+` / `"*` 的异步浏览器桥接
 
 **扩展引擎**: 如需添加新命令，修改 `src/core/motions.ts` 或 `src/core/operators.ts`
 
@@ -488,13 +518,17 @@ ls src/data/lessons/chapter3/
 ### 当前已完成
 
 - ✅ 模块化架构（Core/Data/Hooks/Components）
-- ✅ 28 个课程（Chapter 1-6：基础、进阶、文本对象、搜索重构）
-- ✅ 完整的 Vim 引擎（支持文本对象、搜索 `/ ? n N * #`、find/till、`.` 等命令）
+- ✅ 57 个可见课程（Chapter 1-11：基础、进阶、文本对象、搜索重构、Visual Mode、宏与寄存器、标记与跳转历史、真实世界 Vim 工作流、日常 Vim 熟练度）
+- ✅ 完整的 Vim 引擎（支持文本对象、搜索 `/ ? n N * #`、find/till、`.`、Command-line mode 基础等命令）
 - ✅ Undo/Redo 系统
 - ✅ Yank/Paste 功能
 - ✅ 数字前缀（Count Multiplier）
 - ✅ 查找/搜索（f/F/t/T/;/,/ / ? * # n N）
 - ✅ `.` 命令（重复上次修改操作）
+- ✅ Visual Mode 基础（字符/行/块选择 + y/d/c + 编辑器选区高亮）
+- ✅ Macros / Registers / Marks / Jumplist / Changelist 基础能力
+- ✅ Command-line mode 基础与 `:s` / `:%s` substitute 工作流
+- ✅ 30 分钟生存包入口、本地按键统计、完成后短路径建议
 - ✅ 完整的单元测试系统（Vitest，覆盖核心功能与新增命令）
 - ✅ Challenge 系统（目标验证、计时）
 - ✅ Run Example 可播放示例（`src/components/example/RunExamplePlayer.tsx`）

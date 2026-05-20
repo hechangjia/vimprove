@@ -80,7 +80,7 @@ then \`;\` and \`,\` to move forward and backward between commas without countin
             id: 'first-comma',
             type: 'move',
             description: 'Move the cursor to the first comma in the line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 4) return false;
               const line = next.buffer[3];
               const firstIndex = line.indexOf(',');
@@ -92,7 +92,7 @@ then \`;\` and \`,\` to move forward and backward between commas without countin
             id: 'last-comma',
             type: 'move',
             description: 'Move the cursor to the last comma in the line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 4) return false;
               const line = next.buffer[3];
               const lastIndex = line.lastIndexOf(',');

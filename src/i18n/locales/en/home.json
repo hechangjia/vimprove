@@ -3,7 +3,8 @@
     "titlePrefix": "Master",
     "titleSuffix": "Motion.",
     "subtitle": "Stop memorizing cheatsheets. Build muscle memory directly in the browser with our interactive challenges.",
-    "cta": "Start Learning"
+    "cta": "Start Learning",
+    "survivalCta": "30-Minute Survival Pack"
   },
   "features": {
     "realEngine": {

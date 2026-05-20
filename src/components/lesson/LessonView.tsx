@@ -6,7 +6,9 @@ import { VimChallenge } from '@/components/challenge/VimChallenge';
 import { RunExamplePlayer } from '@/components/example/RunExamplePlayer';
 import { HjklSnakeGame } from '@/components/minigame/HjklSnakeGame';
 import { Game2048Game } from '@/components/minigame/Game2048Game';
+import { FindTargetGame } from '@/components/minigame/FindTargetGame';
 import { CheatSheetBlock } from '@/components/common/CheatSheetBlock';
+import { useProgress } from '@/hooks/useProgress';
 import { useTranslationSafe } from '@/hooks/useI18n';
 import { useLocale } from '@/hooks/useI18n';
 
@@ -19,6 +21,7 @@ type LessonViewProps = {
 export const LessonView = ({ lesson, onNext, onPrev }: LessonViewProps) => {
   const { t } = useTranslationSafe('lessons');
   const { locale } = useLocale();
+  const { updateLessonProgress } = useProgress();
   const translateLessons = locale !== 'en';
 
   const title = translateLessons
@@ -76,7 +79,14 @@ export const LessonView = ({ lesson, onNext, onPrev }: LessonViewProps) => {
                 lessonSlug={translateLessons ? lesson.slug : undefined}
                 i18nBaseKey={translateLessons ? blockKey : undefined}
                 disableContentI18n={!translateLessons}
-                onComplete={({ next }) => {
+                onComplete={({ next, time }) => {
+                  updateLessonProgress(lesson.slug, {
+                    completedGoalsCount: block.config.goalsRequired,
+                    totalGoals: block.config.goals.length,
+                    bestTimeSeconds: time,
+                    attemptsCount: 1,
+                    lastCompletedAt: new Date().toISOString()
+                  });
                   if (next && onNext) onNext();
                 }}
               />
@@ -88,6 +98,9 @@ export const LessonView = ({ lesson, onNext, onPrev }: LessonViewProps) => {
         }
         if (block.type === 'game-2048') {
           return <Game2048Game key={reactKey} config={block.config} />;
+        }
+        if (block.type === 'find-target') {
+          return <FindTargetGame key={reactKey} config={block.config} />;
         }
         if (block.type === 'cheat-sheet') {
           return <CheatSheetBlock key={reactKey} config={block.config} />;

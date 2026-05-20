@@ -1,7 +1,11 @@
 {
   "mode": {
     "normal": "NORMAL",
-    "insert": "INSERT"
+    "insert": "INSERT",
+    "visual": "VISUAL",
+    "visual-line": "VISUAL LINE",
+    "visual-block": "VISUAL BLOCK",
+    "command": "COMMAND"
   },
   "goals": {
     "label": "目标：",
@@ -34,5 +38,17 @@
   "cheatSheet": {
     "download": "下载为 PNG",
     "exporting": "导出中…"
+  },
+  "suggestions": {
+    "repeatedMotion": "你连续重复了同一个移动键。下次可以试试 count 前缀，比如 5l，或用 f{char} 直接跳到目标。"
+  },
+  "findTarget": {
+    "title": "Find Target",
+    "score": "分数",
+    "misses": "低效移动",
+    "restart": "重新开始",
+    "focus": "点击聚焦",
+    "complete": "已达到目标分数。按 r 重新开始。",
+    "prompt": "用 f/F/t/T 到达高亮的 {{char}}，再用 ; 或 , 重复查找。"
   }
 }

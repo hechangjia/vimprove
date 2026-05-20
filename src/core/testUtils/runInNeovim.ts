@@ -115,14 +115,13 @@ export const runInNeovim = (
   }
 
   const marker = 'STATE_JSON:';
-  let parsed: { lines: string[]; cursor: [number, number]; mode: string };
   // Extract the JSON payload by marker to ignore stderr noise (e.g., register errors).
   const markerIndex = rawOutput.lastIndexOf(marker);
   if (markerIndex === -1) {
     throw new Error(proc.stderr || 'Failed to parse Neovim output');
   }
   const jsonPayload = rawOutput.slice(markerIndex + marker.length).trim();
-  parsed = JSON.parse(jsonPayload);
+  const parsed = JSON.parse(jsonPayload) as { lines: string[]; cursor: [number, number]; mode: string };
 
   return {
     lines: parsed.lines,

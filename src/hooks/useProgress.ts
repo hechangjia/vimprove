@@ -31,18 +31,22 @@ export const useProgress = () => {
     lessonSlug: string,
     update: Partial<UserProgress[string]>
   ) => {
-    setProgress(prev => ({
-      ...prev,
-      [lessonSlug]: {
+    setProgress(prev => {
+      const current = prev[lessonSlug] ?? {
         completedGoalsCount: 0,
         totalGoals: 0,
         bestTimeSeconds: null,
         attemptsCount: 0,
-        lastCompletedAt: null,
-        ...prev[lessonSlug],
-        ...update
-      }
-    }));
+        lastCompletedAt: null
+      };
+      return {
+        ...prev,
+        [lessonSlug]: {
+          ...current,
+          ...update
+        }
+      };
+    });
   };
 
   return { progress, updateLessonProgress };

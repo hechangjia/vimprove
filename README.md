@@ -73,12 +73,17 @@ src/
 ├── data/              # 课程数据
 │   ├── categories.ts # 课程分类
 │   └── lessons/      # 课程文件（按章节组织）
-│       ├── chapter1/ # 模式与基础移动（5 课）
+│       ├── chapter1/ # 模式与基础移动（8 课）
 │       ├── chapter2/ # 单词移动与小编辑（5 课）
-│       ├── chapter3/ # 高级编辑（5 课）
+│       ├── chapter3/ # 高级编辑（8 课）
 │       ├── chapter4/ # 行内查找与精确编辑（4 课）
 │       ├── chapter5/ # 文本对象（5 课）
-│       └── chapter6/ # 搜索与重构（4 课）
+│       ├── chapter6/ # 搜索与重构（4 课）
+│       ├── chapter7/ # Visual Mode（5 课）
+│       ├── chapter8/ # 宏与寄存器（5 课）
+│       ├── chapter9/ # 标记与跳转历史（3 课）
+│       ├── chapter10/ # 真实世界 Vim 工作流（6 课）
+│       └── chapter11/ # 日常 Vim 熟练度（4 课）
 │
 ├── hooks/             # 自定义 hooks
 │   ├── useVimEngine.ts    # Vim 引擎封装
@@ -106,27 +111,83 @@ src/
   - `src/core/vimParity.test.ts` - 与 Neovim 对拍测试
   - `vimParityExhaustive.test.ts` - 与 Neovim 对拍测试（详尽）
 
-## 🕊️ TODO
+## 🕊️ Roadmap 状态
 
 ### v2.0.0
 - [x] hjkl贪吃蛇
 - [x] alpha分支选择
 - [x] 亮色模式
 
-### v2.1.0
-- [ ] 优化字体（i/l混淆问题）
-- [ ] 修复文案问题
-- [ ] 光标渲染问题
+### 质量收口
+- [x] 优化默认编辑器字体，优先使用 JetBrains Mono 降低 `i` / `l` 混淆
+- [x] 统一 Normal / Visual 模式下的块状光标渲染，包括行尾位置
+- [x] 增加课程注册表审计测试，覆盖 slug、分类、顺序、课程数量与内容块形状
+- [x] 文案结构由 i18n 完整性与结构测试持续校验
+
+### 已知限制
+- Visual Block 已支持基础选择与 `y` / `d` / `c`，但完整 blockwise paste 与块插入回放语义仍是后续增强项
+- `"+` / `"*` 系统剪贴板寄存器需要浏览器 Clipboard API 桥接，当前仍按本地模拟寄存器处理
 
 ### v2.2.0
-- [ ] VimEngine bug
-  - [ ] 撤销不识别
-  - [ ] s替换渲染
-- [ ] ESC焦点问题
-- [ ] 自动化排查run-example文案
+- [x] Visual Mode 基础：支持 `v` / `V` / `Ctrl-v` 三种选择模式、选区移动、高亮与 `y` / `d` / `c`
+- [x] Chapter 7：新增 5 节 Visual Mode 课程，并同步 zh / zh-lively 翻译
+- [x] 修复 `exhaustiveTestCases.ts` 的 `count` union typecheck 错误
+- [x] 保持 Chapter 10 v2.4 内容为隐藏草稿，避免在 Chapter 7-9 前提前出现在课程导航
+
+### v2.3.0
+- [x] Macros：支持 `q{a-z}` 录制、`@{a-z}` / `@@` 回放、counted macro replay
+- [x] Registers：支持命名寄存器、`"0` 最近 yank、`"_` 黑洞删除
+- [x] Marks / Jumplist / Changelist：支持 `m{a-z}`、`` `{mark}``、`'{mark}`、`Ctrl-o` / `Ctrl-i`、`g;` / `g,`
+- [x] Chapter 8-9：新增 8 节生产力课程，并同步 zh / zh-lively 翻译
+
+### v2.4.0
+- [x] 发布 Chapter 10：6 节真实世界 Vim 工作流课程
+- [x] 覆盖安装与最小配置、VSCode Vim、IdeaVim、终端 vi mode、快捷键迁移、真实重构演示
+- [x] 同步 zh / zh-lively 翻译，并保持零引擎改动
+
+### v2.5.0
+- [x] 首页新增 30 分钟生存包入口
+- [x] 设置页新增本地按键统计面板
+- [x] Challenge 完成后提供确定性的“还能更短”提示
+
+### v2.6.0
+- [x] 新增 Command-line mode 基础：`:`、`Escape`、`Enter`
+- [x] 新增模拟文件命令与 substitute：`:w` / `:q` / `:wq` / `:q!` / `:s` / `:%s`
+- [x] 新增 Chapter 11：4 节日常 Vim 工作流课程
+- [x] 新增 Find Target 小游戏，训练 `f/F/t/T/;/,` 行内精准定位
 
 
 ## 📝 CHANGELOG
+
+### v2.6.0
+- 新增 Command-line mode 基础能力，支持 `:` 提示符、取消、执行与状态显示
+- 新增 substitute 工作流：`:s/old/new/`、`:s/old/new/g`、`:%s/old/new/g`
+- 新增 Chapter 11「Daily Vim Mastery」4 节课程，课程总数达到 57 节
+- 新增 Find Target 小游戏，覆盖 `f/F/t/T/;/,` 行内精准定位训练
+
+### v2.5.0
+- 新增 30 分钟生存包入口，帮助新用户直接进入最小可用学习路径
+- 新增本地按键统计面板，统计挑战练习中的按键频次
+- 新增完成后短路径提示，对连续重复 `h/j/k/l` 给出 count / target jump 建议
+- 维持全本地数据策略，无服务端或隐私敏感数据上传
+
+### v2.4.0
+- 发布 Chapter 10「Vim in the Real World」6 节课程
+- 新增编辑器/IDE/终端落地内容：VSCode Vim、IdeaVim、shell vi mode、快捷键迁移
+- 新增真实重构演示课程，课程总数达到 53 节可见课程
+- 本版本为纯内容发布，无 Vim 引擎改动
+
+### v2.3.0
+- 新增宏与寄存器核心能力：录制/回放/count replay、命名寄存器、最近 yank 寄存器与黑洞寄存器
+- 新增 marks、jumplist、changelist 基础跳转能力
+- 新增 Chapter 8-9 共 8 节课程，课程总数达到 47 节可见课程
+- Chapter 10 v2.4 真实世界课程仍作为隐藏草稿，等待发布窗口再展示
+
+### v2.2.0
+- 新增 Visual Mode 基础能力：字符、行、块选择模式，选区高亮，以及 visual `y` / `d` / `c`
+- 新增 Chapter 7 Visual Mode 课程 5 节，课程总数达到 39 节可见课程
+- 修复 `exhaustiveTestCases.ts` 中 `count` 字段的 TypeScript union 收窄错误
+- 保留 Chapter 10 v2.4 真实世界课程为隐藏草稿，等待 Chapter 8-9 衔接后再展示
 
 ### v2.1.3
 - 修正 `dot-command.test.ts` 中 `c$` + dot 重放的测试期望（原期望违背 Neovim 真实行为，已用 nvim-state-probe 校验后改为 `'test linEND'`）

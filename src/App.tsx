@@ -107,6 +107,13 @@ const App = () => {
     setCurrentLessonSlug(firstLessonSlug);
   };
 
+  const handleSurvivalPack = () => {
+    const survivalSlug = 'modes-basics';
+    localStorage.setItem(CURRENT_LESSON_KEY, survivalSlug);
+    setCurrentView('lesson');
+    setCurrentLessonSlug(survivalSlug);
+  };
+
   const handleHomeClick = () => {
     localStorage.removeItem(CURRENT_LESSON_KEY);
     setCurrentView('home');
@@ -147,7 +154,7 @@ const App = () => {
 
         <div className="flex-1 h-screen overflow-y-auto bg-background relative" data-scroll-container>
           {currentView === 'home' ? (
-            <HomePage onStart={handleStartLearning} />
+            <HomePage onStart={handleStartLearning} onSurvivalPack={handleSurvivalPack} />
           ) : (
             <LessonPage
               lesson={currentLesson}

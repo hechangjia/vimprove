@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSettingsContext } from '@/contexts/SettingsContext';
+import { useSettingsContext } from '@/contexts/useSettingsContext';
 import { useFontLoader, getFontFamily } from '@/hooks/useFontLoader';
 
 const setThemeColorMeta = () => {

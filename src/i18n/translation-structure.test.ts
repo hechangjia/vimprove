@@ -34,7 +34,7 @@ const expectedTypeForBlock = (blockType: string): 'string' | 'object' => {
 };
 
 // Block types that don't carry translatable content (use dedicated UI namespaces).
-const SKIP_BLOCK_TYPES = new Set(['hjkl-snake', 'game-2048', 'cheat-sheet']);
+const SKIP_BLOCK_TYPES = new Set(['hjkl-snake', 'game-2048', 'find-target', 'cheat-sheet']);
 
 describe('i18n lesson translations structure', () => {
   LOCALES.forEach(locale => {

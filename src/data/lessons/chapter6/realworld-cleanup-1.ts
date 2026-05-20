@@ -110,7 +110,7 @@ to delete the whole comment in a single command.`
             id: 'remove-debug-block',
             type: 'delete',
             description: 'Remove the debug-only if (debug) block and its log line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               const hasIfDebug = text.includes('if (debug)');
               const hasDebugLog = text.includes('[DEBUG]');
@@ -121,7 +121,7 @@ to delete the whole comment in a single command.`
             id: 'change-port-to-80',
             type: 'change',
             description: 'Change the port so that it is initialized to 80 instead of 8080.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               return text.includes('int port = 80;') && !text.includes('int port = 8080;');
             }
@@ -130,7 +130,7 @@ to delete the whole comment in a single command.`
             id: 'improve-info-message',
             type: 'change',
             description: 'Update the info message so it reads "[INFO] server ready".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               return text.includes('"[INFO] server ready"') && !text.includes('"[INFO] ready"');
             }

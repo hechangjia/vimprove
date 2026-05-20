@@ -141,7 +141,7 @@ It shows how different text objects can be combined back-to-back to reshape stru
             id: 'rename-userName-to-name',
             type: 'change',
             description: 'Rename "userName" to "name" everywhere.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               // 原 buffer 中 userName 出现 4 次。收紧为：必须不再含 userName 整词，
               // 且 name 整词至少出现 3 次（防御性留 1 次容差，避免 goal 3 顺序影响判定）。
@@ -153,7 +153,7 @@ It shows how different text objects can be combined back-to-back to reshape stru
             id: 'change-greeting-to-hi',
             type: 'change',
             description: 'Change the greeting string to "Hi".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               return text.includes('std::string greeting = "Hi";') &&
                      !text.includes('std::string greeting = "Hello";');
@@ -163,7 +163,7 @@ It shows how different text objects can be combined back-to-back to reshape stru
             id: 'update-error-call',
             type: 'change',
             description: 'In the if-branch, change the logMessage call to use "FATAL" and "name is empty".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               return text.includes('logMessage("FATAL", "name is empty");') &&
                      !text.includes('logMessage("ERROR", "userName is empty");');

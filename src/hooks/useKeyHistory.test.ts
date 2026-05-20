@@ -11,7 +11,7 @@ const makeState = (partial: Partial<VimState> = {}): VimState => ({
 });
 
 describe('useKeyHistory status detection', () => {
-  let hook: ReturnType<typeof useKeyHistory>;
+  let hook: ReturnType<typeof createKeyHistoryManager>;
 
   beforeEach(() => {
     hook = createKeyHistoryManager();

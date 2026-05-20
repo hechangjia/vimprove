@@ -12,10 +12,10 @@ export type Settings = {
   theme: ThemeMode;
 };
 
-const DEFAULT_SETTINGS: Settings = {
+export const DEFAULT_SETTINGS: Settings = {
   editor: {
     fontSize: 16,
-    fontFamily: 'Consolas'
+    fontFamily: 'JetBrains Mono'
   },
   theme: 'system'
 };

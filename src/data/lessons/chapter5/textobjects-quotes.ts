@@ -102,7 +102,7 @@ inside the string.`
             id: 'change-level-to-debug',
             type: 'change',
             description: 'Change the level string so it becomes "DEBUG".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               return text.includes('std::string level = "DEBUG";') &&
                      !text.includes('std::string level = "INFO";');
@@ -112,7 +112,7 @@ inside the string.`
             id: 'change-message-to-shutdown',
             type: 'change',
             description: 'Change the message string so it becomes "Shutting down".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               return text.includes('std::string message = "Shutting down";') &&
                      !text.includes('std::string message = "Starting up";');

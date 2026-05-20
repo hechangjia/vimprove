@@ -90,7 +90,7 @@ const getRgb = (varName: string) => {
   const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
   const parts = raw.split(/\s+/).map(n => Number(n));
   if (parts.length !== 3 || parts.some(n => Number.isNaN(n))) return [0, 0, 0] as const;
-  return parts as readonly [number, number, number];
+  return [parts[0], parts[1], parts[2]] as const;
 };
 
 const rgba = (rgb: readonly [number, number, number], a: number) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
@@ -169,6 +169,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
   }, [boardWidth, boardHeight]);
 
   const [game, setGame] = useState<GameState>(initialState);
+  const [elapsedNowMs, setElapsedNowMs] = useState<number | null>(null);
 
   useEffect(() => {
     setGame(initialState);
@@ -328,7 +329,7 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
           || (prevBadge === 'bronze' && (nextBadge === 'silver' || nextBadge === 'gold'))
           || (prevBadge === 'silver' && nextBadge === 'gold');
 
-        const toasts = badgeUpgraded && nextBadge !== 'none'
+        const toasts = badgeUpgraded
           ? [
               ...prunedToasts,
               { id: `${now}-${nextBadge}`, badge: nextBadge, expiresAtMs: now + 1200 }
@@ -400,12 +401,21 @@ export const HjklSnakeGame = ({ config }: { config?: HjklSnakeGameConfig }) => {
     recordRun
   ]);
 
+  useEffect(() => {
+    if (game.phase !== 'playing' || game.startAtMs == null) return;
+
+    const updateElapsedNow = () => setElapsedNowMs(performance.now());
+    updateElapsedNow();
+    const id = window.setInterval(updateElapsedNow, 250);
+    return () => window.clearInterval(id);
+  }, [game.phase, game.startAtMs]);
+
   const elapsedMs =
     game.startAtMs == null
       ? 0
       : game.endedAtMs != null
         ? Math.max(0, Math.round(game.endedAtMs - game.startAtMs))
-        : Math.max(0, Math.round(performance.now() - game.startAtMs));
+        : Math.max(0, Math.round((elapsedNowMs ?? game.startAtMs) - game.startAtMs));
 
   useEffect(() => {
     const canvas = canvasRef.current;

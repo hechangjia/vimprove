@@ -95,7 +95,7 @@ the closing quote, then type a new name while keeping the surrounding quotes int
             id: 'change-greeting',
             type: 'change',
             description: 'Change the greeting string to "Hi".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const line = next.buffer.find(l => l.includes('greeting'));
               if (!line) return false;
               return line.includes('"Hi"');
@@ -105,7 +105,7 @@ the closing quote, then type a new name while keeping the surrounding quotes int
             id: 'change-name',
             type: 'change',
             description: 'Change the name string to "Ada Lovelace".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const line = next.buffer.find(l => l.includes('name'));
               if (!line) return false;
               return line.includes('"Ada Lovelace"');

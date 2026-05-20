@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Palette, Terminal, Code } from 'lucide-react';
-import { useSettingsContext } from '@/contexts/SettingsContext';
+import { BarChart3, Palette, Terminal, Code } from 'lucide-react';
+import { useSettingsContext } from '@/contexts/useSettingsContext';
 import { AppearanceTab } from './AppearanceTab';
 import { VimStatusTab } from './VimStatusTab';
 import { VimPlaygroundTab } from './VimPlaygroundTab';
+import { KeyStatsTab } from './KeyStatsTab';
 import { useTranslationSafe } from '@/hooks/useI18n';
 
-type Tab = 'appearance' | 'vim-status' | 'playground';
+type Tab = 'appearance' | 'vim-status' | 'playground' | 'key-stats';
 
 type SettingsPanelProps = {
   isOpen: boolean;
@@ -65,6 +66,17 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
             <Code size={18} />
             {t('playground.tab', 'Playground')}
           </button>
+          <button
+            onClick={() => setActiveTab('key-stats')}
+            className={`flex items-center gap-2 px-4 py-3 text-sm transition-colors border-b-2 ${
+              activeTab === 'key-stats'
+                ? 'border-primary text-foreground-strong'
+                : 'border-transparent text-foreground-subtle hover:text-foreground-strong'
+            }`}
+          >
+            <BarChart3 size={18} />
+            {t('keyStats.tab', 'Key Stats')}
+          </button>
         </div>
 
         {/* Content */}
@@ -79,6 +91,7 @@ export const SettingsPanel = ({ isOpen, onClose }: SettingsPanelProps) => {
           )}
           {activeTab === 'vim-status' && <VimStatusTab />}
           {activeTab === 'playground' && <VimPlaygroundTab />}
+          {activeTab === 'key-stats' && <KeyStatsTab />}
         </div>
 
         {/* Footer */}

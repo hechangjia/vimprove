@@ -107,7 +107,7 @@ from counting lines when working on documentation-style sections.`
             id: 'remove-note-paragraph',
             type: 'delete',
             description: 'Delete the NOTE paragraph (but keep the Description paragraph).',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               return text.includes('Description:') &&
                      !text.includes('NOTE:') &&
@@ -118,7 +118,7 @@ from counting lines when working on documentation-style sections.`
             id: 'duplicate-description',
             type: 'insert',
             description: 'Make a second copy of the Description paragraph above std::string name.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const lines = next.buffer;
               const descriptionCount = lines.filter(line => line.includes('Description:')).length;
               return descriptionCount >= 2;

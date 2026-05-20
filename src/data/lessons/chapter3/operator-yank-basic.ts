@@ -60,7 +60,7 @@ It highlights how y and p pair to move text without deleting the source.`
           { key: 'h', description: 'h: move left onto the empty string "".', cursorIndex: 0 },
           { key: 'd', description: 'd: start delete.', cursorIndex: 0 },
           { key: 'w', description: 'w: dw – delete the empty string literal.', cursorIndex: 0 },
-          { key: 'p', description: 'p: paste the yanked "\"Ada\"" after the cursor.', cursorIndex: 0 }
+          { key: 'p', description: 'p: paste the yanked "Ada" after the cursor.', cursorIndex: 0 }
         ]
       }
     },
@@ -101,7 +101,7 @@ It highlights how y and p pair to move text without deleting the source.`
             id: 'copy-name-into-copy',
             type: 'change',
             description: 'Make the "copy" variable store the same string as "name".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 6) return false;
               const nameLine = next.buffer[4].trim();
               const copyLine = next.buffer[5].trim();
@@ -115,7 +115,7 @@ It highlights how y and p pair to move text without deleting the source.`
             id: 'duplicate-log-line',
             type: 'insert',
             description: 'Create a second std::cout line that prints "copy" instead of "name".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\n');
               return text.includes('std::cout << copy << "\\n";');
             }

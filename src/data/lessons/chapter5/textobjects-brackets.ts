@@ -101,7 +101,7 @@ let you act on structured code without counting characters.`
             id: 'clear-initializer',
             type: 'change',
             description: 'Change the initializer list so that values become an empty list: values{};',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const line = next.buffer.find(l => l.includes('std::vector<int> values'));
               if (!line) return false;
               return line.includes('values{};');
@@ -111,7 +111,7 @@ let you act on structured code without counting characters.`
             id: 'clear-add-arguments',
             type: 'change',
             description: 'Change the add(...) call so that it becomes add();',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const line = next.buffer.find(l => l.includes('auto result = add'));
               if (!line) return false;
               return line.includes('add();') && !line.includes('10') && !line.includes('20') && !line.includes('30');

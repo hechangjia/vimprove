@@ -1,11 +1,10 @@
-import { useRef } from 'react';
+import { useMemo } from 'react';
 import type { VimState, KeyPress } from '@/core/types';
 import type {
   KeyHistory,
   KeyGroup,
   KeyAtom,
   KeyKind,
-  KeyStatus,
   KeyGroupType,
   PendingKind,
   KeyGroupStatus
@@ -103,7 +102,7 @@ const getKeyKind = (
 const detectGroupType = (
   key: string,
   prevState: VimState,
-  nextState: VimState,
+  _nextState: VimState,
   kind: KeyKind
 ): KeyGroupType => {
   // Insert text (only when already in insert mode, not when entering)
@@ -157,7 +156,7 @@ const findStateChanged = (prevState: VimState, nextState: VimState): boolean => 
 
 const shouldStartNewGroup = (
   key: string,
-  ctrlKey: boolean,
+  _ctrlKey: boolean,
   prevState: VimState,
   nextState: VimState,
   currentGroup: KeyGroup | null
@@ -327,9 +326,7 @@ const getPendingKind = (state: VimState): PendingKind | undefined => {
 
 const getRoleInGroup = (
   key: string,
-  kind: KeyKind,
-  groupType: KeyGroupType,
-  prevState: VimState
+  kind: KeyKind
 ): string => {
   if (key === '.') return 'dotRepeat';
   if (kind === 'operator') return 'operator';
@@ -379,7 +376,7 @@ const createKeyHistoryStore = (): KeyHistoryStore => {
       const groupType = detectGroupType(key, prevState, nextState, kind);
       const groupStatus = determineGroupStatus(prevState, nextState, key, groupType);
       const pendingKind = getPendingKind(nextState);
-      const role = getRoleInGroup(key, kind, groupType, prevState);
+      const role = getRoleInGroup(key, kind);
       const description = key === '.' ? formatLastChange(prevState.lastChange) : undefined;
 
       const newAtom: KeyAtom = {
@@ -409,8 +406,7 @@ const createKeyHistoryStore = (): KeyHistoryStore => {
     } else {
       if (!currentGroup) return;
 
-      const groupType = currentGroup.type;
-      const role = getRoleInGroup(key, kind, groupType, prevState);
+      const role = getRoleInGroup(key, kind);
 
       const newAtom: KeyAtom = {
         id: globalKeyId++,
@@ -421,7 +417,7 @@ const createKeyHistoryStore = (): KeyHistoryStore => {
         roleInGroup: role,
       };
 
-      const groupStatus = determineGroupStatus(prevState, nextState, key, groupType);
+      const groupStatus = determineGroupStatus(prevState, nextState, key, currentGroup.type);
       const pendingKind = getPendingKind(nextState);
 
       const updatedKeys = [...currentGroup.keys, newAtom].map(k => ({
@@ -473,10 +469,6 @@ const createKeyHistoryStore = (): KeyHistoryStore => {
 };
 
 export const useKeyHistory = (): KeyHistoryStore => {
-  const storeRef = useRef<KeyHistoryStore | null>(null);
-  if (!storeRef.current) {
-    storeRef.current = createKeyHistoryStore();
-  }
-  return storeRef.current;
+  return useMemo(() => createKeyHistoryStore(), []);
 };
 export const createKeyHistoryManager = () => createKeyHistoryStore();

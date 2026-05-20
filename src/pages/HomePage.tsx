@@ -6,9 +6,10 @@ import { supportedLocales } from '@/i18n';
 
 type HomePageProps = {
   onStart: () => void;
+  onSurvivalPack: () => void;
 };
 
-export const HomePage = ({ onStart }: HomePageProps) => {
+export const HomePage = ({ onStart, onSurvivalPack }: HomePageProps) => {
   const { t } = useTranslationSafe('home');
   const { locale, setLocale } = useLocale();
   const [isLangOpen, setIsLangOpen] = useState(false);
@@ -115,13 +116,22 @@ export const HomePage = ({ onStart }: HomePageProps) => {
           'Stop memorizing cheatsheets. Build muscle memory directly in the browser with our interactive challenges.'
         )}
       </p>
-      <button
-        onClick={onStart}
-        className="bg-cta text-cta-foreground px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform flex items-center gap-2 shadow-xl shadow-cta/10"
-      >
-        <Play size={20} fill="currentColor" />
-        {t('hero.cta', 'Start Learning')}
-      </button>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button
+          onClick={onStart}
+          className="bg-cta text-cta-foreground px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 shadow-xl shadow-cta/10"
+        >
+          <Play size={20} fill="currentColor" />
+          {t('hero.cta', 'Start Learning')}
+        </button>
+        <button
+          onClick={onSurvivalPack}
+          className="bg-surface border border-border text-foreground px-8 py-4 rounded-full font-bold text-lg hover:border-primary transition-colors flex items-center justify-center gap-2"
+        >
+          <Keyboard size={20} />
+          {t('hero.survivalCta', '30-Minute Survival Pack')}
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20 w-full text-left">
         {features.map((feat, i) => (

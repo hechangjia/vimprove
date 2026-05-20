@@ -107,7 +107,7 @@ and use \`ct)\` to replace the remaining arguments with a single \`42\`, without
             id: 'simplify-add-call',
             type: 'change',
             description: 'Change the add(...) call so it only has a single argument 42: add(42).',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 5) return false;
               const line = next.buffer[4];
               const trimmed = line.trim();
@@ -118,7 +118,7 @@ and use \`ct)\` to replace the remaining arguments with a single \`42\`, without
             id: 'update-message',
             type: 'change',
             description: 'Update the message string to say "INFO: done" (inside the quotes).',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 6) return false;
               const line = next.buffer[5];
               return line.includes('"INFO: done"');
@@ -128,7 +128,7 @@ and use \`ct)\` to replace the remaining arguments with a single \`42\`, without
             id: 'keep-structure',
             type: 'custom',
             description: 'Make sure the std::cout line still prints message followed by "\\n".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const coutLine = next.buffer.find(l => l.includes('std::cout'));
               if (!coutLine) return false;
               return coutLine.includes('message') && coutLine.includes('"\\n"');

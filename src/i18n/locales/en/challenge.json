@@ -1,7 +1,11 @@
 {
   "mode": {
     "normal": "NORMAL",
-    "insert": "INSERT"
+    "insert": "INSERT",
+    "visual": "VISUAL",
+    "visual-line": "VISUAL LINE",
+    "visual-block": "VISUAL BLOCK",
+    "command": "COMMAND"
   },
   "goals": {
     "label": "Goals:",
@@ -15,5 +19,17 @@
     "subtitle": "You finished in {{time}} seconds.",
     "next": "Next Lesson",
     "hint": "Press Enter to continue"
+  },
+  "suggestions": {
+    "repeatedMotion": "You repeated one motion many times. Next time, try a count prefix like 5l or a target jump such as f{char}."
+  },
+  "findTarget": {
+    "title": "Find Target",
+    "score": "Score",
+    "misses": "Misses",
+    "restart": "Restart",
+    "focus": "Click to focus",
+    "complete": "Target score reached. Press r to restart.",
+    "prompt": "Reach the highlighted {{char}} with f/F/t/T, then repeat with ; or ,."
   }
 }

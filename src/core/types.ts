@@ -3,7 +3,7 @@ export type Cursor = {
   col: number;
 };
 
-export type Mode = 'normal' | 'insert';
+export type Mode = 'normal' | 'insert' | 'visual' | 'visual-line' | 'visual-block' | 'command';
 
 export type Operator = 'd' | 'c' | 'y' | 'gu' | 'gU' | 'g~';
 
@@ -30,10 +30,12 @@ export type SearchState = {
 };
 
 export type Command = {
-  type: 'move' | 'delete-char' | 'delete-line' | 'delete-range' | 'enter-insert' | 'open-line' | 'open-line-above' | 'mode-switch' | 'yank' | 'paste';
+  type: 'move' | 'delete-char' | 'delete-line' | 'delete-range' | 'enter-insert' | 'open-line' | 'open-line-above' | 'mode-switch' | 'yank' | 'paste' | 'ex';
   motion?: OperatorMotion;
   operator?: Operator;
   to?: Mode;
+  before?: boolean;
+  command?: string;
 };
 
 export type FindMotion = {
@@ -41,10 +43,19 @@ export type FindMotion = {
   char: string;
 };
 
+export type LowercaseLetter =
+  | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'
+  | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z';
+
+export type RegisterName = '"' | '0' | '_' | '+' | '*' | LowercaseLetter;
+
 export type VimState = {
   buffer: string[];
   cursor: Cursor;
   mode: Mode;
+  visualAnchor: Cursor | null;
+  commandLine: string;
+  commandStatus: string | null;
   pendingOperator: Operator | null;
   pendingReplace: boolean;
   pendingFind: 'f' | 'F' | 't' | 'T' | null;
@@ -60,6 +71,10 @@ export type VimState = {
 
   // Yank/Paste support
   register: string;
+  yankRegister: string;
+  registers: Partial<Record<RegisterName, string>>;
+  pendingRegister: boolean;
+  selectedRegister: RegisterName | null;
 
   // Insert position (for Insert mode only, 0..len)
   // This is the actual insertion point, while cursor.col is the display position
@@ -88,6 +103,24 @@ export type VimState = {
   recordingCount: number | null;
   recordingExitCursor: Cursor | null;
   recordingInsertCursor: Cursor | null;
+
+  // Macro support
+  pendingMacroRecord: boolean;
+  pendingMacroReplay: boolean;
+  macroRecordingRegister: LowercaseLetter | null;
+  macroRecording: KeyPress[];
+  macros: Partial<Record<LowercaseLetter, KeyPress[]>>;
+  lastMacroRegister: LowercaseLetter | null;
+
+  // Marks, jumplist, and changelist
+  marks: Partial<Record<LowercaseLetter, Cursor>>;
+  pendingMarkSet: boolean;
+  pendingMarkJump: '`' | "'" | null;
+  previousJumpCursor: Cursor | null;
+  jumpList: Cursor[];
+  jumpIndex: number;
+  changeList: Cursor[];
+  changeIndex: number;
 };
 
 export type VimAction = {
@@ -160,6 +193,15 @@ export type Game2048Config = {
   goldTile?: number;    // 默认 2048
 };
 
+export type FindTargetGameConfig = {
+  rounds?: Array<{
+    line: string;
+    cursorCol: number;
+    targetCol: number;
+  }>;
+  targetScore?: number;
+};
+
 export type CheatSheetConfig = {
   chapterId: string;       // 'chapter1' | 'chapter3' | ...
   title?: string;          // 可选覆盖默认 "Chapter X — Cheat Sheet"
@@ -173,6 +215,7 @@ export type ContentBlock =
   | { type: 'run-example'; config: RunExampleConfig; i18nKey?: string }
   | { type: 'hjkl-snake'; config?: HjklSnakeGameConfig; i18nKey?: string }
   | { type: 'game-2048'; config?: Game2048Config; i18nKey?: string }
+  | { type: 'find-target'; config?: FindTargetGameConfig; i18nKey?: string }
   | { type: 'cheat-sheet'; config: CheatSheetConfig; i18nKey?: string };
 
 export type KeyItem = {

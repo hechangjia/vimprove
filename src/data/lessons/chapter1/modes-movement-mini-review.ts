@@ -105,7 +105,7 @@ then drop another comment below. It highlights the Normal → Insert → Normal 
             id: 'add-semicolon-message',
             type: 'insert',
             description: 'Add a semicolon at the end of the line that defines "message".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 4) return false;
               const line = next.buffer[3];
               const trimmed = line.trim();
@@ -116,7 +116,7 @@ then drop another comment below. It highlights the Normal → Insert → Normal 
             id: 'add-semicolon-log',
             type: 'insert',
             description: 'Add a semicolon at the end of the console.log line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 6) return false;
               const line = next.buffer[5];
               const trimmed = line.trim();

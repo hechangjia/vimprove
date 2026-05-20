@@ -84,7 +84,7 @@ through the semicolon, leaving just the declaration and a clean trailing \`;\`.`
             id: 'clear-func-args',
             type: 'delete',
             description: 'Remove the arguments inside func(…) so the call becomes func().',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 4) return false;
               const line = next.buffer[3];
               const trimmed = line.trim();
@@ -98,7 +98,7 @@ through the semicolon, leaving just the declaration and a clean trailing \`;\`.`
             id: 'remove-debug-init',
             type: 'delete',
             description: 'Remove the initializer "= 42;" from the debug line (keep the variable name).',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 5) return false;
               const line = next.buffer[4];
               const trimmed = line.trim();

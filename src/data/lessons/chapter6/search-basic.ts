@@ -101,7 +101,7 @@ and \`n\`/\`N\` to move forward and backward through each match in the buffer.`
             id: 'replace-todo-with-done',
             type: 'change',
             description: 'Replace all occurrences of "TODO" with "DONE".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               const hasTODO = text.includes('TODO');
               const hasDONE = text.includes('DONE');
@@ -112,7 +112,7 @@ and \`n\`/\`N\` to move forward and backward through each match in the buffer.`
             id: 'cursor-on-start-server-comment',
             type: 'move',
             description: 'Move the cursor onto the comment that mentions "start server".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const { line } = next.cursor;
               if (line < 0 || line >= next.buffer.length) return false;
               return next.buffer[line].includes('start server');

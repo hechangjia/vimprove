@@ -10,12 +10,14 @@ const firstNonBlankCol = (line: string): number => {
 
 /** `gg` — jump to first non-blank of line 0 */
 export const gotoFirstLine = (buffer: string[], _cursor: Cursor): Cursor => {
+  void _cursor;
   if (buffer.length === 0) return { line: 0, col: 0 };
   return { line: 0, col: firstNonBlankCol(buffer[0] ?? '') };
 };
 
 /** `G` (no count) — jump to first non-blank of last line */
 export const gotoLastLine = (buffer: string[], _cursor: Cursor): Cursor => {
+  void _cursor;
   if (buffer.length === 0) return { line: 0, col: 0 };
   const last = buffer.length - 1;
   return { line: last, col: firstNonBlankCol(buffer[last] ?? '') };

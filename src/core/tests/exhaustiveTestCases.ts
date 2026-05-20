@@ -112,7 +112,7 @@ const SCENARIOS: Scenario[] = [
 ];
 
 const toKeySeq = (cmd: CommandKind): string => {
-  const prefix = cmd.count ? `${cmd.count}` : '';
+  const prefix = 'count' in cmd && cmd.count ? `${cmd.count}` : '';
   switch (cmd.kind) {
     case 'motion':
       return `${prefix}${cmd.key}`;

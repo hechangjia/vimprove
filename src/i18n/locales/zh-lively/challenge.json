@@ -1,7 +1,11 @@
 {
   "mode": {
     "normal": "NORMAL",
-    "insert": "INSERT"
+    "insert": "INSERT",
+    "visual": "VISUAL",
+    "visual-line": "VISUAL LINE",
+    "visual-block": "VISUAL BLOCK",
+    "command": "COMMAND"
   },
   "goals": {
     "label": "目标：",
@@ -34,5 +38,17 @@
   "cheatSheet": {
     "download": "把这张卡片存下来",
     "exporting": "正在生成图片…"
+  },
+  "suggestions": {
+    "repeatedMotion": "你刚才连续猛按同一个移动键。下次试试 5l 这种 count，或者用 f{char} 直接飞过去。"
+  },
+  "findTarget": {
+    "title": "Find Target",
+    "score": "得分",
+    "misses": "绕路次数",
+    "restart": "再来一局",
+    "focus": "点一下开始",
+    "complete": "目标分到手。按 r 再练一轮。",
+    "prompt": "用 f/F/t/T 瞄准高亮的 {{char}}，再用 ; 或 , 连续追踪。"
   }
 }

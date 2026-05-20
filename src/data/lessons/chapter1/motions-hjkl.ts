@@ -76,7 +76,7 @@ Notice how every move is a single keypress, keeping your hands on the home row t
             id: 'reach-X',
             type: 'move',
             description: 'Move the cursor onto the X on the second line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               return next.cursor.line === 1 && next.cursor.col === 5;
             }
           },
@@ -84,7 +84,7 @@ Notice how every move is a single keypress, keeping your hands on the home row t
             id: 'reach-TARGET',
             type: 'move',
             description: 'Move the cursor to the first T (the capital T at the start) in "TARGET" on the last line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               return next.cursor.line === 2 && next.cursor.col === 3;
             }
           }

@@ -82,6 +82,7 @@ import { useFontLoader, FONT_CONFIGS, getFontFamily } from '@/hooks/useFontLoade
 | --- | --- | --- |
 | `vimprove-progress` | `useProgress` | 课程进度 |
 | `vimprove-settings` | `useSettings` | 字体/字号/主题 |
+| `vimprove-key-stats` | `useKeyStats` | 挑战按键统计 |
 | `vimprove-minigame-hjkl-snake` | `useHjklSnakeStats` | 贪吃蛇成绩 |
 | `vimprove_current_lesson` | `App.tsx`（非 hook） | 上次学到的 slug |
 | `i18nextLng` | `useLocale` | 当前语言 |
@@ -107,6 +108,8 @@ src/hooks/
 ├── useSettings.ts         # 编辑器/主题设置
 ├── useHjklSnakeStats.ts   # 贪吃蛇成绩
 ├── useKeyHistory.ts       # 按键历史聚合
+├── useKeyStats.ts         # 按键统计持久化
+├── useCommandSuggester.ts # 短路径建议
 └── useFontLoader.ts       # Google Fonts 按需加载
 ```
 

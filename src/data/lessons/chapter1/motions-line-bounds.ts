@@ -80,7 +80,7 @@ and **$** to jump straight to the semicolon at the end of the line.`
             id: 'go-to-absolute-start',
             type: 'move',
             description: 'Move the cursor to column 0 on the second line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 2) return false;
               return next.cursor.line === 1 && next.cursor.col === 0;
             }
@@ -89,7 +89,7 @@ and **$** to jump straight to the semicolon at the end of the line.`
             id: 'go-to-first-code-char',
             type: 'move',
             description: 'Move the cursor to the first non-blank character on the second line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 2) return false;
               return next.cursor.line === 1 && next.cursor.col === 4;
             }
@@ -98,7 +98,7 @@ and **$** to jump straight to the semicolon at the end of the line.`
             id: 'go-to-line-end',
             type: 'move',
             description: 'Move the cursor to the last character of the second line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 2) return false;
               const line = next.buffer[1];
               if (!line.length) return false;

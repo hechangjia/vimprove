@@ -75,7 +75,7 @@ This shows how word motions cover more ground than single-character moves.`
             id: 'reach-lastName-start',
             type: 'move',
             description: 'Move the cursor to the start of the word "lastName" on the second line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 2) return false;
               return next.cursor.line === 1 && next.cursor.col === 4;
             }
@@ -84,7 +84,7 @@ This shows how word motions cover more ground than single-character moves.`
             id: 'reach-firstName-end',
             type: 'move',
             description: 'Move the cursor to the end of the word "firstName" on the third line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 3) return false;
               return next.cursor.line === 2 && next.cursor.col === 25;
             }

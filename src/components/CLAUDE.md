@@ -52,10 +52,11 @@ src/components/
 - `MobileHeader.tsx` — 移动端顶栏：菜单 / 上一课 / 下一课 / 语言 / 设置 / GitHub，滚动隐藏
 
 ### `settings/`
-- `SettingsPanel.tsx` — 顶部 Tab 切换 → 三个面板
+- `SettingsPanel.tsx` — 顶部 Tab 切换 → 外观 / Vim 状态 / Playground / 按键统计
 - `AppearanceTab.tsx` — 字体（按需加载）/ 字号 / 主题（system / dark / light），实时预览
 - `VimStatusTab.tsx` — 引擎状态可视化（Neovim 对拍结果展示）
 - `VimPlaygroundTab.tsx` — 语法高亮的自由练习场（C++ / JS / Python）
+- `KeyStatsTab.tsx` — 本地按键统计面板
 - `EditorStyleApplier.tsx` — 把 `useSettings` 的字体/字号写到 CSS 变量，供编辑器使用
 
 ## 关键依赖

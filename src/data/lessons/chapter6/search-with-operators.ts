@@ -106,7 +106,7 @@ then move to the second "DEBUG" and press \`.\` to repeat exactly the same chang
             id: 'rename-logdebug-to-loginfo',
             type: 'change',
             description: 'Rename the function and all calls from logDebug to logInfo.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               const hasOld = text.includes('logDebug');
               const hasNew = text.includes('logInfo');
@@ -117,7 +117,7 @@ then move to the second "DEBUG" and press \`.\` to repeat exactly the same chang
             id: 'change-debug-prefix-to-info',
             type: 'change',
             description: 'Change the log prefix from "[DEBUG]" to "[INFO]".',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               const text = next.buffer.join('\\n');
               return text.includes('"[INFO] "') && !text.includes('"[DEBUG] "');
             }

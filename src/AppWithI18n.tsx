@@ -1,0 +1,35 @@
+import { Suspense, useEffect, useState } from 'react';
+import { I18nextProvider } from 'react-i18next';
+import App from './App.tsx';
+import { initI18n } from '@/i18n';
+
+export const AppWithI18n = () => {
+  const [i18nInstance, setI18nInstance] = useState<Awaited<ReturnType<typeof initI18n>> | null>(null);
+
+  useEffect(() => {
+    initI18n().then(instance => setI18nInstance(instance));
+  }, []);
+
+  useEffect(() => {
+    if (i18nInstance) {
+      const loadingElement = document.getElementById('loading');
+      if (loadingElement) {
+        loadingElement.style.opacity = '0';
+        loadingElement.style.transition = 'opacity 0.3s ease-out';
+        setTimeout(() => loadingElement.remove(), 300);
+      }
+    }
+  }, [i18nInstance]);
+
+  if (!i18nInstance) {
+    return null;
+  }
+
+  return (
+    <Suspense fallback={null}>
+      <I18nextProvider i18n={i18nInstance}>
+        <App />
+      </I18nextProvider>
+    </Suspense>
+  );
+};

@@ -6,8 +6,12 @@ import { useChallenge } from '@/hooks/useChallenge';
 import { vimReducer } from '@/core/vimReducer';
 import { tokenizeLine, getTokenClassName } from '@/core/syntaxHighlight';
 import { getLigatureRange } from '@/core/ligatures';
+import { isInVisualSelection } from '@/core/visualSelection';
+import { usesBlockCursor } from '@/core/modeUtils';
 import { useTranslationSafe } from '@/hooks/useI18n';
 import { useKeyHistory } from '@/hooks/useKeyHistory';
+import { getCommandSuggestion } from '@/hooks/useCommandSuggester';
+import { useKeyStats } from '@/hooks/useKeyStats';
 import { KeyHistoryPanel } from '@/components/common/KeyHistoryPanel';
 
 type VimChallengeProps = {
@@ -37,6 +41,7 @@ export const VimChallenge = ({
   );
   const { t } = useTranslationSafe(['challenge', 'lessons']);
   const { recordKey, getHistory, clearHistory } = useKeyHistory();
+  const { recordKeyStat } = useKeyStats();
 
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -106,6 +111,7 @@ export const VimChallenge = ({
           payload: { key: char, ctrlKey: false }
         });
         recordKey(char, false, currentState, nextState);
+        recordKeyStat(char, false);
         dispatch({
           type: 'KEYDOWN',
           payload: { key: char, ctrlKey: false }
@@ -117,6 +123,7 @@ export const VimChallenge = ({
       // Show Chinese characters in key history as ignored
       for (const char of text) {
         recordKey(char, false, state, state);
+        recordKeyStat(char, false);
       }
     }
 
@@ -144,6 +151,7 @@ export const VimChallenge = ({
     });
 
     recordKey(e.key, e.ctrlKey, state, nextState);
+    recordKeyStat(e.key, e.ctrlKey);
 
     dispatch({
       type: 'KEYDOWN',
@@ -180,14 +188,16 @@ export const VimChallenge = ({
               return tokenChars.map((char, localIdx) => {
                 const c = charIndex++;
                 const isCursor = state.cursor.line === r && state.cursor.col === c;
-                const isNormalMode = state.mode === 'normal';
+                const isBlockCursorMode = usesBlockCursor(state.mode);
+                const isSelected = isInVisualSelection(state, { line: r, col: c });
                 const disableLigatures =
                   ligatureRange != null && c >= ligatureRange.start && c <= ligatureRange.end;
                 const cursorTextClass = isCursor
-                  ? isNormalMode
+                  ? isBlockCursorMode
                     ? 'vim-cursor-text'
                     : 'relative z-10'
                   : '';
+                const selectionClass = isSelected ? 'vim-visual-selection' : '';
 
                 return (
                   <span
@@ -196,10 +206,10 @@ export const VimChallenge = ({
                   >
                     {isCursor && (
                       <span
-                        className={isNormalMode ? 'vim-cursor-block' : 'vim-cursor-bar'}
+                        className={isBlockCursorMode ? 'vim-cursor-block' : 'vim-cursor-bar'}
                       />
                     )}
-                    <span className={`${cursorTextClass} ${disableLigatures ? 'vim-no-ligatures' : ''}`.trim()}>
+                    <span className={`${selectionClass} ${cursorTextClass} ${disableLigatures ? 'vim-no-ligatures' : ''}`.trim()}>
                       {char}
                     </span>
                   </span>
@@ -207,7 +217,7 @@ export const VimChallenge = ({
               });
             })}
             {state.cursor.line === r && state.cursor.col === line.length && (
-              <span className={state.mode === 'normal' ? 'vim-cursor-eol-block' : 'vim-cursor-eol-bar'}>
+              <span className={usesBlockCursor(state.mode) ? 'vim-cursor-eol-block' : 'vim-cursor-eol-bar'}>
                 &nbsp;
               </span>
             )}
@@ -216,6 +226,7 @@ export const VimChallenge = ({
       );
     });
   };
+  const suggestion = isComplete ? getCommandSuggestion(getHistory()) : null;
 
   return (
     <div className="bg-surface rounded-xl overflow-hidden border border-border shadow-2xl flex flex-row gap-0 h-[500px] md:h-[600px]">
@@ -296,6 +307,11 @@ export const VimChallenge = ({
                   time: elapsed
                 })}
               </p>
+              {suggestion && (
+                <p className="text-sm text-info-muted-foreground bg-info-muted/20 border border-info-muted/40 rounded-lg px-3 py-2 mb-4">
+                  {t(suggestion.messageKey, suggestion.fallback, { ns: 'challenge' })}
+                </p>
+              )}
               <button
                 onClick={() => onComplete({ next: true, time: elapsed })}
                 className="bg-primary hover:bg-primary-hover text-primary-foreground px-6 py-2 rounded-lg font-bold w-full transition-all"
@@ -310,6 +326,11 @@ export const VimChallenge = ({
         )}
 
         <div className="vim-editor-root">{renderBuffer()}</div>
+        {(state.mode === 'command' || state.commandStatus) && (
+          <div className="sticky bottom-0 border-t border-border bg-surface-2 px-4 py-2 font-mono text-sm text-foreground-muted">
+            {state.mode === 'command' ? `:${state.commandLine}` : state.commandStatus}
+          </div>
+        )}
       </div>
 
       {/* Goals List */}

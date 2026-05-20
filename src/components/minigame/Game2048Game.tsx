@@ -226,11 +226,21 @@ export const Game2048Game = ({ config }: Game2048GameProps) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFocused, handleKeyDown]);
 
+  const [elapsedNowMs, setElapsedNowMs] = useState<number | null>(null);
+  useEffect(() => {
+    if (!state.startAtMs || state.endedAtMs != null) return;
+
+    const updateElapsedNow = () => setElapsedNowMs(Date.now());
+    updateElapsedNow();
+    const id = window.setInterval(updateElapsedNow, 1000);
+    return () => window.clearInterval(id);
+  }, [state.startAtMs, state.endedAtMs]);
+
   const elapsedSec = useMemo(() => {
     if (!state.startAtMs) return 0;
-    const end = state.endedAtMs ?? Date.now();
+    const end = state.endedAtMs ?? elapsedNowMs ?? state.startAtMs;
     return Math.max(0, Math.floor((end - state.startAtMs) / 1000));
-  }, [state.startAtMs, state.endedAtMs]);
+  }, [state.startAtMs, state.endedAtMs, elapsedNowMs]);
 
   return (
     <div

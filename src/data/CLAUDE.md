@@ -9,7 +9,7 @@
 ## 入口与启动
 
 - `index.ts` — 汇总所有 Lesson 并按章节顺序导出 `LESSONS: Lesson[]`，同时 re-export `CATEGORIES`
-- `categories.ts` — 6 个章节的 id / title / order
+- `categories.ts` — 11 个章节的 id / title / order
 
 被 `src/App.tsx` 直接消费：根据 `currentLessonSlug` 在 `LESSONS` 中查找当前 Lesson。
 
@@ -28,14 +28,19 @@ import type { Lesson, Category, ContentBlock } from '@/core/types';
 
 | id | title | 课程数 |
 | --- | --- | --- |
-| chapter1 | Vim Mindset & Basic Motions | 5 |
+| chapter1 | Vim Mindset & Basic Motions | 8 |
 | chapter2 | Word Navigation & Small Edits | 5 |
-| chapter3 | Advanced Editing | 5 |
+| chapter3 | Advanced Editing | 8 |
 | chapter4 | In-line Find & Till | 4 |
 | chapter5 | Text Objects | 5 |
 | chapter6 | Search & Refactor | 4 |
+| chapter7 | Visual Mode | 5 |
+| chapter8 | Macros & Registers | 5 |
+| chapter9 | Marks & Jump History | 3 |
+| chapter10 | Vim in the Real World | 6 |
+| chapter11 | Daily Vim Mastery | 4 |
 
-**合计 28 节课。**
+**合计 57 节可见课程。**
 
 ### Lesson 文件分布（来自 `index.ts`）
 
@@ -45,6 +50,9 @@ src/data/lessons/
 │   ├── modes-basics.ts
 │   ├── motions-hjkl.ts
 │   ├── motions-line-bounds.ts
+│   ├── motions-file-bounds.ts
+│   ├── motions-paragraph.ts
+│   ├── motions-bracket-match.ts
 │   ├── modes-movement-mini-review.ts
 │   └── hjkl-snake.ts                 # 末尾贪吃蛇小游戏
 ├── chapter2/
@@ -58,7 +66,10 @@ src/data/lessons/
 │   ├── operator-change-basic.ts
 │   ├── operator-yank-basic.ts
 │   ├── count-repeat-undo.ts
-│   └── operators-mini-review.ts
+│   ├── operators-mini-review.ts
+│   ├── operator-shortcuts.ts
+│   ├── operator-case.ts
+│   └── game-2048.ts                  # 末尾 2048 小游戏
 ├── chapter4/
 │   ├── find-char.ts
 │   ├── delete-with-find.ts
@@ -70,11 +81,39 @@ src/data/lessons/
 │   ├── textobjects-brackets.ts
 │   ├── textobjects-quotes.ts
 │   └── textobjects-mega-review.ts
-└── chapter6/
-    ├── search-basic.ts
-    ├── search-with-operators.ts
-    ├── realworld-cleanup-1.ts
-    └── speedrun-challenge.ts
+├── chapter6/
+│   ├── search-basic.ts
+│   ├── search-with-operators.ts
+│   ├── realworld-cleanup-1.ts
+│   └── speedrun-challenge.ts
+├── chapter7/
+│   ├── visual-char-basics.ts
+│   ├── visual-line-mode.ts
+│   ├── visual-block-mode.ts
+│   ├── visual-operators.ts
+│   └── visual-refactor-review.ts
+├── chapter8/
+│   ├── macros-basics.ts
+│   ├── macros-count.ts
+│   ├── registers-named.ts
+│   ├── registers-system.ts
+│   └── macros-mega-challenge.ts
+├── chapter9/
+│   ├── marks-basics.ts
+│   ├── jumplist.ts
+│   └── changelist.ts
+├── chapter10/
+    ├── install-and-minimal-config.ts
+    ├── vim-in-vscode.ts
+    ├── vim-in-jetbrains.ts
+    ├── vim-in-terminal.ts
+    ├── editor-shortcut-migration.ts
+    └── realworld-refactor-demo.ts
+└── chapter11/
+    ├── command-line-basics.ts
+    ├── substitute-current-line.ts
+    ├── substitute-whole-buffer.ts
+    └── first-week-workflow-review.ts
 ```
 
 ### 单个 Lesson 形状
@@ -83,9 +122,9 @@ src/data/lessons/
 {
   slug: string;                  // 路由/i18n 主键，全局唯一
   title: string;                 // 英文标题（同时作为 en 默认值）
-  categoryId: string;            // 'chapter1' ~ 'chapter6'
+  categoryId: string;            // 'chapter1' ~ 'chapter11'
   shortDescription: string;      // 列表/页眉副标题
-  contentBlocks: ContentBlock[]; // markdown | key-list | challenge | run-example | hjkl-snake
+  contentBlocks: ContentBlock[]; // markdown | key-list | challenge | run-example | minigame | cheat-sheet
   i18nKey?: string;              // 可选；缺省时按 `lessons.{slug}.*` 解析
 }
 ```
@@ -122,14 +161,18 @@ npm run test                       # 跑核心引擎不会回归
 ```
 src/data/
 ├── index.ts            # 汇总入口（注册新课在此）
-├── categories.ts       # 6 个章节定义
+├── categories.ts       # 7 个章节定义
 └── lessons/
-    ├── chapter1/  (5 lessons)
+    ├── chapter1/  (8 lessons)
     ├── chapter2/  (5 lessons)
-    ├── chapter3/  (5 lessons)
+    ├── chapter3/  (8 lessons)
     ├── chapter4/  (4 lessons)
     ├── chapter5/  (5 lessons)
-    └── chapter6/  (4 lessons)
+    ├── chapter6/  (4 lessons)
+    ├── chapter7/  (5 lessons)
+    ├── chapter8/  (5 lessons)
+    ├── chapter9/  (3 lessons)
+    └── chapter10/ (6 lessons)
 ```
 
 外部协作文档（位于 .gitignore 的 `tmp/`，但仓库可见）：

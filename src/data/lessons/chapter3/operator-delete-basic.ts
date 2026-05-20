@@ -100,7 +100,7 @@ It shows how the delete operator follows whatever motion you pair with it.`
             id: 'remove-debug-word',
             type: 'delete',
             description: 'Remove the word "debug" from the comment on the value line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 4) return false;
               const line = next.buffer[3];
               // 精确到注释段：变量声明保持 `int value = 42;` 不变，注释里不能再含 `debug`。
@@ -111,7 +111,7 @@ It shows how the delete operator follows whatever motion you pair with it.`
             id: 'remove-unused-comment',
             type: 'delete',
             description: 'Remove the entire "// unused" comment on the count line.',
-            validator: (prev, next) => {
+            validator: (_prev, next) => {
               if (next.buffer.length < 5) return false;
               const line = next.buffer[4];
               return !line.includes('// unused') && line.includes('int count = 3;');
