@@ -23,8 +23,8 @@ You move first, then type.`
       type: 'markdown',
       content: `## Example: fixing a word with w/b/e and Insert
 
-In the example we travel with **w/e** to the end of \`count\`, enter Insert with **a**,
-and type a couple of letters to turn it into \`counter\`.
+In the example we travel with **w/e** to the end of \`encount\`, enter Insert with **a**,
+and type a couple of letters to turn it into \`encounter\`.
 It highlights the rhythm of navigate first, then make a quick edit.`
     },
     {
@@ -32,21 +32,21 @@ It highlights the rhythm of navigate first, then make a quick edit.`
       config: {
         initialBuffer: [
           'int main() {',
-          '    int count = 0;',
+          '    int encount = 0;',
           '}'
         ],
-        initialCursor: { line: 1, col: 4 },
+        initialCursor: { line: 1, col: 0 },
         autoPlaySpeed: 900,
         tracks: [
           { label: 'Word + Insert', keys: [] }
         ],
         steps: [
           { key: 'w', description: 'w: jump to "int".', cursorIndex: 0 },
-          { key: 'w', description: 'w: jump to "count".', cursorIndex: 0 },
-          { key: 'e', description: 'e: jump to the end of "count".', cursorIndex: 0 },
-          { key: 'a', description: 'a: enter Insert mode just after "count".', cursorIndex: 0 },
+          { key: 'w', description: 'w: jump to "encount".', cursorIndex: 0 },
+          { key: 'e', description: 'e: jump to the end of "encount".', cursorIndex: 0 },
+          { key: 'a', description: 'a: enter Insert mode just after "encount".', cursorIndex: 0 },
           { key: 'e', description: 'Type "e" to start adding "er".', cursorIndex: 0 },
-          { key: 'r', description: 'Type "r" to complete the new name "counter".', cursorIndex: 0 },
+          { key: 'r', description: 'Type "r" to complete the new name "encounter".', cursorIndex: 0 },
           { key: 'Escape', description: 'Escape: go back to Normal with the fixed name.', cursorIndex: 0 }
         ]
       }
