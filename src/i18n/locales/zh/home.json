@@ -36,6 +36,11 @@
       "title": "项目导航",
       "desc": "Buffers、splits 和 Ctrl-w 移动，面向真实项目。",
       "action": "开始项目路线"
+    },
+    "environment": {
+      "title": "开发环境",
+      "desc": "Vim mode、IDE、LSP、AI 与远程开发循环。",
+      "action": "开始环境路线"
     }
   },
   "language": {

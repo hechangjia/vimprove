@@ -15,5 +15,6 @@ export const CATEGORIES: Category[] = [
   { id: 'chapter12', title: 'Chapter 12: Project Navigation', order: 12 },
   { id: 'chapter13', title: 'Chapter 13: Screen Navigation', order: 13 },
   { id: 'chapter14', title: 'Chapter 14: Project Workspace', order: 14 },
-  { id: 'chapter15', title: 'Chapter 15: VimGolf Challenges', order: 15 }
+  { id: 'chapter15', title: 'Chapter 15: VimGolf Challenges', order: 15 },
+  { id: 'chapter16', title: 'Chapter 16: Development Environment Bridge', order: 16 }
 ];

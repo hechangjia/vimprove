@@ -42,8 +42,8 @@ describe('lesson registry', () => {
     }
   });
 
-  it('keeps visible curriculum at the published v3.1 size', () => {
-    expect(LESSONS.length).toBe(76);
-    expect(CATEGORIES.length).toBe(15);
+  it('keeps visible curriculum at the published v3.2 size', () => {
+    expect(LESSONS.length).toBe(80);
+    expect(CATEGORIES.length).toBe(16);
   });
 });

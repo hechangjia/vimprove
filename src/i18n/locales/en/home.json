@@ -36,6 +36,11 @@
       "title": "Project Navigation",
       "desc": "Buffers, splits, and Ctrl-w movement for real projects.",
       "action": "Start project path"
+    },
+    "environment": {
+      "title": "Development Environment",
+      "desc": "Vim mode, IDEs, LSP, AI, and remote development loops.",
+      "action": "Start environment path"
     }
   },
   "language": {

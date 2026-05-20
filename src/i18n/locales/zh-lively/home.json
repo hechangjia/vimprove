@@ -36,6 +36,11 @@
       "title": "项目里不迷路",
       "desc": "Buffers、splits、Ctrl-w，在真实项目里来回切。",
       "action": "练项目导航"
+    },
+    "environment": {
+      "title": "把 Vim 带进开发环境",
+      "desc": "Vim mode、IDE、LSP、AI、远程开发，把它们串成一条工作流。",
+      "action": "练开发环境"
     }
   },
   "language": {

@@ -80,6 +80,13 @@ export const HomePage = ({ onStart, onSurvivalPack, onLearningPath }: HomePagePr
       title: t('paths.project.title', 'Project Navigation'),
       desc: t('paths.project.desc', 'Buffers, splits, and Ctrl-w movement for real projects.'),
       action: t('paths.project.action', 'Start project path')
+    },
+    {
+      icon: Terminal,
+      slug: 'dev-environment-mental-model',
+      title: t('paths.environment.title', 'Development Environment'),
+      desc: t('paths.environment.desc', 'Vim mode, IDEs, LSP, AI, and remote development loops.'),
+      action: t('paths.environment.action', 'Start environment path')
     }
   ];
 
@@ -175,7 +182,7 @@ export const HomePage = ({ onStart, onSurvivalPack, onLearningPath }: HomePagePr
             {t('paths.title', 'Choose a learning path')}
           </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {learningPaths.map(path => (
             <button
               key={path.slug}

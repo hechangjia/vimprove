@@ -103,6 +103,9 @@ import { projectWorkspaceReview } from './lessons/chapter14/project-workspace-re
 // Chapter 15: VimGolf Challenges
 import { vimgolfIntro, vimgolfBasicEditing, vimgolfTextObjects, vimgolfMacros, vimgolfAdvanced } from './lessons/chapter15/vimgolf-challenges';
 
+// Chapter 16: Development Environment Bridge
+import { devEnvironmentMentalModel, vimModeEverywhere, lspAiVimWorkflow, remoteDevWorkflowReview } from './lessons/chapter16/development-environment';
+
 export { CATEGORIES };
 
 export const LESSONS: Lesson[] = [
@@ -208,5 +211,11 @@ export const LESSONS: Lesson[] = [
   vimgolfBasicEditing,
   vimgolfTextObjects,
   vimgolfMacros,
-  vimgolfAdvanced
+  vimgolfAdvanced,
+
+  // Chapter 16: Development Environment Bridge
+  devEnvironmentMentalModel,
+  vimModeEverywhere,
+  lspAiVimWorkflow,
+  remoteDevWorkflowReview
 ];

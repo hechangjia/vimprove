@@ -14,7 +14,8 @@
     "chapter12": "第 12 章：项目导航",
     "chapter13": "第 13 章：屏幕导航",
     "chapter14": "第 14 章：项目工作区",
-    "chapter15": "第 15 章：VimGolf 挑战"
+    "chapter15": "第 15 章：VimGolf 挑战",
+    "chapter16": "第 16 章：开发环境桥接"
   },
   "lessons": {
     "modes-basics": {
@@ -2332,6 +2333,85 @@
           }
         },
         "4": "## 恭喜！\n\n你已完成全部 10 个 VimGolf 挑战！把你的解法和最优按键数比一比。\n\n**想要更多？** 去 [vimgolf.com](https://www.vimgolf.com/) 看社区提供的几百个挑战。\n\n**关键收获：**\n- 先想后打——最短路径不一定一眼能看出来\n- 文本对象（`ci(`、`di\"`）通常比手动选快\n- 宏在重复任务里巨好用\n- `.` 命令是重复编辑的神器"
+      }
+    },
+    "dev-environment-mental-model": {
+      "title": "开发环境心智模型",
+      "shortDescription": "把 Vim 放进一整套开发工具链里看。",
+      "content": {
+        "0": "## Vim 是一层能力，不是整个宇宙\n\n一个顺手的开发环境通常是一套组合：\n\n- **编辑器**：你改文本的地方。\n- **Shell**：你跑工具的地方。\n- **语言服务器**：负责定义、引用、诊断和重命名。\n- **格式化 / lint / 测试**：把反馈变成可重复的检查。\n- **AI 助手**：帮你探索和起草，但最终仍要自己审。\n- **远程运行时**：容器、SSH、云工作区，让项目环境稳定可复现。\n\nVim 技能在编辑层发力，但真正爽点是它能和整套环境配合。",
+        "1": {
+          "keys": {
+            "0": "在更大的编辑器或 IDE 里继续用 Vim 编辑语言",
+            "1": "让语言工具回答定义、引用、诊断和重命名",
+            "2": "编辑、运行、检查、跳回，再来一轮"
+          }
+        },
+        "2": {
+          "goals": {
+            "choose-vim": "把 editor 设置改成 \"vim\"。",
+            "enable-vim-mode": "把 vim_mode 改成 true。"
+          }
+        }
+      }
+    },
+    "vim-mode-everywhere": {
+      "title": "到处开 Vim Mode",
+      "shortDescription": "把同一套编辑语言带进 IDE、shell 和代码评审。",
+      "content": {
+        "0": "## 跨工具共用一套编辑语言\n\n现代开发经常在 VS Code、JetBrains IDE、终端、commit message、浏览器文本框和 code review 评论之间来回切。\n\n重点不是把所有工具都换成终端 Vim，而是在经常改文本的地方启用 **Vim mode**：\n\n- 日常代码用 VS Code Vim 或类似扩展。\n- JetBrains 项目用 IdeaVim。\n- 命令行开启 shell vi mode。\n- notebook、review 工具、浏览器扩展里按需启用 Vim 键位。\n\n目标是保持一致：motion、operator、text object、repeat。",
+        "1": {
+          "keys": {
+            "0": "在 VS Code Vim、IdeaVim、终端 Vim 里都很常用",
+            "1": "Vim 层支持时，一键重复刚才的小编辑",
+            "2": "先回到命令思维，再选下一步"
+          }
+        },
+        "2": {
+          "goals": {
+            "enable-vim-extension": "把 vim.enable 从 false 改成 true。"
+          }
+        }
+      }
+    },
+    "lsp-ai-vim-workflow": {
+      "title": "LSP、AI 和 Vim 工作流",
+      "shortDescription": "Vim 管精确编辑，语言工具管代码智能。",
+      "content": {
+        "0": "## 让每个工具做自己擅长的事\n\nVim 擅长精确文本变换。语言服务器擅长代码感知导航和重构。AI 助手适合草稿、解释和大范围探索，但最终仍要人工审查。\n\n强工作流通常是：\n\n1. 用 LSP 找到目标 symbol、diagnostic 或 reference。\n2. 用 Vim motion 和 text object 做局部编辑。\n3. 用 formatter、linter 和 tests 验证。\n4. 用 AI 帮你探索，但让最终修改保持小而可检查。\n\n这样既保留手速，也不会把所有问题都当成纯文本问题。",
+        "1": {
+          "keys": {
+            "0": "很多 Vim-mode IDE 配置里的跳到定义",
+            "1": "通过语言层查找引用",
+            "2": "符号重命名优先用语义 rename，不要硬做全文替换"
+          }
+        },
+        "2": {
+          "goals": {
+            "fix-local-symbol-spelling": "把本地函数拼写改成 getUserName，并同步调用处。"
+          }
+        }
+      }
+    },
+    "remote-dev-workflow-review": {
+      "title": "远程开发工作流复盘",
+      "shortDescription": "练 SSH、容器、云工作区里的编辑-运行-检查循环。",
+      "content": {
+        "0": "## 远程开发本质上还是编辑循环\n\nSSH session、dev container 和云工作区改变的是代码跑在哪里，不改变核心循环：\n\n1. 在稳定环境中打开项目。\n2. 搜索失败设置或诊断信息。\n3. 做最小且清晰的编辑。\n4. 跑 formatter、linter 或 test。\n5. 跳回错误位置继续修。\n\nVim 在这里很有价值，因为有延迟、远程 shell 或受限终端时，键盘驱动编辑依然稳。",
+        "1": {
+          "keys": {
+            "0": "能进入 quickfix 风格导航的项目搜索",
+            "1": "跳到下一个结果或错误",
+            "2": "落到问题处后精确修改当前单词"
+          }
+        },
+        "2": {
+          "goals": {
+            "remote-workspace": "把 workspace 改成 \"remote\"。",
+            "auto-lint": "把 lint 改成 \"auto\"。",
+            "enable-tests": "把 test 改成 \"run\"。"
+          }
+        }
       }
     }
   }

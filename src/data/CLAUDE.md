@@ -9,7 +9,7 @@
 ## 入口与启动
 
 - `index.ts` — 汇总所有 Lesson 并按章节顺序导出 `LESSONS: Lesson[]`，同时 re-export `CATEGORIES`
-- `categories.ts` — 15 个章节的 id / title / order
+- `categories.ts` — 16 个章节的 id / title / order
 
 被 `src/App.tsx` 直接消费：根据 `currentLessonSlug` 在 `LESSONS` 中查找当前 Lesson。
 
@@ -43,8 +43,9 @@ import type { Lesson, Category, ContentBlock } from '@/core/types';
 | chapter13 | Screen Navigation | 4 |
 | chapter14 | Project Workspace | 4 |
 | chapter15 | VimGolf Challenges | 5 |
+| chapter16 | Development Environment Bridge | 4 |
 
-**合计 76 节可见课程。**
+**合计 80 节可见课程。**
 
 ### Lesson 文件分布（来自 `index.ts`）
 
@@ -137,6 +138,8 @@ src/data/lessons/
     └── project-workspace-review.ts
 └── chapter15/
     └── vimgolf-challenges.ts
+└── chapter16/
+    └── development-environment.ts
 ```
 
 ### 单个 Lesson 形状
@@ -145,7 +148,7 @@ src/data/lessons/
 {
   slug: string;                  // 路由/i18n 主键，全局唯一
   title: string;                 // 英文标题（同时作为 en 默认值）
-  categoryId: string;            // 'chapter1' ~ 'chapter15'
+  categoryId: string;            // 'chapter1' ~ 'chapter16'
   shortDescription: string;      // 列表/页眉副标题
   contentBlocks: ContentBlock[]; // markdown | key-list | challenge | run-example | minigame | cheat-sheet
   i18nKey?: string;              // 可选；缺省时按 `lessons.{slug}.*` 解析
@@ -184,7 +187,7 @@ npm run test                       # 跑核心引擎不会回归
 ```
 src/data/
 ├── index.ts            # 汇总入口（注册新课在此）
-├── categories.ts       # 15 个章节定义
+├── categories.ts       # 16 个章节定义
 └── lessons/
     ├── chapter1/  (8 lessons)
     ├── chapter2/  (6 lessons)
@@ -200,7 +203,8 @@ src/data/
     ├── chapter12/ (4 lessons)
     ├── chapter13/ (4 lessons)
     ├── chapter14/ (4 lessons)
-    └── chapter15/ (5 lessons)
+    ├── chapter15/ (5 lessons)
+    └── chapter16/ (4 lessons)
 ```
 
 外部协作文档（位于 .gitignore 的 `tmp/`，但仓库可见）：

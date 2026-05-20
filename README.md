@@ -87,7 +87,8 @@ src/
 │       ├── chapter12/ # 项目导航（4 课）
 │       ├── chapter13/ # 屏幕导航（4 课）
 │       ├── chapter14/ # 项目工作区（4 课）
-│       └── chapter15/ # VimGolf 挑战（5 课）
+│       ├── chapter15/ # VimGolf 挑战（5 课）
+│       └── chapter16/ # 开发环境桥接（4 课）
 │
 ├── hooks/             # 自定义 hooks
 │   ├── useVimEngine.ts    # Vim 引擎封装
@@ -178,6 +179,12 @@ src/
 - [x] 新增 Scroll Surfer 小游戏，训练半页/整页滚动与视口定位
 - [x] 引擎新增 deterministic viewport state，供课程 challenge 校验
 
+### v3.2.0
+- [x] 新增 Chapter 16：4 节 Development Environment Bridge 课程
+- [x] 首页新增 Development Environment 学习路线入口
+- [x] 将 Vim mode、IDE、LSP、AI、远程开发工作流纳入课程体系
+- [x] 参考 Missing Semester 开发环境视角，把 Vim 从命令训练连接到现代开发环境
+
 ### v3.1.0
 - [x] 新增 Insert Mode Shortcuts 课程与 `Ctrl-w/u/t/d` 插入模式快捷键训练
 - [x] 新增 Text Object Ninja 小游戏，训练 `viw` / `vaw` / `vi(`/`vi{` / `vi"` 选择
@@ -192,6 +199,12 @@ src/
 
 
 ## 📝 CHANGELOG
+
+### v3.2.0
+- 新增 Chapter 16「Development Environment Bridge」4 节课程，课程总数达到 80 节
+- 首页新增 Development Environment 路线，帮助用户从 Vim 命令过渡到 IDE/LSP/AI/remote dev 工作流
+- 新增开发环境心智模型、Vim mode everywhere、LSP/AI 配合、远程开发循环四个主题
+- 同步 v3.2 版本号、课程注册表、中文/活泼中文翻译与文档
 
 ### v3.1.0
 - 新增日常插入流畅度训练：Insert 模式支持 `Ctrl-w`、`Ctrl-u`、`Ctrl-t`、`Ctrl-d`
